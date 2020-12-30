@@ -9,12 +9,13 @@ import numpy as np
 import net as net
 from utils import load_data
 from sklearn.metrics import f1_score
-
+import pdb
 
 def run(args, seed):
 
     setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
+    pdb.set_trace()
 
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
