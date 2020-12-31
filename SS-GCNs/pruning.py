@@ -25,6 +25,8 @@ def setup_seed(seed):
 
 class AddTrainableMask(ABC):
 
+    _tensor_name: str
+    
     def __init__(self):
         pass
         
@@ -34,8 +36,8 @@ class AddTrainableMask(ABC):
 
     def apply_mask(self, module):
 
-        mask_weight = getattr(module, self.__tensor_name + "_mask_weight")
-        orig_weight = getattr(module, self.__tensor_name + "_orig_weight")
+        mask_weight = getattr(module, self._tensor_name + "_mask_weight")
+        orig_weight = getattr(module, self._tensor_name + "_orig_weight")
         pruned_weight = mask_weight * orig_weight
         
         return pruned_weight
