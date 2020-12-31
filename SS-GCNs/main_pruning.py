@@ -28,6 +28,7 @@ def run(args, seed):
     early_stopping = 10
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'])
+    pdb.set_trace()
     pruning.add_mask(net_gcn)
 
     net_gcn = net_gcn.cuda()
