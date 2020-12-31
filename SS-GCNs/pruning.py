@@ -51,7 +51,7 @@ class AddTrainableMask(ABC):
 
         del module._parameters[name]
 
-        setattr(module, name, method.apply_weight(module))
+        setattr(module, name, method.apply_mask(module))
         module.register_forward_pre_hook(method)
 
         return method
