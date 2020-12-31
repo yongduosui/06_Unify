@@ -27,7 +27,6 @@ def run(args, seed):
     loss_func = nn.CrossEntropyLoss()
     early_stopping = 10
 
-    pdb.set_trace()
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'])
     pruning.add_mask(net_gcn)
 
