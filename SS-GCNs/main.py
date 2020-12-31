@@ -87,9 +87,12 @@ if __name__ == "__main__":
     acc_test = np.zeros(50)
     for seed in range(50):
         acc_val[seed], acc_test[seed] = run(args, seed)
-        print('seed', seed, 'val', acc_val[seed], 'test', acc_test[seed])
+        print("Seed:[{}], Val:[{:.4f}], Test:[{:.4f}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100))
 
-    print('finish')
-    print('val mean', acc_val.mean(), 'val std', acc_val.std())
-    print('test mean', acc_test.mean(), 'test std', acc_test.std())
+    print('Finish !')
+    print('Val  mean : [{:.4f}]  std : [{:.4f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
+    print('Test mean : [{:.4f}]  std : [{:.4f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
+
+    # print('val mean', acc_val.mean(), 'val std', acc_val.std())
+    # print('test mean', acc_test.mean(), 'test std', acc_test.std())
 
