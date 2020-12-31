@@ -83,9 +83,10 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    acc_val = np.zeros(50)
-    acc_test = np.zeros(50)
-    for seed in range(20):
+    seed_time = 20
+    acc_val = np.zeros(seed_time)
+    acc_test = np.zeros(seed_time)
+    for seed in range(seed_time):
         acc_val[seed], acc_test[seed] = run(args, seed)
         print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100))
 

@@ -15,7 +15,7 @@ def run(args, seed):
 
     setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
-    
+    pdb.set_trace()
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -83,13 +83,14 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    acc_val = np.zeros(50)
-    acc_test = np.zeros(50)
-    for seed in range(50):
+    seed_time = 20
+    acc_val = np.zeros(seed_time)
+    acc_test = np.zeros(seed_time)
+    for seed in range(seed_time):
         acc_val[seed], acc_test[seed] = run(args, seed)
-        print('seed', seed, 'val', acc_val[seed], 'test', acc_test[seed])
+        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100))
 
-    print('finish')
-    print('val mean', acc_val.mean(), 'val std', acc_val.std())
-    print('test mean', acc_test.mean(), 'test std', acc_test.std())
+    print('Finish !')
+    print('Val  mean : [{:.4f}]  std : [{:.4f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
+    print('Test mean : [{:.4f}]  std : [{:.4f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
 
