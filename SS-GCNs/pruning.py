@@ -70,4 +70,19 @@ def add_mask(model, init_mask_dict=None):
         AddTrainableMask.apply(model.net_layer[1], 'weight', mask2)
 
     else:
-        pass
+
+        mask1 = nn.Parameter(init_mask_dict['mask1'])
+        AddTrainableMask.apply(model.net_layer[0], 'weight', mask1)
+
+        mask2 = nn.Parameter(init_mask_dict['mask2'])
+        AddTrainableMask.apply(model.net_layer[1], 'weight', mask2)
+        
+
+
+def generate_mask(model):
+
+    mask_dict = {}
+    mask_dict['mask1'] = torch.zeros_like(model.net_layer[0].weight)
+    mask_dict['mask2'] = torch.zeros_like(model.net_layer[1].weight)
+
+    return mask_dict
