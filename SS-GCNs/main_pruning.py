@@ -30,8 +30,7 @@ def run(args, seed):
     pdb.set_trace()
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'])
 
-    zeros_mask_dict = pruning.generate_mask(net_gcn)
-    pruning.add_mask(net_gcn, zeros_mask_dict)
+    pruning.add_mask(net_gcn)
 
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
