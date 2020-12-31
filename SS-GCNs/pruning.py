@@ -32,7 +32,7 @@ class AddTrainableMask(ABC):
         
     def __call__(self, module, inputs):
 
-        setattr(module, self._tensor_name, self.apply_weight(module))
+        setattr(module, self._tensor_name, self.apply_mask(module))
 
     def apply_mask(self, module):
 
