@@ -10,12 +10,13 @@ import net as net
 from utils import load_data
 from sklearn.metrics import f1_score
 import pdb
+import pruning
 
 def run(args, seed):
 
-    setup_seed(seed)
+    pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
-    pdb.set_trace()
+    
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -26,7 +27,10 @@ def run(args, seed):
     loss_func = nn.CrossEntropyLoss()
     early_stopping = 10
 
+    pdb.set_trace()
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'])
+    pruning.add_mask(net_gcn)
+
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
@@ -65,14 +69,6 @@ def parser_loader():
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--weight-decay', type=float, default=5e-4)
     return parser
-
-
-def setup_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    np.random.seed(seed)
-    random.seed(seed)
 
 
 if __name__ == "__main__":
