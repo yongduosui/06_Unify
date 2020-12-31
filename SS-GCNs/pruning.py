@@ -37,7 +37,7 @@ class AddTrainableMask(ABC):
     def apply_mask(self, module):
 
         mask_weight = getattr(module, self._tensor_name + "_mask_weight")
-        orig_weight = getattr(module, self._tensor_name + "_orig_weight")
+        orig_weight = getattr(module, self._tensor_name + "weight")
         pruned_weight = mask_weight * orig_weight
         
         return pruned_weight
@@ -50,9 +50,7 @@ class AddTrainableMask(ABC):
         orig = getattr(module, name)
 
         module.register_parameter(name + "_mask_weight", mask.to(dtype=orig.dtype))
-
-        del module._parameters[name]
-
+        
         setattr(module, name, method.apply_mask(module))
         module.register_forward_pre_hook(method)
 
