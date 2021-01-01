@@ -16,7 +16,7 @@ def run(args, seed):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
-    pdb.set_trace()
+    
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -27,8 +27,7 @@ def run(args, seed):
     loss_func = nn.CrossEntropyLoss()
     early_stopping = 10
 
-    
-    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj_shape=adj.shape)
+    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
 
     net_gcn = net_gcn.cuda()

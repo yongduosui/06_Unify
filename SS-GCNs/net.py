@@ -4,17 +4,19 @@ import pdb
 
 class net_gcn(nn.Module):
 
-    def __init__(self, embedding_dim, adj_shape):
+    def __init__(self, embedding_dim, adj):
         super().__init__()
 
         self.layer_num = len(embedding_dim) - 1
         self.net_layer = nn.ModuleList([nn.Linear(embedding_dim[ln], embedding_dim[ln+1], bias=False) for ln in range(self.layer_num)])
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
-        self.adj_mask = nn.Parameter(torch.ones(adj_shape))
+        self.adj_mask = nn.Parameter(self.generate_adj_mask(adj))
+        # self.adj_mask = nn.Parameter(torch.ones(adj_shape)).to_sparse()
 
     def forward(self, x, adj, val_test=False):
 
+        adj = adj * self.adj_mask
         for ln in range(self.layer_num):
             x = torch.spmm(adj, x)
             x = self.net_layer[ln](x)
@@ -25,6 +27,16 @@ class net_gcn(nn.Module):
                 continue
             x = self.dropout(x)
         return x
+
+    def generate_adj_mask(input_adj):
+        pdb.set_trace()
+        sparse_adj = input_adj.to_dense()
+        zeros = torch.zeros_like(sparse_adj)
+        ones = torch.ones_like(sparse_adj)
+        mask = torch.where(sparse_adj != 0, ones, zeros)
+        return mask.to_sparse()
+
+
 
 
 class net_gcn_multitask(nn.Module):

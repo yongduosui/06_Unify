@@ -29,7 +29,7 @@ class AddTrainableMask(ABC):
     
     def __init__(self):
         pass
-        
+    
     def __call__(self, module, inputs):
 
         setattr(module, self._tensor_name, self.apply_mask(module))
