@@ -52,9 +52,10 @@ def run(args, seed):
         # early stopping
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break
-    
-    mask_dis = pruning.get_mask_distribution(net_gcn)
+        
     pdb.set_trace()
+    mask_dis = pruning.get_mask_distribution(net_gcn)
+    
     # test
     with torch.no_grad():
         output = net_gcn(features, adj, val_test=True)
