@@ -105,7 +105,7 @@ def get_mask_distribution(model):
     mask_tensor = torch.cat((mask_tensor, model.net_layer[0].weight_mask_weight.flatten()))
     mask_tensor = torch.cat((mask_tensor, model.net_layer[1].weight_mask_weight.flatten()))
     
-    plt.hist(mask_tensor, bins=1000)
+    plt.hist(mask_tensor.detach().cpu().numpy(), bins=1000)
     plt.xlabel('mask')
     plt.ylabel('value')
     plt.savefig('./mask_distribution.png')
