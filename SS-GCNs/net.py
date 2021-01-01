@@ -16,7 +16,8 @@ class net_gcn(nn.Module):
 
     def forward(self, x, adj, val_test=False):
 
-        adj = adj * self.adj_mask
+        # adj = adj * self.adj_mask
+        adj = torch.mul(adj, self.adj_mask)
         for ln in range(self.layer_num):
             x = torch.spmm(adj, x)
             x = self.net_layer[ln](x)
