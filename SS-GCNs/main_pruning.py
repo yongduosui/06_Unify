@@ -42,7 +42,7 @@ def run(args, seed):
         loss = loss_func(output[idx_train], labels[idx_train])
         # print('epoch', epoch, 'loss', loss_train.data)
         loss.backward()
-        pdb.set_trace()
+        
         pruning.subgradient_update_mask(net_gcn, args) # l1 norm
         
         optimizer.step()
@@ -55,7 +55,7 @@ def run(args, seed):
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break
 
-    
+    pdb.set_trace()
     mask_dis = pruning.get_mask_distribution(net_gcn)
     
     # test
