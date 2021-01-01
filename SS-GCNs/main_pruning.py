@@ -29,7 +29,6 @@ def run(args, seed):
 
     pdb.set_trace()
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'])
-
     pruning.add_mask(net_gcn)
 
     net_gcn = net_gcn.cuda()
@@ -43,7 +42,6 @@ def run(args, seed):
         # print('epoch', epoch, 'loss', loss_train.data)
         loss.backward()
         optimizer.step()
-
         # validation
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
