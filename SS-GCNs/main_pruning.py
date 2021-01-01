@@ -31,7 +31,7 @@ def run(args, seed):
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
-    pdb.set_trace()
+
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
@@ -49,7 +49,6 @@ def run(args, seed):
             output = net_gcn(features, adj, val_test=True)
             loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
             # print('val acc', f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro'))
-
         # early stopping
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break
