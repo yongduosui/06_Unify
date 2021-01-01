@@ -18,7 +18,7 @@ def run(args, seed):
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
     adj = adj.to_dense()
-    
+
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -42,8 +42,7 @@ def run(args, seed):
         loss = loss_func(output[idx_train], labels[idx_train])
         # print('epoch', epoch, 'loss', loss_train.data)
         loss.backward()
-        # l1 norm
-        pruning.subgradient_update_mask(net_gcn, args)
+        pruning.subgradient_update_mask(net_gcn, args) # l1 norm
         optimizer.step()
         # validation
         with torch.no_grad():
