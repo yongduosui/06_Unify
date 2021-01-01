@@ -12,14 +12,13 @@ class net_gcn(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
         self.adj_mask = nn.Parameter(self.generate_adj_mask(adj))
-        # self.adj_mask = nn.Parameter(torch.ones(adj_shape)).to_sparse()
 
     def forward(self, x, adj, val_test=False):
 
-        # adj = adj * self.adj_mask
-        adj = torch.mul(adj.to_dense(), self.adj_mask).to_sparse()
+        adj = torch.mul(adj, self.adj_mask)
         for ln in range(self.layer_num):
-            x = torch.spmm(adj, x)
+            x = torch.mm(adj, x)
+            # x = torch.spmm(adj, x)
             x = self.net_layer[ln](x)
             if ln == self.layer_num - 1:
                 break
@@ -31,7 +30,7 @@ class net_gcn(nn.Module):
 
     def generate_adj_mask(self, input_adj):
         
-        sparse_adj = input_adj.to_dense()
+        sparse_adj = input_adj
         zeros = torch.zeros_like(sparse_adj)
         ones = torch.ones_like(sparse_adj)
         mask = torch.where(sparse_adj != 0, ones, zeros)
