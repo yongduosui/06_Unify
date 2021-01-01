@@ -3,7 +3,7 @@ import torch.nn as nn
 from abc import ABC
 import numpy as np
 import random
-
+import matplotlib.pyplot as plt
 # def soft_threshold(w, th):
 # 	'''
 # 	pytorch soft-sign function
@@ -93,3 +93,32 @@ def subgradient_update_mask(model, args):
     model.adj_mask.grad.data.add_(args['s1'] * torch.sign(model.adj_mask.data))
     model.net_layer[0].weight_mask_weight.grad.data.add_(args['s2'] * torch.sign(model.net_layer[0].weight_mask_weight.data))
     model.net_layer[1].weight_mask_weight.grad.data.add_(args['s2'] * torch.sign(model.net_layer[1].weight_mask_weight.data))
+
+
+
+def get_mask_distribution(model):
+
+    mask_tensor = model.adj_mask.flatten()
+    mask_tensor = torch.cat((mask_tensor, model.net_layer[0].weight_mask_weight), 1)
+    mask_tensor = torch.cat((mask_tensor, model.net_layer[1].weight_mask_weight), 1)
+    
+    plt.hist(mask_tensor, bins=1000)
+    plt.xlabel('mask')
+    plt.ylabel('value')
+    plt.savefig('./mask_distribution.png')
+    return mask_tensor
+    
+
+# def pruning(model, percent):
+
+#     total = 0
+#     total += model.adj_mask.numel()
+#     total += model.net_layer[0].weight_mask_weight.numel()
+#     total += model.net_layer[1].weight_mask_weight.numel()
+
+#     bn = torch.zeros(total)
+
+#     index = 0
+
+    
+

@@ -52,14 +52,16 @@ def run(args, seed):
         # early stopping
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break
-
+    
+    mask_dis = pruning.get_mask_distribution(net_gcn)
+    pdb.set_trace()
     # test
     with torch.no_grad():
         output = net_gcn(features, adj, val_test=True)
         acc_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro')
         acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
-    pdb.set_trace()
-    return acc_val, acc_test
+    
+    return acc_val, acc_test, epoch
 
 
 def parser_loader():
@@ -87,8 +89,8 @@ if __name__ == "__main__":
     acc_val = np.zeros(seed_time)
     acc_test = np.zeros(seed_time)
     for seed in range(seed_time):
-        acc_val[seed], acc_test[seed] = run(args, seed)
-        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100))
+        acc_val[seed], acc_test[seed], epoch = run(args, seed)
+        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] Stop at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
 
     print('Finish !')
     print('Val  mean : [{:.4f}]  std : [{:.4f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
