@@ -17,7 +17,7 @@ class net_gcn(nn.Module):
     def forward(self, x, adj, val_test=False):
 
         # adj = adj * self.adj_mask
-        adj = torch.mul(adj, self.adj_mask)
+        adj = torch.mul(adj.to_dense(), self.adj_mask).to_sparse()
         for ln in range(self.layer_num):
             x = torch.spmm(adj, x)
             x = self.net_layer[ln](x)
@@ -35,7 +35,7 @@ class net_gcn(nn.Module):
         zeros = torch.zeros_like(sparse_adj)
         ones = torch.ones_like(sparse_adj)
         mask = torch.where(sparse_adj != 0, ones, zeros)
-        return mask.to_sparse()
+        return mask
 
 
 
