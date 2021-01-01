@@ -58,7 +58,7 @@ def run(args, seed):
         output = net_gcn(features, adj, val_test=True)
         acc_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro')
         acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
-
+    pdb.set_trace()
     return acc_val, acc_test
 
 
