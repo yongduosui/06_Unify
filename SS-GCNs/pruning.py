@@ -100,11 +100,12 @@ def get_mask_distribution(model):
 
     mask_tensor = model.adj_mask.flatten()
     nonzero = torch.abs(mask_tensor) > 0
-    mask_tensor = mask_tensor[nonzero]
+    mask_tensor = mask_tensor[nonzero] # 13264
 
-    mask_tensor = torch.cat((mask_tensor, model.net_layer[0].weight_mask_weight.flatten()))
-    mask_tensor = torch.cat((mask_tensor, model.net_layer[1].weight_mask_weight.flatten()))
+    mask_tensor = torch.cat((mask_tensor, model.net_layer[0].weight_mask_weight.flatten())) # 22928
+    mask_tensor = torch.cat((mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
     
+    plt.subplot()
     plt.hist(mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
     plt.xlabel('mask')
     plt.ylabel('times')
