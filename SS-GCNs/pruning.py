@@ -4,15 +4,15 @@ from abc import ABC
 import numpy as np
 import random
 
-def soft_threshold(w, th):
-	'''
-	pytorch soft-sign function
-	'''
-	with torch.no_grad():
-		temp = torch.abs(w) - th
-		# print('th:', th)
-		# print('temp:', temp.size())
-		return torch.sign(w) * nn.functional.relu(temp)
+# def soft_threshold(w, th):
+# 	'''
+# 	pytorch soft-sign function
+# 	'''
+# 	with torch.no_grad():
+# 		temp = torch.abs(w) - th
+# 		# print('th:', th)
+# 		# print('temp:', temp.size())
+# 		return torch.sign(w) * nn.functional.relu(temp)
 
 def setup_seed(seed):
 

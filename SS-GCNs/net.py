@@ -4,13 +4,14 @@ import pdb
 
 class net_gcn(nn.Module):
 
-    def __init__(self, embedding_dim):
+    def __init__(self, embedding_dim, adj_shape):
         super().__init__()
 
         self.layer_num = len(embedding_dim) - 1
         self.net_layer = nn.ModuleList([nn.Linear(embedding_dim[ln], embedding_dim[ln+1], bias=False) for ln in range(self.layer_num)])
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
+        self.adj_mask = nn.Parameter(torch.ones(adj_shape))
 
     def forward(self, x, adj, val_test=False):
 
@@ -36,6 +37,7 @@ class net_gcn_multitask(nn.Module):
         self.ss_classifier = nn.Linear(embedding_dim[-2], ss_dim, bias=False)
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
+        
 
     def forward(self, x, adj, val_test=False):
 
