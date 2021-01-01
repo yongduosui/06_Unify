@@ -28,7 +28,7 @@ class net_gcn(nn.Module):
             x = self.dropout(x)
         return x
 
-    def generate_adj_mask(input_adj):
+    def generate_adj_mask(self, input_adj):
         pdb.set_trace()
         sparse_adj = input_adj.to_dense()
         zeros = torch.zeros_like(sparse_adj)
