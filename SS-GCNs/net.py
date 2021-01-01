@@ -29,13 +29,12 @@ class net_gcn(nn.Module):
         return x
 
     def generate_adj_mask(self, input_adj):
-        pdb.set_trace()
+        
         sparse_adj = input_adj.to_dense()
         zeros = torch.zeros_like(sparse_adj)
         ones = torch.ones_like(sparse_adj)
         mask = torch.where(sparse_adj != 0, ones, zeros)
         return mask.to_sparse()
-
 
 
 

@@ -86,3 +86,10 @@ def generate_mask(model):
     mask_dict['mask2'] = torch.zeros_like(model.net_layer[1].weight)
 
     return mask_dict
+
+
+def subgradient_update_mask(model, args):
+
+    model.adj_mask.grad.data.add_(args.s1 * torch.sign(model.adj_mask.data))
+    model.net_layer[0].weight_mask_weight.grad.data.add_(args.s2 * torch.sign(model.net_layer[0].weight_mask_weight.data))
+    model.net_layer[1].weight_mask_weight.grad.data.add_(args.s2 * torch.sign(model.net_layer[0].weight_mask_weight.data))

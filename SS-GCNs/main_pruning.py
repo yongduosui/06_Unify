@@ -12,6 +12,7 @@ from sklearn.metrics import f1_score
 import pdb
 import pruning
 
+
 def run(args, seed):
 
     pruning.setup_seed(seed)
@@ -29,7 +30,7 @@ def run(args, seed):
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
-
+    pdb.set_trace()
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
@@ -40,6 +41,8 @@ def run(args, seed):
         loss = loss_func(output[idx_train], labels[idx_train])
         # print('epoch', epoch, 'loss', loss_train.data)
         loss.backward()
+        # l1 norm
+        pruning.subgradient_update_mask(net_gcn, args)
         optimizer.step()
         # validation
         with torch.no_grad():
@@ -66,7 +69,11 @@ def parser_loader():
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--weight-decay', type=float, default=5e-4)
+    parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
+    parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     return parser
+
+
 
 
 if __name__ == "__main__":
