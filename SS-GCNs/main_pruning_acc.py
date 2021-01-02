@@ -13,6 +13,8 @@ import pdb
 import pruning
 import copy
 
+import warnings
+warnings.filterwarnings('ignore')
 
 def run_pruning_acc(args, seed):
 
