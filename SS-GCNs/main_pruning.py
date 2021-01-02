@@ -79,6 +79,12 @@ def run_get_mask(args, seed):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
+
+    for name, param in net_gcn.named_parameters():
+        if 'mask' in name:
+            param.requires_grad = False
+            print("{}\{} require_grad=False".format(name, param.shape))
+            
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
@@ -129,7 +135,7 @@ if __name__ == "__main__":
     for seed in range(seed_time):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
-
+        pdb.set_trace()
         rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
