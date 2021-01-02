@@ -67,13 +67,13 @@ def run_fix_mask(args, seed, rewind_weight):
     return acc_val, acc_test, epoch
 
 
-
 def run_get_mask(args, seed):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
     adj = adj.to_dense()
 
+    pdb.set_trace()
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -113,6 +113,8 @@ def run_get_mask(args, seed):
     return final_mask_dict, rewind_weight
 
 
+
+
 def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
     ###### Unify pruning settings #######
@@ -135,7 +137,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    seed_time = 10
+    seed_time = 20
     acc_val = np.zeros(seed_time)
     acc_test = np.zeros(seed_time)
     for seed in range(seed_time):
