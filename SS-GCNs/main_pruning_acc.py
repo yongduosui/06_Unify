@@ -39,7 +39,7 @@ def run_pruning_acc(args, seed):
     supervise_loss = []
     adj_mask_loss = []
     weight_mask_loss = []
-
+    test_acc = []
     for epoch in range(args['total_epoch']):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
         optimizer.zero_grad()
@@ -55,10 +55,10 @@ def run_pruning_acc(args, seed):
         weight_mask_loss.append(net_gcn.net_layer[0].weight_mask_weight.data.abs().sum().detach().cpu().numpy() 
                               + net_gcn.net_layer[1].weight_mask_weight.data.abs().sum().detach().cpu().numpy())
 
-        
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
             acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
+            test_acc.append(acc_test)
             print("(Pruning Acc) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
     
     return acc_test, epoch
