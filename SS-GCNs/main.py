@@ -56,7 +56,7 @@ def run(args, seed):
         acc_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro')
         acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
 
-    return acc_val, acc_test
+    return acc_val, acc_test, epoch
 
 
 def parser_loader():
@@ -87,14 +87,16 @@ if __name__ == "__main__":
     seed_time = 20
     acc_val = np.zeros(seed_time)
     acc_test = np.zeros(seed_time)
+    epoch_list = np.zeros(seed_time)
     for seed in range(seed_time):
-        acc_val[seed], acc_test[seed] = run(args, seed)
-        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100))
+        acc_val[seed], acc_test[seed], epoch_list[seed] = run(args, seed)
+        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
 
     print('Finish !')
+    
     print('Val  mean : [{:.4f}]  std : [{:.4f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
     print('Test mean : [{:.4f}]  std : [{:.4f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
-
+    print('Mean Epoch: [{:.4f}]'.format(epoch_list.mean()))
     # print('val mean', acc_val.mean(), 'val std', acc_val.std())
     # print('test mean', acc_test.mean(), 'test std', acc_test.std())
 

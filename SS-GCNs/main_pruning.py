@@ -40,7 +40,8 @@ def run_fix_mask(args, seed, rewind_weight):
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
-    for epoch in range(args['total_epoch']):
+    loss_val = []
+    for epoch in range(1000):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -50,8 +51,13 @@ def run_fix_mask(args, seed, rewind_weight):
 
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
-            acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
-            print("(Fix Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
+            loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
+            # acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
+            # print("(Fix Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
+
+        # early stopping
+        if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
+            break
 
     with torch.no_grad():
         output = net_gcn(features, adj, val_test=True)
@@ -99,8 +105,8 @@ def run_get_mask(args, seed):
         optimizer.step()
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
-            acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
-            print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
+            # acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
+            # print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
 
     final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
     
@@ -135,7 +141,7 @@ if __name__ == "__main__":
     for seed in range(seed_time):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
-        
+
         rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
