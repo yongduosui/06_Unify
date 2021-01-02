@@ -153,10 +153,10 @@ def get_final_mask(model, percent):
     ### get threshold
     adj_thre_index = int(adj_total * percent)
     adj_thre = adj_y[adj_thre_index]
-    print("adj pruning threshold:{:.6f}".format(adj_thre))
+    print("Adj pruning threshold:{:.6f}".format(adj_thre))
     wei_thre_index = int(wei_total * percent)
     wei_thre = wei_y[wei_thre_index]
-    print("weight pruning threshold:{:.6f}".format(wei_thre))
+    print("Weight pruning threshold:{:.6f}".format(wei_thre))
     
     mask_dict = {}
     
