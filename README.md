@@ -12,7 +12,7 @@ https://github.com/Shen-Lab/SS-GCNs
 | Node-level | cora    | 2708 |  13264  | 81.03±0.64 | 236.10 |
 | Node-level | citeseet| 3327 |  12431  | 70.94±0.77 | 236.95 |
 
-### 2.2 Pruning
+### 2.2 OMP Pruning
 
 | Pruning % | cora | citeseet |
 | :---:| :---: | :---: | 
