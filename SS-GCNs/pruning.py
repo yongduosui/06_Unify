@@ -162,14 +162,17 @@ def get_final_mask(model, percent):
     
     ori_adj_mask = model.adj_mask.detach().cpu()
     ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
-    pdb.set_trace()
+
     mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
     mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_weight'], wei_thre)
     mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_weight'], wei_thre)
 
-    print("Finish pruning !")
+    print("Finish pruning, Sparsity: Adj:[{:.4f} %], Weight:[{:.4f} %]"
+        .format((mask_dict['adj_mask'].sum() / adj_total) * 100, 
+         ((mask_dict['weight1_mask'].sum() + mask_dict['weight12_mask'].sum()) / wei_total) * 100))
     print("-" * 100)
     return mask_dict
+
 
 def get_each_mask(mask_weight_tensor, threshold):
     

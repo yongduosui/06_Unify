@@ -91,6 +91,7 @@ def run_get_mask(args, seed):
             print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
 
     final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
+    pdb.set_trace()
     return final_mask_dict, rewind_weight
 
 
