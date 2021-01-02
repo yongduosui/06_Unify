@@ -36,7 +36,7 @@ def run(args, seed):
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
     acc_test = 0.0
-    for epoch in range(200):
+    for epoch in range(300):
 
         pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
         optimizer.zero_grad()
