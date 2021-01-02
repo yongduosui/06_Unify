@@ -30,6 +30,15 @@ def run_fix_mask(args, seed, final_mask_dict, rewind_weight):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
 
+    net_gcn.load_state_dict(rewind_weight)
+    net_gcn.adj_mask.load_state_dict(mask_dict['adj_mask'])
+    net_gcn.net_layer[0].load_state_dict(mask_dict['weight1_mask'])
+    net_gcn.net_layer[1].load_state_dict(mask_dict['weight2_mask'])
+
+    for name, param in model.named_parameters():
+        print("{}\{}".format(name, param.shape))
+    
+    pdb.set_trace()
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -91,7 +100,7 @@ def run_get_mask(args, seed):
             print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
 
     final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
-    pdb.set_trace()
+    
     return final_mask_dict, rewind_weight
 
 
