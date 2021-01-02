@@ -102,7 +102,7 @@ def subgradient_update_mask(model, args):
 def get_mask_distribution(model, if_numpy=True, if_random=False):
 
     if if_random:
-        model.adj_mask = model.adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
+        model.adj_mask.add_((2 * torch.rand(model.adj_mask.shape) - 1) * 1e-5)
 
     adj_mask_tensor = model.adj_mask.flatten()
     nonzero = torch.abs(adj_mask_tensor) > 0
@@ -146,7 +146,7 @@ def get_final_mask(model, percent):
     print("Begin pruning percent:{:.2f}".format(percent))
 
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False, if_random=True) # 13264
-    
+
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
     
