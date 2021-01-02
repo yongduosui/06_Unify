@@ -33,7 +33,9 @@ def run_fix_mask(args, seed, rewind_weight):
     net_gcn.load_state_dict(rewind_weight)
     
     for name, param in net_gcn.named_parameters():
-        print("{}\{}".format(name, param.shape))
+        if 'mask' in name:
+            param.requires_grad = False
+            print("{}\{} require_grad=False".format(name, param.shape))
     
     pdb.set_trace()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
