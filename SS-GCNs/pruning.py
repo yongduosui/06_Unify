@@ -144,8 +144,7 @@ def get_final_mask(model, percent):
 
     pdb.set_trace()
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
-    adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-7)
-    wei_mask.add_((2 * torch.rand(wei_mask.shape) - 1) * 1e-7)
+    adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-6)
 
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
