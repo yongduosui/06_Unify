@@ -90,7 +90,6 @@ def run_get_mask(args, seed):
             acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
 
-    pdb.set_trace()
     final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
     return final_mask_dict, rewind_weight
 

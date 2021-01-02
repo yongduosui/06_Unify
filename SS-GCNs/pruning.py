@@ -106,6 +106,7 @@ def get_mask_distribution(model, if_numpy=True):
     weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
     weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
     # np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
+    
     if if_numpy:
         return adj_mask_tensor.detach().cpu().numpy(), weight_mask_tensor.detach().cpu().numpy()
     else:
@@ -138,8 +139,12 @@ def get_final_mask(model, percent):
 
     print("-" * 100)
     print("Begin pruning percent:{:.2f}".format(percent))
-    
+
+    pdb.set_trace()
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
+    adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-7)
+    wei_mask.add_((2 * torch.rand(wei_mask.shape) - 1) * 1e-7)
+
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
 
@@ -148,10 +153,10 @@ def get_final_mask(model, percent):
 
     adj_thre_index = int(adj_total * percent)
     adj_thre = adj_y[adj_thre_index]
-    print("adj pruning threshold:{}".format(adj_thre))
+    print("adj pruning threshold:{:.6f}".format(adj_thre))
     wei_thre_index = int(wei_total * percent)
     wei_thre = wei_y[wei_thre_index]
-    print("weight pruning threshold:{}".format(wei_thre))
+    print("weight pruning threshold:{:.6f}".format(wei_thre))
     
     mask_dict = {}
     mask_dict['adj_mask'] = get_each_mask(model.state_dict()['adj_mask'], adj_thre)
