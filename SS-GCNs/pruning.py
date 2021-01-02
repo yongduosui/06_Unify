@@ -105,22 +105,7 @@ def get_mask_distribution(model):
     weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
     weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
 
-    plt.subplot(1,2,1)
-    plt.hist(adj_mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
-    plt.title("adj mask")
-    plt.xlabel('mask value')
-    plt.ylabel('times')
-    plt.ylim(0,6000)
-
-    plt.subplot(1,2,2)
-    plt.hist(weight_mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
-    plt.title("weight mask")
-    plt.xlabel('mask value')
-    plt.ylabel('times')
-    plt.ylim(0,6000)
-    plt.savefig('./mask_distribution.png')
-
-    np.savez('mask.npy', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
+    np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
 
     return adj_mask_tensor, weight_mask_tensor
     
