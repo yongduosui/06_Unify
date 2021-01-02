@@ -103,7 +103,7 @@ def get_mask_distribution(model):
     adj_mask_tensor = adj_mask_tensor[nonzero] # 13264
 
     weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
-    weight_mask_tensor = torch.cat(weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten()) # 112
+    weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
 
     plt.subplot(1,2,1)
     plt.hist(adj_mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
