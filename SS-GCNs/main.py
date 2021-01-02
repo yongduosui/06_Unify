@@ -90,7 +90,7 @@ if __name__ == "__main__":
     epoch_list = np.zeros(seed_time)
     for seed in range(seed_time):
         acc_val[seed], acc_test[seed], epoch_list[seed] = run(args, seed)
-        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
+        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch_list[seed]))
 
     print('Finish !')
     
