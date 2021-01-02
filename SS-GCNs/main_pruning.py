@@ -30,7 +30,7 @@ def run_fix_mask(args, seed, final_mask_dict, rewind_weight):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=final_mask_dict['adj_mask'], load_adj_mask=True)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-    
+
     pdb.set_trace()
     net_gcn.load_state_dict(rewind_weight)
     # net_gcn.adj_mask.load_state_dict(final_mask_dict['adj_mask'])
@@ -134,6 +134,7 @@ if __name__ == "__main__":
     for seed in range(seed_time):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
+        pdb.set_trace()
         acc_val[seed], acc_test[seed], epoch = run_fix_mask(args, seed, final_mask_dict, rewind_weight)
         print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] Stop at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
 

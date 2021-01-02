@@ -179,7 +179,6 @@ def get_each_mask(mask_weight_tensor, threshold):
     ones  = torch.ones_like(mask_weight_tensor)
     zeros = torch.zeros_like(mask_weight_tensor) 
     mask = torch.where(mask_weight_tensor.abs() > threshold, ones, zeros)
-
     return mask
 
     
