@@ -99,10 +99,7 @@ def subgradient_update_mask(model, args):
 
 
 
-def get_mask_distribution(model, if_numpy=True, if_random=False):
-
-    if if_random:
-        model.adj_mask.add_((2 * torch.rand(model.adj_mask.shape) - 1) * 1e-5)
+def get_mask_distribution(model, if_numpy=True):
 
     adj_mask_tensor = model.adj_mask.flatten()
     nonzero = torch.abs(adj_mask_tensor) > 0
@@ -145,15 +142,15 @@ def get_final_mask(model, percent):
     print("-" * 100)
     print("Begin pruning percent:{:.2f}".format(percent))
 
-    adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False, if_random=True) # 13264
+    adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
+    adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
 
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
-    
+    ### sort
     adj_y, adj_i = torch.sort(adj_mask.abs())
     wei_y, wei_i = torch.sort(wei_mask.abs())
-
-    pdb.set_trace()
+    ### get threshold
     adj_thre_index = int(adj_total * percent)
     adj_thre = adj_y[adj_thre_index]
     print("adj pruning threshold:{:.6f}".format(adj_thre))
@@ -163,7 +160,10 @@ def get_final_mask(model, percent):
     
     mask_dict = {}
     
-    mask_dict['adj_mask'] = get_each_mask(model.state_dict()['adj_mask'], adj_thre)
+    ori_adj_mask = model.adj_mask.detach().cpu()
+    ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
+    pdb.set_trace()
+    mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
     mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_weight'], wei_thre)
     mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_weight'], wei_thre)
 
