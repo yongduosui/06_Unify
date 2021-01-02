@@ -4,21 +4,21 @@ import pdb
 
 class net_gcn(nn.Module):
 
-    def __init__(self, embedding_dim, adj, load_adj_mask=False):
+    def __init__(self, embedding_dim, adj):
         super().__init__()
 
         self.layer_num = len(embedding_dim) - 1
         self.net_layer = nn.ModuleList([nn.Linear(embedding_dim[ln], embedding_dim[ln+1], bias=False) for ln in range(self.layer_num)])
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
-
-        if load_adj_mask:
-            print("INFO: Load pruning adj mask")
-            self.adj_mask = nn.Parameter(adj)
-        else:
-            print("INFO: Using all ones mask")
-            self.adj_mask = nn.Parameter(self.generate_adj_mask(adj))
-
+        self.adj_mask = nn.Parameter(self.generate_adj_mask(adj))
+        
+        # if load_adj_mask:
+        #     print("INFO: Load pruning adj mask")
+        #     self.adj_mask = nn.Parameter(adj)
+        # else:
+        #     print("INFO: Using all ones mask")
+            
     def forward(self, x, adj, val_test=False):
 
         adj = torch.mul(adj, self.adj_mask)

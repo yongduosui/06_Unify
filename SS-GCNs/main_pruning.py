@@ -13,7 +13,7 @@ import pdb
 import pruning
 import copy
 
-def run_fix_mask(args, seed, final_mask_dict, rewind_weight):
+def run_fix_mask(args, seed, rewind_weight):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -27,21 +27,15 @@ def run_fix_mask(args, seed, final_mask_dict, rewind_weight):
     labels = labels.cuda()
     loss_func = nn.CrossEntropyLoss()
 
-    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=final_mask_dict['adj_mask'], load_adj_mask=True)
+    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-
-    pdb.set_trace()
     net_gcn.load_state_dict(rewind_weight)
-    # net_gcn.adj_mask.load_state_dict(final_mask_dict['adj_mask'])
-    net_gcn.net_layer[0].load_state_dict(final_mask_dict['weight1_mask'])
-    net_gcn.net_layer[1].load_state_dict(final_mask_dict['weight2_mask'])
-
+    
     for name, param in model.named_parameters():
         print("{}\{}".format(name, param.shape))
     
     pdb.set_trace()
-    
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
@@ -134,8 +128,12 @@ if __name__ == "__main__":
     for seed in range(seed_time):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
-        pdb.set_trace()
-        acc_val[seed], acc_test[seed], epoch = run_fix_mask(args, seed, final_mask_dict, rewind_weight)
+
+        rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
+        rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
+        rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
+
+        acc_val[seed], acc_test[seed], epoch = run_fix_mask(args, seed, rewind_weight)
         print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] Stop at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
 
     print('Finish !')
