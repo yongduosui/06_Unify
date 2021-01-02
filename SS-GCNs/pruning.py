@@ -3,6 +3,7 @@ import torch.nn as nn
 from abc import ABC
 import numpy as np
 import random
+import os
 import matplotlib.pyplot as plt
 # def soft_threshold(w, th):
 # 	'''
@@ -104,45 +105,62 @@ def get_mask_distribution(model):
 
     weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
     weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
-
-    np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
-
+    # np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
     return adj_mask_tensor, weight_mask_tensor
     
 
-def pruning(model, percent):
+
+def plot_mask_distribution(model, epoch, path):
+
+    print("plot epoch {}".format(epoch))
+    if not os.path.exists(path): os.makedirs(path)
+    adj_mask, weight_mask = get_mask_distribution(model)
+
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1,2,1)
+    plt.hist(adj_mask)
+    plt.title("adj mask")
+    plt.xlabel('mask value')
+    plt.ylabel('times')
+
+    plt.subplot(1,2,2)
+    plt.hist(weight_mask)
+    plt.title("weight mask")
+    plt.xlabel('mask value')
+    plt.ylabel('times')
+    plt.savefig(path + '/mask_epoch{}.png'.format(epoch))
+
+    # plt.show()
+
+# def pruning(model, percent):
 
     
-    adj_total = model.adj_mask.numel()
+#     adj_total = model.adj_mask.numel()
 
-    weight_total = 0
-    weight_total += model.net_layer[0].weight_mask_weight.numel()
-    weight_total += model.net_layer[1].weight_mask_weight.numel()
+#     weight_total = 0
+#     weight_total += model.net_layer[0].weight_mask_weight.numel()
+#     weight_total += model.net_layer[1].weight_mask_weight.numel()
 
-    adj_mask_weight = model.adj_mask.data.flatten().abs().clone()
+#     adj_mask_weight = model.adj_mask.data.flatten().abs().clone()
 
-    weight_mask_weight = model.net_layer[0].weight_mask_weight.flatten().abs().clone()    # 22928
-    weight_mask_weight = torch.cat((weight_mask_weight, model.net_layer[1].weight_mask_weight.flatten().abs().clone())) # 112
+#     weight_mask_weight = model.net_layer[0].weight_mask_weight.flatten().abs().clone()    # 22928
+#     weight_mask_weight = torch.cat((weight_mask_weight, model.net_layer[1].weight_mask_weight.flatten().abs().clone())) # 112
 
-    adj_y, adj_i = torch.sort(adj_mask_weight)
-    wei_y, wei_i = torch.sort(weight_mask_weight)
+#     adj_y, adj_i = torch.sort(adj_mask_weight)
+#     wei_y, wei_i = torch.sort(weight_mask_weight)
 
-    adj_thre_index = int(adj_total * percent)
-    adj_thre = adj_y[adj_thre_index]
-    print("adj pruning the:{}".format(adj_thre))
-    wei_thre_index = int(weight_total * percent)
-    wei_thre = wei_y[wei_thre_index]
-    print("weight pruning the:{}".format(wei_thre))
+#     adj_thre_index = int(adj_total * percent)
+#     adj_thre = adj_y[adj_thre_index]
+#     print("adj pruning the:{}".format(adj_thre))
+#     wei_thre_index = int(weight_total * percent)
+#     wei_thre = wei_y[wei_thre_index]
+#     print("weight pruning the:{}".format(wei_thre))
     
-    adj_mask = torch.zeros(adj_total)
+#     adj_mask = torch.zeros(adj_total)
 
 
-
-
-
-
-    bn = torch.zeros(total)
-    index = 0
+#     bn = torch.zeros(total)
+#     index = 0
 
 
     
