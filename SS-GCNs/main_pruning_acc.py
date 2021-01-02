@@ -52,8 +52,8 @@ def run_pruning_acc(args, seed):
         pdb.set_trace()
         supervise_loss.append(loss)
         adj_mask_loss.append(net_gcn.adj_mask.data.abs().sum().detach().cpu().numpy())
-        weight_mask_loss.append(net_gcn[0].weight_mask_weight.grad.data.abs().sum().detach().cpu().numpy() 
-                              + net_gcn[1].weight_mask_weight.grad.data.abs().sum().detach().cpu().numpy())
+        weight_mask_loss.append(net_gcn.net_layer[0].weight_mask_weight.data.abs().sum().detach().cpu().numpy() 
+                              + net_gcn.net_layer[1].weight_mask_weight.data.abs().sum().detach().cpu().numpy())
 
         
         with torch.no_grad():
