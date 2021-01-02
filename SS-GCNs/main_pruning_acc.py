@@ -36,6 +36,10 @@ def run_pruning_acc(args, seed):
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
+    supervise_loss = []
+    adj_mask_loss = []
+    weight_mask_loss = []
+
     for epoch in range(args['total_epoch']):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
         optimizer.zero_grad()
@@ -44,6 +48,14 @@ def run_pruning_acc(args, seed):
         loss.backward()
         pruning.subgradient_update_mask(net_gcn, args) # l1 norm
         optimizer.step()
+
+        pdb.set_trace()
+        supervise_loss.append(loss)
+        adj_mask_loss.append(net_gcn.adj_mask.data.abs().sum().detach().cpu().numpy())
+        weight_mask_loss.append(net_gcn[0].weight_mask_weight.grad.data.abs().sum().detach().cpu().numpy() 
+                              + net_gcn[1].weight_mask_weight.grad.data.abs().sum().detach().cpu().numpy())
+
+        
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
             acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
