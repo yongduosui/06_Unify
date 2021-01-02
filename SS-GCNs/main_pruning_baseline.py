@@ -26,6 +26,7 @@ def run_baseline(args, seed):
     features = features.cuda()
     labels = labels.cuda()
     loss_func = nn.CrossEntropyLoss()
+    early_stopping = 10
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
