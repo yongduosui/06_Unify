@@ -68,17 +68,14 @@ def run_get_mask(args, seed):
     adj = adj.cuda()
     features = features.cuda()
     labels = labels.cuda()
-
     loss_func = nn.CrossEntropyLoss()
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
-
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
-    pdb.set_trace()
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
@@ -88,12 +85,12 @@ def run_get_mask(args, seed):
         loss.backward()
         pruning.subgradient_update_mask(net_gcn, args) # l1 norm
         optimizer.step()
-
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
             acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
 
+    pdb.set_trace()
     final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
     return final_mask_dict, rewind_weight
 
