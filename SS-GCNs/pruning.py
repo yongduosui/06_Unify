@@ -115,7 +115,7 @@ def get_mask_distribution(model, if_numpy=True):
 
 def plot_mask_distribution(model, epoch, acc_test, path):
 
-    print("Plot Epoch:[{}] Test Acc[{:.4f}]".format(epoch, acc_test * 100))
+    print("Plot Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
     if not os.path.exists(path): os.makedirs(path)
     adj_mask, weight_mask = get_mask_distribution(model)
 
@@ -131,13 +131,14 @@ def plot_mask_distribution(model, epoch, acc_test, path):
     plt.title("weight mask")
     plt.xlabel('mask value')
     plt.ylabel('times')
-    plt.suptitle("Epoch:[{}] Test Acc[{:.4f}]".format(epoch, acc_test * 100))
+    plt.suptitle("Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
     plt.savefig(path + '/mask_epoch{}.png'.format(epoch))
-
-
 
 def get_final_mask(model, percent):
 
+    print("-" * 100)
+    print("Begin pruning percent:{:.2f}".format(percent))
+    
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
@@ -151,6 +152,28 @@ def get_final_mask(model, percent):
     wei_thre_index = int(wei_total * percent)
     wei_thre = wei_y[wei_thre_index]
     print("weight pruning threshold:{}".format(wei_thre))
+    
+    mask_dict = {}
+    mask_dict['adj_mask'] = get_each_mask(model.state_dict()['adj_mask'], adj_thre)
+    mask_dict['weight1_mask'] = get_each_mask(model.state_dict()['adj_mask'], wei_thre)
+    mask_dict['weight2_mask'] = get_each_mask(model.state_dict()['adj_mask'], wei_thre)
+
+    print("Finish pruning !")
+    print("-" * 100)
+    return mask_dict
+
+def get_each_mask(mask_weight_tensor, threshold):
+
+    ones  = torch.ones_like(mask_weight_tensor)
+    zeros = torch.zeros_like(mask_weight_tensor) 
+    mask = torch.where(mask_weight_tensor.abs() > threshold, ones, zeros)
+
+    return mask
+
+    
+
+
+
 
 
 
