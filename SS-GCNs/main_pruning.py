@@ -73,7 +73,6 @@ def run_get_mask(args, seed):
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
     adj = adj.to_dense()
 
-    pdb.set_trace()
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -113,8 +112,6 @@ def run_get_mask(args, seed):
     return final_mask_dict, rewind_weight
 
 
-
-
 def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
     ###### Unify pruning settings #######
@@ -149,6 +146,7 @@ if __name__ == "__main__":
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
 
         acc_val[seed], acc_test[seed], epoch = run_fix_mask(args, seed, rewind_weight)
+        
         print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] Stop at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
 
     print('Finish !')
