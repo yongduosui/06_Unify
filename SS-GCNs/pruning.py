@@ -110,16 +110,40 @@ def get_mask_distribution(model):
     return adj_mask_tensor, weight_mask_tensor
     
 
-# def pruning(model, percent):
+def pruning(model, percent):
 
-#     total = 0
-#     total += model.adj_mask.numel()
-#     total += model.net_layer[0].weight_mask_weight.numel()
-#     total += model.net_layer[1].weight_mask_weight.numel()
+    
+    adj_total = model.adj_mask.numel()
 
-#     bn = torch.zeros(total)
+    weight_total = 0
+    weight_total += model.net_layer[0].weight_mask_weight.numel()
+    weight_total += model.net_layer[1].weight_mask_weight.numel()
 
-#     index = 0
+    adj_mask_weight = model.adj_mask.data.flatten().abs().clone()
+
+    weight_mask_weight = model.net_layer[0].weight_mask_weight.flatten().abs().clone()    # 22928
+    weight_mask_weight = torch.cat((weight_mask_weight, model.net_layer[1].weight_mask_weight.flatten().abs().clone())) # 112
+
+    adj_y, adj_i = torch.sort(adj_mask_weight)
+    wei_y, wei_i = torch.sort(weight_mask_weight)
+
+    adj_thre_index = int(adj_total * percent)
+    adj_thre = adj_y[adj_thre_index]
+    print("adj pruning the:{}".format(adj_thre))
+    wei_thre_index = int(weight_total * percent)
+    wei_thre = wei_y[wei_thre_index]
+    print("weight pruning the:{}".format(wei_thre))
+    
+    adj_mask = torch.zeros(adj_total)
+
+
+
+
+
+
+    bn = torch.zeros(total)
+    index = 0
+
 
     
 
