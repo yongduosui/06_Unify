@@ -32,7 +32,7 @@ def run_fix_mask(args, seed, rewind_weight):
     net_gcn = net_gcn.cuda()
     net_gcn.load_state_dict(rewind_weight)
     
-    for name, param in model.named_parameters():
+    for name, param in net_gcn.named_parameters():
         print("{}\{}".format(name, param.shape))
     
     pdb.set_trace()
