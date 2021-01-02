@@ -120,8 +120,7 @@ def get_mask_distribution(model):
     plt.ylim(0,6000)
     plt.savefig('./mask_distribution.png')
 
-    save_dict = {"adj": adj_mask_tensor, "weight": weight_mask_tensor}
-    torch.save(save_dict, "./mask.pt")
+    np.savez('mask.npy', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
 
     return adj_mask_tensor, weight_mask_tensor
     
