@@ -35,7 +35,7 @@ def run_baseline(args, seed):
     for name, param in net_gcn.named_parameters():
         if 'mask' in name:
             param.requires_grad = False
-            # print("{}\{} require_grad=False".format(name, param.shape))
+            print("{}\{} require_grad=False".format(name, param.shape))
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
