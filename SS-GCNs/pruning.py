@@ -98,20 +98,28 @@ def subgradient_update_mask(model, args):
 
 def get_mask_distribution(model):
 
-    mask_tensor = model.adj_mask.flatten()
-    nonzero = torch.abs(mask_tensor) > 0
-    mask_tensor = mask_tensor[nonzero] # 13264
+    adj_mask_tensor = model.adj_mask.flatten()
+    nonzero = torch.abs(adj_mask_tensor) > 0
+    adj_mask_tensor = adj_mask_tensor[nonzero] # 13264
 
-    mask_tensor = torch.cat((mask_tensor, model.net_layer[0].weight_mask_weight.flatten())) # 22928
-    mask_tensor = torch.cat((mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
-    
-    plt.subplot()
-    plt.hist(mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
-    plt.xlabel('mask')
+    weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
+    weight_mask_tensor = torch.cat(weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten()) # 112
+
+    plt.subplot(1,2,1)
+    plt.hist(adj_mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
+    plt.title("adj mask")
+    plt.xlabel('mask value')
+    plt.ylabel('times')
+    plt.ylim(0,6000)
+
+    plt.subplot(1,2,2)
+    plt.hist(weight_mask_tensor.detach().cpu().numpy(), bins=1000, range=(0,0.6))
+    plt.title("weight mask")
+    plt.xlabel('mask value')
     plt.ylabel('times')
     plt.ylim(0,6000)
     plt.savefig('./mask_distribution.png')
-    return mask_tensor
+    return adj_mask_tensor, weight_mask_tensor
     
 
 # def pruning(model, percent):

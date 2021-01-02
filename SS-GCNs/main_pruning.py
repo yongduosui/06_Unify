@@ -56,7 +56,7 @@ def run(args, seed):
             break
 
     pdb.set_trace()
-    mask_dis = pruning.get_mask_distribution(net_gcn)
+    adj_mask_tensor, weight_mask_tensor = pruning.get_mask_distribution(net_gcn)
     
     # test
     with torch.no_grad():
