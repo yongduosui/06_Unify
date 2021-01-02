@@ -26,8 +26,8 @@ def run_fix_mask(args, seed, rewind_weight):
     features = features.cuda()
     labels = labels.cuda()
     loss_func = nn.CrossEntropyLoss()
-    early_stopping = 10
 
+    early_stopping = 10
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
@@ -139,7 +139,7 @@ if __name__ == "__main__":
         rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
-        
+
         acc_val[seed], acc_test[seed], epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
         
         print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch_list[seed]))
