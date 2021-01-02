@@ -27,11 +27,11 @@ def run_fix_mask(args, seed, final_mask_dict, rewind_weight):
     labels = labels.cuda()
     loss_func = nn.CrossEntropyLoss()
 
-    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj, load_adj_mask=True)
+    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=mask_dict['adj_mask'], load_adj_mask=True)
     pruning.add_mask(net_gcn)
     pdb.set_trace()
     net_gcn.load_state_dict(rewind_weight)
-    net_gcn.adj_mask.load_state_dict(mask_dict['adj_mask'])
+    # net_gcn.adj_mask.load_state_dict(mask_dict['adj_mask'])
     net_gcn.net_layer[0].load_state_dict(mask_dict['weight1_mask'])
     net_gcn.net_layer[1].load_state_dict(mask_dict['weight2_mask'])
 
