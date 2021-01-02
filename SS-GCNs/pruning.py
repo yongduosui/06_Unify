@@ -142,7 +142,7 @@ def get_final_mask(model, percent):
     print("-" * 100)
     print("Begin pruning percent:{:.2f}".format(percent))
 
-    pdb.set_trace()
+    
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
     adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
 
@@ -160,6 +160,7 @@ def get_final_mask(model, percent):
     print("weight pruning threshold:{:.6f}".format(wei_thre))
     
     mask_dict = {}
+    pdb.set_trace()
     mask_dict['adj_mask'] = get_each_mask(model.state_dict()['adj_mask'], adj_thre)
     mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_weight'], wei_thre)
     mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_weight'], wei_thre)
@@ -169,7 +170,7 @@ def get_final_mask(model, percent):
     return mask_dict
 
 def get_each_mask(mask_weight_tensor, threshold):
-
+    
     ones  = torch.ones_like(mask_weight_tensor)
     zeros = torch.zeros_like(mask_weight_tensor) 
     mask = torch.where(mask_weight_tensor.abs() > threshold, ones, zeros)
