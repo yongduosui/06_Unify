@@ -169,7 +169,7 @@ def get_final_mask(model, percent):
 
     print("Finish pruning, Sparsity: Adj:[{:.4f} %], Weight:[{:.4f} %]"
         .format((mask_dict['adj_mask'].sum() / adj_total) * 100, 
-         ((mask_dict['weight1_mask'].sum() + mask_dict['weight12_mask'].sum()) / wei_total) * 100))
+         ((mask_dict['weight1_mask'].sum() + mask_dict['weight2_mask'].sum()) / wei_total) * 100))
     print("-" * 100)
     return mask_dict
 
