@@ -26,6 +26,7 @@ def run_fix_mask(args, seed, rewind_weight):
     features = features.cuda()
     labels = labels.cuda()
     loss_func = nn.CrossEntropyLoss()
+    early_stopping = 10
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
@@ -35,10 +36,9 @@ def run_fix_mask(args, seed, rewind_weight):
     for name, param in net_gcn.named_parameters():
         if 'mask' in name:
             param.requires_grad = False
-            print("{}\{} require_grad=False".format(name, param.shape))
+            # print("{}\{} require_grad=False".format(name, param.shape))
     
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
-
     acc_test = 0.0
     loss_val = []
     for epoch in range(1000):
@@ -54,7 +54,6 @@ def run_fix_mask(args, seed, rewind_weight):
             loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
             # acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             # print("(Fix Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
-
         # early stopping
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break
@@ -84,11 +83,6 @@ def run_get_mask(args, seed):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-
-    # for name, param in net_gcn.named_parameters():
-    #     if 'mask' in name:
-    #         param.requires_grad = False
-    #         print("{}\{} require_grad=False".format(name, param.shape))
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -137,6 +131,7 @@ if __name__ == "__main__":
     seed_time = 20
     acc_val = np.zeros(seed_time)
     acc_test = np.zeros(seed_time)
+    epoch_list = np.zeros(seed_time)
     for seed in range(seed_time):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
@@ -144,12 +139,12 @@ if __name__ == "__main__":
         rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
-
-        acc_val[seed], acc_test[seed], epoch = run_fix_mask(args, seed, rewind_weight)
         
-        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] Stop at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch))
+        acc_val[seed], acc_test[seed], epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
+        
+        print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch_list[seed]))
 
     print('Finish !')
     print('Val  mean : [{:.4f}]  std : [{:.4f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
     print('Test mean : [{:.4f}]  std : [{:.4f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
-
+    print('Mean Epoch: [{:.4f}]'.format(epoch_list.mean()))
