@@ -143,8 +143,8 @@ def get_final_mask(model, percent):
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
 
-    adj_y, adj_i = torch.sort(adj_mask)
-    wei_y, wei_i = torch.sort(wei_mask)
+    adj_y, adj_i = torch.sort(adj_mask.abs())
+    wei_y, wei_i = torch.sort(wei_mask.abs())
 
     adj_thre_index = int(adj_total * percent)
     adj_thre = adj_y[adj_thre_index]
