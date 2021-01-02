@@ -35,7 +35,7 @@ def run(args, seed):
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
-    for epoch in range(1000):
+    for epoch in range(500):
 
         pruning.plot_mask_distribution(net_gcn, epoch, "mask_distribution")
         optimizer.zero_grad()
@@ -51,8 +51,8 @@ def run(args, seed):
             loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
             # print('val acc', f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro'))
         # early stopping
-        if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
-            break
+        # if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
+        #     break
     pdb.set_trace()
     # adj_mask_tensor, weight_mask_tensor = pruning.get_mask_distribution(net_gcn)
     # test
