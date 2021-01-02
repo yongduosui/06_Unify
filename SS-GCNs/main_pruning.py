@@ -63,7 +63,6 @@ def run_fix_mask(args, seed, rewind_weight):
         acc_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro')
         acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
         
-    pdb.set_trace()
     return acc_val, acc_test, epoch
 
 
