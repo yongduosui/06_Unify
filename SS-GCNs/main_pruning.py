@@ -80,10 +80,10 @@ def run_get_mask(args, seed):
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
 
-    for name, param in net_gcn.named_parameters():
-        if 'mask' in name:
-            param.requires_grad = False
-            print("{}\{} require_grad=False".format(name, param.shape))
+    # for name, param in net_gcn.named_parameters():
+    #     if 'mask' in name:
+    #         param.requires_grad = False
+    #         print("{}\{} require_grad=False".format(name, param.shape))
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -95,7 +95,7 @@ def run_get_mask(args, seed):
         output = net_gcn(features, adj)
         loss = loss_func(output[idx_train], labels[idx_train])
         loss.backward()
-        # pruning.subgradient_update_mask(net_gcn, args) # l1 norm
+        pruning.subgradient_update_mask(net_gcn, args) # l1 norm
         optimizer.step()
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    seed_time = 1
+    seed_time = 10
     acc_val = np.zeros(seed_time)
     acc_test = np.zeros(seed_time)
     for seed in range(seed_time):
