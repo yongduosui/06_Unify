@@ -35,9 +35,10 @@ def run(args, seed):
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
-    for epoch in range(500):
+    acc_test = 0.0
+    for epoch in range(200):
 
-        pruning.plot_mask_distribution(net_gcn, epoch, "mask_distribution")
+        pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
         optimizer.zero_grad()
         output = net_gcn(features, adj)
         loss = loss_func(output[idx_train], labels[idx_train])
@@ -49,6 +50,7 @@ def run(args, seed):
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
             loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
+            acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             # print('val acc', f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro'))
         # early stopping
         # if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):

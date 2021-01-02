@@ -97,7 +97,7 @@ def subgradient_update_mask(model, args):
 
 
 
-def get_mask_distribution(model):
+def get_mask_distribution(model, if_numpy=True):
 
     adj_mask_tensor = model.adj_mask.flatten()
     nonzero = torch.abs(adj_mask_tensor) > 0
@@ -106,13 +106,16 @@ def get_mask_distribution(model):
     weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
     weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
     # np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
-    return adj_mask_tensor.detach().cpu().numpy(), weight_mask_tensor.detach().cpu().numpy()
+    if if_numpy:
+        return adj_mask_tensor.detach().cpu().numpy(), weight_mask_tensor.detach().cpu().numpy()
+    else:
+        return adj_mask_tensor.detach().cpu(), weight_mask_tensor.detach().cpu()
     
 
 
-def plot_mask_distribution(model, epoch, path):
+def plot_mask_distribution(model, epoch, acc_test, path):
 
-    print("plot epoch {}".format(epoch))
+    print("Plot Epoch:[{}] Test Acc[{:.4f}]".format(epoch, acc_test * 100))
     if not os.path.exists(path): os.makedirs(path)
     adj_mask, weight_mask = get_mask_distribution(model)
 
@@ -128,39 +131,65 @@ def plot_mask_distribution(model, epoch, path):
     plt.title("weight mask")
     plt.xlabel('mask value')
     plt.ylabel('times')
+    plt.suptitle("Epoch:[{}] Test Acc[{:.4f}]".format(epoch, acc_test * 100))
     plt.savefig(path + '/mask_epoch{}.png'.format(epoch))
 
-    # plt.show()
 
-# def pruning(model, percent):
+
+def get_final_mask(model, percent):
+
+    adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
+    adj_total = adj_mask.shape[0]
+    wei_total = wei_mask.shape[0]
+
+    adj_y, adj_i = torch.sort(adj_mask)
+    wei_y, wei_i = torch.sort(wei_mask)
+
+    adj_thre_index = int(adj_total * percent)
+    adj_thre = adj_y[adj_thre_index]
+    print("adj pruning threshold:{}".format(adj_thre))
+    wei_thre_index = int(wei_total * percent)
+    wei_thre = wei_y[wei_thre_index]
+    print("weight pruning threshold:{}".format(wei_thre))
+
+
+
+
+
 
     
-#     adj_total = model.adj_mask.numel()
 
-#     weight_total = 0
-#     weight_total += model.net_layer[0].weight_mask_weight.numel()
-#     weight_total += model.net_layer[1].weight_mask_weight.numel()
 
-#     adj_mask_weight = model.adj_mask.data.flatten().abs().clone()
-
-#     weight_mask_weight = model.net_layer[0].weight_mask_weight.flatten().abs().clone()    # 22928
-#     weight_mask_weight = torch.cat((weight_mask_weight, model.net_layer[1].weight_mask_weight.flatten().abs().clone())) # 112
-
-#     adj_y, adj_i = torch.sort(adj_mask_weight)
-#     wei_y, wei_i = torch.sort(weight_mask_weight)
-
-#     adj_thre_index = int(adj_total * percent)
-#     adj_thre = adj_y[adj_thre_index]
-#     print("adj pruning the:{}".format(adj_thre))
-#     wei_thre_index = int(weight_total * percent)
-#     wei_thre = wei_y[wei_thre_index]
-#     print("weight pruning the:{}".format(wei_thre))
     
-#     adj_mask = torch.zeros(adj_total)
 
 
-#     bn = torch.zeros(total)
-#     index = 0
+
+    adj_total = model.adj_mask.numel()
+
+    weight_total = 0
+    weight_total += model.net_layer[0].weight_mask_weight.numel()
+    weight_total += model.net_layer[1].weight_mask_weight.numel()
+
+    adj_mask_weight = model.adj_mask.data.flatten().abs().clone()
+
+    weight_mask_weight = model.net_layer[0].weight_mask_weight.flatten().abs().clone()    # 22928
+    weight_mask_weight = torch.cat((weight_mask_weight, model.net_layer[1].weight_mask_weight.flatten().abs().clone())) # 112
+
+    adj_y, adj_i = torch.sort(adj_mask_weight)
+    wei_y, wei_i = torch.sort(weight_mask_weight)
+
+    adj_thre_index = int(adj_total * percent)
+    adj_thre = adj_y[adj_thre_index]
+    print("adj pruning the:{}".format(adj_thre))
+    wei_thre_index = int(weight_total * percent)
+    wei_thre = wei_y[wei_thre_index]
+    print("weight pruning the:{}".format(wei_thre))
+    
+    adj_mask = torch.zeros(adj_total)
+
+
+    bn = torch.zeros(total)
+    index = 0
 
 
     
