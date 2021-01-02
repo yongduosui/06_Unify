@@ -62,7 +62,8 @@ def run_fix_mask(args, seed, rewind_weight):
         output = net_gcn(features, adj, val_test=True)
         acc_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro')
         acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
-    
+        
+    pdb.set_trace()
     return acc_val, acc_test, epoch
 
 
@@ -141,10 +142,12 @@ if __name__ == "__main__":
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
 
         acc_val[seed], acc_test[seed], epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
-        
         print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch_list[seed]))
 
     print('Finish !')
-    print('Val  mean : [{:.4f}]  std : [{:.4f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
-    print('Test mean : [{:.4f}]  std : [{:.4f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
-    print('Mean Epoch: [{:.4f}]'.format(epoch_list.mean()))
+    print("syd:" + "-" * 100)
+    print("syd: Pruning Percent:[{}]".format(args['pruning_percent']))
+    print('syd: Val  mean : [{:.2f}]  std : [{:.2f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
+    print('syd: Test mean : [{:.2f}]  std : [{:.2f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
+    print('syd: Mean Epoch: [{:.2f}]'.format(epoch_list.mean()))
+    print("syd:" + "-" * 100)
