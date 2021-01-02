@@ -5,4 +5,5 @@ python -u main_pruning_acc.py \
 --embedding-dim 3703 16 6 \
 --lr 0.01 \
 --weight-decay 5e-4 \
---pruning_percent 0.1
+--pruning_percent 0.1 \
+--total_epoch 1000
