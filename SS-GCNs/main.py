@@ -15,6 +15,7 @@ def run(args, seed):
 
     setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
+    adj = adj.to_dense()
     
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
@@ -26,7 +27,7 @@ def run(args, seed):
     loss_func = nn.CrossEntropyLoss()
     early_stopping = 10
 
-    net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'])
+    net_gcn = net.net_gcn_baseline(embedding_dim=args['embedding_dim'])
     net_gcn = net_gcn.cuda()
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
