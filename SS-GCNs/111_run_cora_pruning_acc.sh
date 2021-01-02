@@ -8,4 +8,5 @@ python -u main_pruning_acc.py \
 --embedding-dim 1433 16 7 \
 --lr 0.008 \
 --weight-decay 8e-5 \
---pruning_percent ${i}
+--pruning_percent ${i} \
+--total_epoch 500
