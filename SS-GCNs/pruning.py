@@ -140,7 +140,7 @@ def plot_mask_distribution(model, epoch, acc_test, path):
 def get_final_mask(model, percent):
 
     print("-" * 100)
-    print("Begin pruning percent:{:.2f}".format(percent))
+    print("Begin pruning percent: [{:.2f} %]".format(percent * 100))
 
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
     adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
@@ -153,10 +153,10 @@ def get_final_mask(model, percent):
     ### get threshold
     adj_thre_index = int(adj_total * percent)
     adj_thre = adj_y[adj_thre_index]
-    print("Adj pruning threshold:{:.6f}".format(adj_thre))
+    print("Adj    pruning threshold: [{:.6f}]".format(adj_thre))
     wei_thre_index = int(wei_total * percent)
     wei_thre = wei_y[wei_thre_index]
-    print("Weight pruning threshold:{:.6f}".format(wei_thre))
+    print("Weight pruning threshold: [{:.6f}]".format(wei_thre))
     
     mask_dict = {}
     

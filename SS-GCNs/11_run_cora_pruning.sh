@@ -5,4 +5,4 @@ python -u main_pruning.py \
 --embedding-dim 1433 16 7 \
 --lr 0.008 \
 --weight-decay 8e-5 \
---pruning_percent 0.3
+--pruning_percent 0.1
