@@ -104,7 +104,7 @@ def run_get_mask(args, seed):
                 best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
             print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}] | Best Acc:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
-    final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
+    # final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
     pdb.set_trace()
     return final_mask_dict, rewind_weight
 

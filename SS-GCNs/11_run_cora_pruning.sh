@@ -7,7 +7,8 @@ python -u main_pruning.py \
 --embedding-dim 1433 16 7 \
 --lr 0.008 \
 --weight-decay 8e-5 \
---pruning_percent ${i}
+--pruning_percent ${i} \
+--total_epoch 500
 
 # for i in {0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9}
 # do
