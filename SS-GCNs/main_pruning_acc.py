@@ -81,7 +81,6 @@ def parser_loader():
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--total_epoch', type=int, default=130)
     parser.add_argument('--pruning_percent', type=float, default=0.1)
-
     ###### Others settings #######
     parser.add_argument('--dataset', type=str, default='citeseer')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])

@@ -39,13 +39,11 @@ def run(args, seed):
         # print('epoch', epoch, 'loss', loss_train.data)
         loss.backward()
         optimizer.step()
-
         # validation
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
             loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
             # print('val acc', f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro'))
-
         # early stopping
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break

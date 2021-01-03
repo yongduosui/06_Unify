@@ -104,11 +104,9 @@ def get_mask_distribution(model, if_numpy=True):
     adj_mask_tensor = model.adj_mask.flatten()
     nonzero = torch.abs(adj_mask_tensor) > 0
     adj_mask_tensor = adj_mask_tensor[nonzero] # 13264
-
     weight_mask_tensor = model.net_layer[0].weight_mask_weight.flatten()    # 22928
     weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_weight.flatten())) # 112
     # np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
-    
     if if_numpy:
         return adj_mask_tensor.detach().cpu().numpy(), weight_mask_tensor.detach().cpu().numpy()
     else:
@@ -159,7 +157,6 @@ def get_final_mask(model, percent):
     print("Weight pruning threshold: [{:.6f}]".format(wei_thre))
     
     mask_dict = {}
-    
     ori_adj_mask = model.adj_mask.detach().cpu()
     ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
 
@@ -174,6 +171,8 @@ def get_final_mask(model, percent):
     return mask_dict
 
 
+
+
 def get_each_mask(mask_weight_tensor, threshold):
     
     ones  = torch.ones_like(mask_weight_tensor)
@@ -185,7 +184,33 @@ def get_each_mask(mask_weight_tensor, threshold):
 
 
 
+def get_final_mask_epoch(model, percent):
 
+    adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
+    adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
+
+    adj_total = adj_mask.shape[0]
+    wei_total = wei_mask.shape[0]
+    ### sort
+    adj_y, adj_i = torch.sort(adj_mask.abs())
+    wei_y, wei_i = torch.sort(wei_mask.abs())
+    ### get threshold
+    adj_thre_index = int(adj_total * percent)
+    adj_thre = adj_y[adj_thre_index]
+
+    wei_thre_index = int(wei_total * percent)
+    wei_thre = wei_y[wei_thre_index]
+
+    
+    mask_dict = {}
+    ori_adj_mask = model.adj_mask.detach().cpu()
+    ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
+
+    mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
+    mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_weight'], wei_thre)
+    mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_weight'], wei_thre)
+
+    return mask_dict
 
 
 

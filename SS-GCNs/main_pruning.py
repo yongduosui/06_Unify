@@ -37,7 +37,6 @@ def run_fix_mask(args, seed, rewind_weight):
         if 'mask' in name:
             param.requires_grad = False
             # print("{}\{} require_grad=False".format(name, param.shape))
-    
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     acc_test = 0.0
     loss_val = []
@@ -48,7 +47,6 @@ def run_fix_mask(args, seed, rewind_weight):
         loss = loss_func(output[idx_train], labels[idx_train])
         loss.backward()
         optimizer.step()
-
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
             loss_val.append(loss_func(output[idx_val], labels[idx_val]).cpu().numpy())
@@ -57,7 +55,6 @@ def run_fix_mask(args, seed, rewind_weight):
         # early stopping
         if epoch > early_stopping and loss_val[-1] > np.mean(loss_val[-(early_stopping+1):-1]):
             break
-
     with torch.no_grad():
         output = net_gcn(features, adj, val_test=True)
         acc_val = f1_score(labels[idx_val].cpu().numpy(), output[idx_val].cpu().numpy().argmax(axis=1), average='micro')
@@ -87,6 +84,8 @@ def run_get_mask(args, seed):
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
+    best_acc = {'acc': 0, 'epoch' : 0}
+
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
@@ -98,11 +97,15 @@ def run_get_mask(args, seed):
         optimizer.step()
         with torch.no_grad():
             output = net_gcn(features, adj, val_test=True)
-            # acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
-            # print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
-
+            acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
+            if acc_test > best_acc['acc']:
+                best_acc['acc'] = acc_test
+                best_acc['epoch'] = epoch
+                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
+            print("(Get Mask) Epoch:[{}] Test Acc[{:.2f}] | Best Acc:[{:.2f}] at Epoch:[{}]"
+                 .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
     final_mask_dict = pruning.get_final_mask(net_gcn, percent=args['pruning_percent'])
-    
+    pdb.set_trace()
     return final_mask_dict, rewind_weight
 
 
