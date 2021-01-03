@@ -63,13 +63,13 @@ def run_pruning_acc(args, seed):
             if acc_test > best_acc['acc']:
                 best_acc['acc'] = acc_test
                 best_acc['epoch'] = epoch
-            print("(Pruning Acc) Epoch:[{}] Test Acc[{:.2f}] Best Acc:[] | Best Acc:[{:.2f}] at Epoch:[{}]"
+            print("(Pruning Acc) Epoch:[{}] Test Acc[{:.2f}] | Best Acc:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
     
     OUTDIR = "debug_settings"
     if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
     np.savez(OUTDIR + "/cora_mask_info_s1_{}_s2_{}", supervise_loss=supervise_loss, adj_mask_loss=adj_mask_loss, weight_mask_loss=weight_mask_loss, test_acc_list=test_acc_list)
-    return acc_test, epoch
+    return best_acc
 
 
 def parser_loader():
@@ -94,18 +94,22 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    seed_time = 1
-    acc_val = np.zeros(seed_time)
-    acc_test = np.zeros(seed_time)
-    epoch_list = np.zeros(seed_time)
-    for seed in range(seed_time):
+    best_acc = run_pruning_acc(args, seed)
+    print("syd: s1:[{}] s2:[{}]  Best Acc [{}] at epoch:[{}]"
+    .format(args['s1'], args['s2'], best_acc['acc'], best_acc['epoch']))
 
-        acc_test, epoch = run_pruning_acc(args, seed)
-        print("Seed:[{}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_test[seed] * 100, epoch_list[seed]))
+    # seed_time = 1
+    # acc_val = np.zeros(seed_time)
+    # acc_test = np.zeros(seed_time)
+    # epoch_list = np.zeros(seed_time)
+    # for seed in range(seed_time):
 
-    print('Finish !')
-    print("syd:" + "-" * 100)
-    print("syd: Pruning Percent:[{}]".format(args['pruning_percent']))
-    print('syd: Test mean : [{:.2f}]  std : [{:.2f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
-    print('syd: Mean Epoch: [{:.2f}]'.format(epoch_list.mean()))
-    print("syd:" + "-" * 100)
+    #     acc_test, epoch = run_pruning_acc(args, seed)
+    #     print("Seed:[{}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_test[seed] * 100, epoch_list[seed]))
+
+    # print('Finish !')
+    # print("syd:" + "-" * 100)
+    # print("syd: Pruning Percent:[{}]".format(args['pruning_percent']))
+    # print('syd: Test mean : [{:.2f}]  std : [{:.2f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
+    # print('syd: Mean Epoch: [{:.2f}]'.format(epoch_list.mean()))
+    # print("syd:" + "-" * 100)
