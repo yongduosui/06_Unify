@@ -36,7 +36,8 @@ def run_pruning_acc(args, seed):
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
-    best_acc = {}
+    best_acc = {'acc': 0, 'epoch' : 0}
+
     supervise_loss = []
     adj_mask_loss = []
     weight_mask_loss = []
@@ -59,7 +60,7 @@ def run_pruning_acc(args, seed):
             output = net_gcn(features, adj, val_test=True)
             acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             test_acc_list.append(acc_test)
-            if acc_test > best_acc:
+            if acc_test > best_acc['acc']:
                 best_acc['acc'] = acc_test
                 best_acc['epoch'] = epoch
             print("(Pruning Acc) Epoch:[{}] Test Acc[{:.2f}] Best Acc:[] | Best Acc:[{:.2f}] at Epoch:[{}]"
