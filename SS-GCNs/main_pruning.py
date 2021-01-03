@@ -145,9 +145,9 @@ if __name__ == "__main__":
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
 
-        best_acc_test[seed], early_acc_test[seed], best_epoch_list[seed], early_epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
+        best_acc_test[seed], best_epoch_list[seed], early_acc_test[seed], early_epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
         print("Seed:[{}], BestAcc:[{:.2f}] at epoch:[{}] | EarlyAcc:[{:.2f}] at epoch:[{}]"
-            .format(seed, best_acc_test[seed] * 100, early_acc_test[seed] * 100, best_epoch_list[seed], early_epoch_list[seed]))
+            .format(seed, best_acc_test[seed] * 100, best_epoch_list[seed], early_acc_test[seed] * 100, early_epoch_list[seed]))
 
     print('Finish !')
     print("syd:" + "-" * 100)
