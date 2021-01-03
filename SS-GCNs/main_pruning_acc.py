@@ -36,6 +36,7 @@ def run_pruning_acc(args, seed):
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
+    best_acc = {}
     supervise_loss = []
     adj_mask_loss = []
     weight_mask_loss = []
@@ -58,9 +59,15 @@ def run_pruning_acc(args, seed):
             output = net_gcn(features, adj, val_test=True)
             acc_test = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             test_acc_list.append(acc_test)
-            print("(Pruning Acc) Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
+            if acc_test > best_acc:
+                best_acc['acc'] = acc_test
+                best_acc['epoch'] = epoch
+            print("(Pruning Acc) Epoch:[{}] Test Acc[{:.2f}] Best Acc:[] | Best Acc:[{:.2f}] at Epoch:[{}]"
+                 .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
     
-    np.savez("./cora_mask_info", supervise_loss=supervise_loss, adj_mask_loss=adj_mask_loss, weight_mask_loss=weight_mask_loss, test_acc_list=test_acc_list)
+    OUTDIR = "debug_settings"
+    if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
+    np.savez(OUTDIR + "/cora_mask_info_s1_{}_s2_{}", supervise_loss=supervise_loss, adj_mask_loss=adj_mask_loss, weight_mask_loss=weight_mask_loss, test_acc_list=test_acc_list)
     return acc_test, epoch
 
 
