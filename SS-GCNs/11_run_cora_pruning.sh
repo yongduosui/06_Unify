@@ -1,5 +1,5 @@
 GPU=$1
-
+i=0.1
 for s1 in 1e-4 5e-5 1e-5 5e-6 1e-6
 do
     for s2 in 5e-4 1e-4 5e-5 1e-5 5e-6 1e-6
