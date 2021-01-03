@@ -93,7 +93,7 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    seed = 1
+    seed = 11
     best_acc = run_pruning_acc(args, seed)
     print("syd: s1:[{}] s2:[{}]  Best Acc [{}] at epoch:[{}]"
     .format(args['s1'], args['s2'], best_acc['acc'], best_acc['epoch']))
