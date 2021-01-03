@@ -11,4 +11,4 @@ python -u main_pruning_acc.py \
 --pruning_percent ${i} \
 --total_epoch 500 \
 --s1 1e-5 \
---s2 1e-5
+--s2 1e-4
