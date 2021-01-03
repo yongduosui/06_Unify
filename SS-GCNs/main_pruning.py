@@ -60,7 +60,7 @@ def run_fix_mask(args, seed, rewind_weight):
             best_acc['early_stop_acc'] = f1_score(labels[idx_test].cpu().numpy(), output[idx_test].cpu().numpy().argmax(axis=1), average='micro')
             best_acc['early_stop_epoch'] = epoch
         print("(Fix Mask) Epoch:[{}] Test Acc[{:.2f}] | Best Acc:[{:.2f}] at Epoch:[{}]"
-                 .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
+                 .format(epoch, acc_test * 100, best_acc['best_acc'] * 100, best_acc['best_epoch']))
 
     return best_acc['best_acc'], best_acc['best_epoch'], best_acc['early_stop_acc'], best_acc['early_stop_epoch']
 
