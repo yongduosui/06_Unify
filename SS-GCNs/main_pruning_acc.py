@@ -67,8 +67,10 @@ def run_pruning_acc(args, seed):
                  .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
     
     OUTDIR = "debug_settings"
-    if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
-    np.savez(OUTDIR + "/cora_mask_info_s1_{}_s2_{}", supervise_loss=supervise_loss, adj_mask_loss=adj_mask_loss, weight_mask_loss=weight_mask_loss, test_acc_list=test_acc_list)
+    if not os.path.exists(OUTDIR): 
+        os.makedirs(OUTDIR)
+    savedir = OUTDIR + "/cora_mask_info_s1_{}_s2_{}".format(args['s1'], args['s2'])
+    np.savez(savedir, supervise_loss=supervise_loss, adj_mask_loss=adj_mask_loss, weight_mask_loss=weight_mask_loss, test_acc_list=test_acc_list)
     return best_acc
 
 
@@ -95,8 +97,8 @@ if __name__ == "__main__":
     print(args)
     seed = 11
     best_acc = run_pruning_acc(args, seed)
-    print("syd: s1:[{}] s2:[{}]  Best Acc [{}] at epoch:[{}]"
-    .format(args['s1'], args['s2'], best_acc['acc'], best_acc['epoch']))
+    print("syd: s1:[{}] s2:[{}]  Best Acc [{:.2f}] at epoch:[{}]"
+    .format(args['s1'], args['s2'], best_acc['acc'] * 100, best_acc['epoch']))
 
     # seed_time = 1
     # acc_val = np.zeros(seed_time)
