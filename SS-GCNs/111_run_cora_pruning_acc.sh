@@ -9,4 +9,6 @@ python -u main_pruning_acc.py \
 --lr 0.008 \
 --weight-decay 8e-5 \
 --pruning_percent ${i} \
---total_epoch 500
+--total_epoch 500 \
+--s1 5e-4 \
+--s2 1e-3
