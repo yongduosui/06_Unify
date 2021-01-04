@@ -168,14 +168,14 @@ if __name__ == "__main__":
                 final_epoch_list.mean()))
     print("syd:" + "-" * 100)
     print("syd: All Result:")
-    for dicts in all_result_list:
-        print("syd: seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
+    for seed, acc in all_result_list:
+        print("syd: seed:{} \t acc:{:.2f}".format(seed, acc * 100))
     print("syd:" + "-" * 100)
     print("syd:" + "-" * 100)
     print("syd: Good result:")
     print("syd:" + "-" * 100)
-    for dicts in good_result_list:
-        print("syd: seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
+    for seed, acc in good_result_list:
+        print("syd: seed:{} \t acc:{:.2f}".format(seed, acc * 100))
     print("syd:" + "=" * 100)
 
     # seed_time = 20
