@@ -145,7 +145,7 @@ if __name__ == "__main__":
     good_result_list = []
     all_result_list = []
 
-    for seed in rand_seed_list:
+    for i, seed in enumerate(rand_seed_list):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
 
@@ -153,13 +153,13 @@ if __name__ == "__main__":
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
 
-        best_acc_val[seed], final_acc_test[seed], final_epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
+        best_acc_val[i], final_acc_test[i], final_epoch_list[i] = run_fix_mask(args, seed, rewind_weight)
         print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
-            .format(seed, best_acc_val[seed] * 100, final_epoch_list[seed], final_acc_test[seed] * 100))
+            .format(seed, best_acc_val[i] * 100, final_epoch_list[i], final_acc_test[i] * 100))
 
-        all_result_list.append((seed, final_acc_test[seed]))
-        if final_acc_test[seed] > 80:
-            good_result_list.append((seed, final_acc_test[seed]))
+        all_result_list.append((seed, final_acc_test[i]))
+        if final_acc_test[i] > 80:
+            good_result_list.append((seed, final_acc_test[i]))
 
     print('Finish !')
     print("syd:" + "=" * 100)
