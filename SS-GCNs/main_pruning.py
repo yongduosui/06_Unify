@@ -39,8 +39,7 @@ def run_fix_mask(args, seed, rewind_weight):
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     acc_test = 0.0
-    best_acc = {'best_acc': 0, 'best_epoch' : 0, 'early_stop_acc': 0, 'early_stop_epoch': 0}
-    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc'}
+    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
     for epoch in range(300):
 
