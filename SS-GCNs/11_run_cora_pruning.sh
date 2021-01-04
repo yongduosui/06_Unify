@@ -1,6 +1,7 @@
 GPU=$1
-
 i=0.1
+s1=5e-6
+s2=5e-6
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning.py \
 --dataset cora \
@@ -8,7 +9,9 @@ python -u main_pruning.py \
 --lr 0.008 \
 --weight-decay 8e-5 \
 --pruning_percent ${i} \
---total_epoch 300
+--total_epoch 300 \
+--s1 $s1 \
+--s2 $s2
 
 # i=0.1
 # for s1 in 1e-4 5e-5 1e-5 5e-6 1e-6
