@@ -142,7 +142,8 @@ if __name__ == "__main__":
     final_epoch_list = np.zeros(seed_time)
     best_seed = {"seed": 0, "test_acc": 0}
     good_result_list = []
-
+    all_resut_dict = {"seed": 0, "test_acc": 0}
+    all_result_list = []
     for seed in range(seed_time):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
@@ -155,22 +156,32 @@ if __name__ == "__main__":
         print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
             .format(seed, best_acc_val[seed] * 100, final_epoch_list[seed], final_acc_test[seed] * 100))
         
+        all_resut_dict['seed'] = seed
+        all_resut_dict['test_acc'] = final_acc_test[seed]
+        all_result_list.append(all_resut_dict)
         if final_acc_test[seed] > 80:
             best_seed['seed'] = seed
             best_seed['test_acc'] = final_acc_test[seed]
             good_result_list.append(best_seed)
 
     print('Finish !')
-    print("syd:" + "-" * 100)
+    print("syd:" + "=" * 100)
     print("syd: Pruning Percent : [{}]".format(args['pruning_percent']))
     print('syd: Val Acc : [{:.2f}/{:.2f}]  Test Acc : [{:.2f}/{:.2f}] | at Epoch: [{}]'
         .format(best_acc_val.mean() * 100, best_acc_val.std() * 100, 
                 final_acc_test.mean() * 100, final_acc_test.std() * 100, 
                 final_epoch_list.mean()))
-    print("syd: Good result:")
-    for dicts in good_result_list:
+    print("syd:" + "-" * 100)
+    print("syd: All Result:")
+    for dicts in all_result_list:
         print("seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
     print("syd:" + "-" * 100)
+    print("syd:" + "-" * 100)
+    print("syd: Good result:")
+    print("syd:" + "-" * 100)
+    for dicts in good_result_list:
+        print("seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
+    print("syd:" + "=" * 100)
 
     # seed_time = 20
     # acc_val = np.zeros(seed_time)
