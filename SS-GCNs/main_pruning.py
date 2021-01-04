@@ -137,13 +137,16 @@ if __name__ == "__main__":
     print(args)
 
     seed_time = 5
+
+    rand_seed_list = np.random.randint(100, 500, 20)
     final_acc_test = np.zeros(seed_time)
     best_acc_val = np.zeros(seed_time)
     final_epoch_list = np.zeros(seed_time)
 
     good_result_list = []
     all_result_list = []
-    for seed in range(seed_time):
+
+    for seed in rand_seed_list:
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
 
