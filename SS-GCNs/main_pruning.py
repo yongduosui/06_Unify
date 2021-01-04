@@ -136,7 +136,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    seed_time = 20
+    seed_time = 5
     final_acc_test = np.zeros(seed_time)
     best_acc_val = np.zeros(seed_time)
     final_epoch_list = np.zeros(seed_time)
