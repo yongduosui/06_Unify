@@ -140,9 +140,8 @@ if __name__ == "__main__":
     final_acc_test = np.zeros(seed_time)
     best_acc_val = np.zeros(seed_time)
     final_epoch_list = np.zeros(seed_time)
-    best_seed = {"seed": 0, "test_acc": 0}
+
     good_result_list = []
-    all_resut_dict = {"seed": 0, "test_acc": 0}
     all_result_list = []
     for seed in range(seed_time):
 
@@ -155,14 +154,10 @@ if __name__ == "__main__":
         best_acc_val[seed], final_acc_test[seed], final_epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
         print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
             .format(seed, best_acc_val[seed] * 100, final_epoch_list[seed], final_acc_test[seed] * 100))
-        
-        all_resut_dict['seed'] = seed
-        all_resut_dict['test_acc'] = final_acc_test[seed]
-        all_result_list.append(all_resut_dict)
+
+        all_result_list.append((seed, final_acc_test[seed]))
         if final_acc_test[seed] > 80:
-            best_seed['seed'] = seed
-            best_seed['test_acc'] = final_acc_test[seed]
-            good_result_list.append(best_seed)
+            good_result_list.append((seed, final_acc_test[seed]))
 
     print('Finish !')
     print("syd:" + "=" * 100)
