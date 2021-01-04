@@ -174,13 +174,13 @@ if __name__ == "__main__":
     print("syd:" + "-" * 100)
     print("syd: All Result:")
     for dicts in all_result_list:
-        print("seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
+        print("syd: seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
     print("syd:" + "-" * 100)
     print("syd:" + "-" * 100)
     print("syd: Good result:")
     print("syd:" + "-" * 100)
     for dicts in good_result_list:
-        print("seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
+        print("syd: seed:{} \t acc:{:.2f}".format(dicts['seed'], dicts['test_acc'] * 100))
     print("syd:" + "=" * 100)
 
     # seed_time = 20
