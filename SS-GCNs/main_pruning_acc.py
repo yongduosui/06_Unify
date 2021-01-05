@@ -21,7 +21,7 @@ def run_pruning_acc(args, seed):
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
     adj = adj.to_dense()
-
+    pdb.set_trace()
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -67,9 +67,8 @@ def run_pruning_acc(args, seed):
                  .format(epoch, acc_test * 100, best_acc['acc'] * 100, best_acc['epoch']))
     
     OUTDIR = "debug_settings"
-    if not os.path.exists(OUTDIR): 
-        os.makedirs(OUTDIR)
-    savedir = OUTDIR + "/cora_mask_info_s1_{}_s2_{}".format(args['s1'], args['s2'])
+    if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
+    savedir = OUTDIR + "/{}_mask_info_s1_{}_s2_{}".format(args['dataset'], args['s1'], args['s2'])
     np.savez(savedir, supervise_loss=supervise_loss, adj_mask_loss=adj_mask_loss, weight_mask_loss=weight_mask_loss, test_acc_list=test_acc_list)
     return best_acc
 
