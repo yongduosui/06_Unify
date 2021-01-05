@@ -136,7 +136,7 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
 
-    seed_time = 30
+    seed_time = 10
     rand_seed_list = np.random.randint(100, 500, seed_time)
     final_acc_test = np.zeros(seed_time)
     best_acc_val = np.zeros(seed_time)
