@@ -1,4 +1,6 @@
 GPU=$1
+s1=1e-5
+s2=1e-5
 echo syd ------------------------------------------------------
 echo syd s1: $s1 s2: $s2
 CUDA_VISIBLE_DEVICES=${GPU} \
