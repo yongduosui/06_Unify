@@ -148,7 +148,7 @@ if __name__ == "__main__":
     for i, seed in enumerate(rand_seed_list):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
-
+        pdb.set_trace()
         rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
@@ -158,7 +158,7 @@ if __name__ == "__main__":
             .format(seed, best_acc_val[i] * 100, final_epoch_list[i], final_acc_test[i] * 100))
 
         all_result_list.append((seed, final_acc_test[i]))
-        if final_acc_test[i] > 80:
+        if final_acc_test[i] > 79:
             good_result_list.append((seed, final_acc_test[i]))
 
     print('Finish !')
