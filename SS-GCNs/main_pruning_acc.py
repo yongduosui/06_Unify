@@ -21,7 +21,7 @@ def run_pruning_acc(args, seed):
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
     adj = adj.to_dense()
-    pdb.set_trace()
+    
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
