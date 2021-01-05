@@ -41,7 +41,7 @@ def run_fix_mask(args, seed, rewind_weight):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
-    for epoch in range(600):
+    for epoch in range(400):
 
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -86,7 +86,7 @@ def run_get_mask(args, seed):
 
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
-    pdb.set_trace()
+    
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     for i, seed in enumerate(rand_seed_list):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
-        pdb.set_trace()
+        
         rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
