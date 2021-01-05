@@ -86,7 +86,7 @@ def run_get_mask(args, seed):
 
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
-
+    pdb.set_trace()
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
         # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
