@@ -158,8 +158,8 @@ if __name__ == "__main__":
             .format(seed, best_acc_val[i] * 100, final_epoch_list[i], final_acc_test[i] * 100))
 
         all_result_list.append((seed, final_acc_test[i]))
-
-        if final_acc_test[i] > 79:
+        pdb.set_trace()
+        if final_acc_test[i] > 60:
             good_result_list.append((seed, final_acc_test[i]))
 
     print('Finish !')
