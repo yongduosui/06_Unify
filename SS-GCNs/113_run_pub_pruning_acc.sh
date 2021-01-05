@@ -1,6 +1,6 @@
 GPU=$1
 CUDA_VISIBLE_DEVICES=${GPU} \
-python -u main.py \
+python -u main_pruning_acc.py \
 --dataset pubmed \
 --embedding-dim 500 16 3 \
 --lr 0.01 \
