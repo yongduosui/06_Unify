@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
         print("=" * 120)
-        print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+        print("syd : Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
             .format(seed, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
         print("=" * 120)
         seed_result.append((seed, final_acc_test))
