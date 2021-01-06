@@ -139,11 +139,11 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    seed = 307 # cora
-    seed = 118 # cite
+    seed_dict = {'cora': 307, 'citeseer': 118}
     # seed_time = 30
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
+    seed = seed_dict[args['dataset']]
     rewind_weight = None
     for p in range(1):
         
