@@ -12,6 +12,8 @@ from sklearn.metrics import f1_score
 import pdb
 import pruning
 import copy
+import warnings
+warnings.filterwarnings('ignore')
 
 def run_fix_mask(args, seed, rewind_weight_mask):
 

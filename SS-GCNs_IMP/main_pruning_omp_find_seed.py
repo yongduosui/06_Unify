@@ -142,14 +142,17 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    # seed_time = 30
-    # rand_seed_list = np.random.randint(100, 500, seed_time)
-    # for seed in rand_seed_list:
-    seed_dict = {'cora': 307, 'citeseer': 118}
-    seed = seed_dict[args['dataset']]
+
+    seed_time = 10
+    rand_seed_list = np.random.randint(100, 500, seed_time)
+
     rewind_weight = None
-    for p in range(10):
-        
+    seed_result = []
+    good_result = []
+    good = {'cora': 0.8, 'citeseer': 0.7}
+
+    for seed in rand_seed_list:
+
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
@@ -161,6 +164,17 @@ if __name__ == "__main__":
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
         print("=" * 120)
-        print("syd : Sparsity:[0.9^{}={:.2f}%], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(p + 1, 0.9 ** (p + 1) * 100, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
+        print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+            .format(seed, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
         print("=" * 120)
+        seed_result.append((seed, final_acc_test))
+
+        if final_acc_test > good[args['dataset']]:
+            good_result.append((seed, final_acc_test))
+    
+    print("syd all seed :" + "=" * 100)
+    for seed, result in seed_result:
+        print("syd: seed:[{}] acc:[{:.2f}]".format(seed, result * 100))
+    print("syd good seed :" + "=" * 100)
+    for seed, result in good_result:
+        print("syd: seed:[{}] acc:[{:.2f}]".format(seed, result * 100))
