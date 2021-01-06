@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
     good_result_list = []
     all_result_list = []
-
+    good_result_dict = {'cora': 0.8, 'citeseer': 0.75, 'pubmed': 0.79}
     for i, seed in enumerate(rand_seed_list):
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
@@ -159,7 +159,7 @@ if __name__ == "__main__":
 
         all_result_list.append((seed, final_acc_test[i]))
         pdb.set_trace()
-        if final_acc_test[i] > 60:
+        if final_acc_test[i] > good_result_dict[args['dataset']]:
             good_result_list.append((seed, final_acc_test[i]))
 
     print('Finish !')
