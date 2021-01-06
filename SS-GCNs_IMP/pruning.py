@@ -244,9 +244,17 @@ def add_trainable_mask_noise(model):
     model.net_layer[0].weight_mask_train.requires_grad = False
     model.net_layer[1].weight_mask_train.requires_grad = False
     c = 1e-5
-    model.adj_mask1_train.add_(((2 * torch.rand(model.adj_mask1_train.shape) - 1) * c).cuda())
-    model.net_layer[0].weight_mask_train.add_(((2 * torch.rand(model.net_layer[0].weight_mask_train.shape) - 1) * c).cuda())
-    model.net_layer[1].weight_mask_train.add_(((2 * torch.rand(model.net_layer[1].weight_mask_train.shape) - 1) * c).cuda())
+    rand1 = (2 * torch.rand(model.adj_mask1_train.shape) - 1) * c
+    rand1.to(dtype=model.adj_mask1_train.dtype)
+    model.adj_mask1_train.add_(rand1)
+
+    rand2 = (2 * torch.rand(model.net_layer[0].weight_mask_train.shape) - 1) * c
+    rand2.to(dtype=model.net_layer[0].weight_mask_train.dtype)
+    model.net_layer[0].weight_mask_train.add_(rand2)
+
+    rand3 = (2 * torch.rand(model.net_layer[1].weight_mask_train.shape) - 1) * c
+    rand3.to(dtype=model.net_layer[1].weight_mask_train.dtype)
+    model.net_layer[1].weight_mask_train.add_(rand3)
 
     model.adj_mask1_train.requires_grad = True
     model.net_layer[0].weight_mask_train.requires_grad = True
