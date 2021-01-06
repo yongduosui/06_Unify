@@ -144,7 +144,7 @@ if __name__ == "__main__":
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
     rewind_weight = None
-    for p in range(1):
+    for p in range(10):
         
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
