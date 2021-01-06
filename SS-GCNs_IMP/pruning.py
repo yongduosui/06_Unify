@@ -252,10 +252,12 @@ def add_trainable_mask_noise(model):
 
     rand2 = (2 * torch.rand(model.net_layer[0].weight_mask_train.shape) - 1) * c
     rand2 = rand2.to(device)
+    rand2 = rand2 * model.net_layer[0].weight_mask_train
     model.net_layer[0].weight_mask_train.add_(rand2)
 
     rand3 = (2 * torch.rand(model.net_layer[1].weight_mask_train.shape) - 1) * c
     rand3 = rand3.to(device)
+    rand3 = rand3 * model.net_layer[1].weight_mask_train
     model.net_layer[1].weight_mask_train.add_(rand3)
 
     model.adj_mask1_train.requires_grad = True
