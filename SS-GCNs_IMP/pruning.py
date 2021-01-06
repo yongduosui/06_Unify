@@ -187,7 +187,7 @@ def get_each_mask(mask_weight_tensor, threshold):
     return mask
 
 ##### pruning remain mask percent #######
-def get_final_mask_epoch(model, percent):
+def get_final_mask_epoch(model, adj_percent, wei_percent):
 
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
     #adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
@@ -197,10 +197,10 @@ def get_final_mask_epoch(model, percent):
     adj_y, adj_i = torch.sort(adj_mask.abs())
     wei_y, wei_i = torch.sort(wei_mask.abs())
     ### get threshold
-    adj_thre_index = int(adj_total * percent)
+    adj_thre_index = int(adj_total * adj_percent)
     adj_thre = adj_y[adj_thre_index]
     
-    wei_thre_index = int(wei_total * percent)
+    wei_thre_index = int(wei_total * wei_percent)
     wei_thre = wei_y[wei_thre_index]
 
     mask_dict = {}
