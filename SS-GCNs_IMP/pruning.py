@@ -189,10 +189,8 @@ def get_each_mask(mask_weight_tensor, threshold):
 ##### pruning remain mask percent #######
 def get_final_mask_epoch(model, percent):
 
-    pdb.set_trace()
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
     #adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
-
     adj_total = adj_mask.shape[0]
     wei_total = wei_mask.shape[0]
     ### sort
@@ -207,8 +205,7 @@ def get_final_mask_epoch(model, percent):
 
     mask_dict = {}
     ori_adj_mask = model.adj_mask1_train.detach().cpu()
-    #ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
-
+    # ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
     mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
     mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_train'], wei_thre)
     mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_train'], wei_thre)
