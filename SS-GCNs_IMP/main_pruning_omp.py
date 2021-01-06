@@ -111,13 +111,15 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                 best_val_acc['test_acc'] = acc_test
                 best_val_acc['val_acc'] = acc_val
                 best_val_acc['epoch'] = epoch
-                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
+                #best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
 
             print("(Get Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_val * 100, acc_test * 100, 
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
                                 best_val_acc['epoch']))
+        
+        best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
 
     return best_epoch_mask, rewind_weight
 
