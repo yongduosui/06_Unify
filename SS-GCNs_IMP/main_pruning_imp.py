@@ -43,7 +43,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
-    for epoch in range(400):
+    for epoch in range(1000):
 
         optimizer.zero_grad()
         output = net_gcn(features, adj)
