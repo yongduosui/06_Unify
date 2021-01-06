@@ -182,8 +182,6 @@ def get_each_mask(mask_weight_tensor, threshold):
 
     
 
-
-
 def get_final_mask_epoch(model, percent):
 
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
@@ -201,55 +199,12 @@ def get_final_mask_epoch(model, percent):
     wei_thre_index = int(wei_total * percent)
     wei_thre = wei_y[wei_thre_index]
 
-    
     mask_dict = {}
-    ori_adj_mask = model.adj_mask.detach().cpu()
+    ori_adj_mask = model.adj_mask1_train.detach().cpu()
     ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
 
     mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
-    mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_weight'], wei_thre)
-    mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_weight'], wei_thre)
+    mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_train'], wei_thre)
+    mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_train'], wei_thre)
 
     return mask_dict
-
-
-
-
-
-    
-
-
-    
-
-
-
-    adj_total = model.adj_mask.numel()
-
-    weight_total = 0
-    weight_total += model.net_layer[0].weight_mask_weight.numel()
-    weight_total += model.net_layer[1].weight_mask_weight.numel()
-
-    adj_mask_weight = model.adj_mask.data.flatten().abs().clone()
-
-    weight_mask_weight = model.net_layer[0].weight_mask_weight.flatten().abs().clone()    # 22928
-    weight_mask_weight = torch.cat((weight_mask_weight, model.net_layer[1].weight_mask_weight.flatten().abs().clone())) # 112
-
-    adj_y, adj_i = torch.sort(adj_mask_weight)
-    wei_y, wei_i = torch.sort(weight_mask_weight)
-
-    adj_thre_index = int(adj_total * percent)
-    adj_thre = adj_y[adj_thre_index]
-    print("adj pruning the:{}".format(adj_thre))
-    wei_thre_index = int(weight_total * percent)
-    wei_thre = wei_y[wei_thre_index]
-    print("weight pruning the:{}".format(wei_thre))
-    
-    adj_mask = torch.zeros(adj_total)
-
-
-    bn = torch.zeros(total)
-    index = 0
-
-
-    
-
