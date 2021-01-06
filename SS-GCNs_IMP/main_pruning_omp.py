@@ -80,14 +80,13 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
-    pruning.add_trainable_mask_noise(net_gcn)
-
     net_gcn = net_gcn.cuda()
-    
+
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
-
+    
+    pruning.add_trainable_mask_noise(net_gcn)
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
@@ -117,7 +116,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
                                 best_val_acc['epoch']))
-        
+
     return best_epoch_mask, rewind_weight
 
 
@@ -141,10 +140,10 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    seed_dict = {'cora': 307, 'citeseer': 118}
     # seed_time = 30
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
+    seed_dict = {'cora': 307, 'citeseer': 118}
     seed = seed_dict[args['dataset']]
     rewind_weight = None
     for p in range(1):

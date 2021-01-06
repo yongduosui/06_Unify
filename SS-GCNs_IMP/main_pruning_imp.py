@@ -85,7 +85,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
-
+    
     pruning.add_trainable_mask_noise(net_gcn)
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
