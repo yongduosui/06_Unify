@@ -209,12 +209,11 @@ def get_final_mask_epoch(model, percent):
 
 def print_sparsity(model):
 
-    pdb.set_trace()
     adj_nonzero = model.adj_nonzero
     adj_mask_nonzero = model.adj_mask2_fixed.sum().item()
 
-    weight1_total = model.net_layer[0].weight_mask_train.numel().item()
-    weight2_total = model.net_layer[1].weight_mask_train.numel().item()
+    weight1_total = model.net_layer[0].weight_mask_train.numel()
+    weight2_total = model.net_layer[1].weight_mask_train.numel()
     weight_total = weight1_total + weight2_total
 
     weight1_nonzero = model.net_layer[0].weight_mask_train.sum().item()

@@ -11,7 +11,7 @@ class net_gcn(nn.Module):
         self.net_layer = nn.ModuleList([nn.Linear(embedding_dim[ln], embedding_dim[ln+1], bias=False) for ln in range(self.layer_num)])
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
-        self.adj_nonzero = torch.nonzero(adj).shape[0]
+        self.adj_nonzero = torch.nonzero(adj, as_tuple=False).shape[0]
         self.adj_mask1_train = nn.Parameter(self.generate_adj_mask(adj))
         self.adj_mask2_fixed = nn.Parameter(self.generate_adj_mask(adj), requires_grad=False)
     
