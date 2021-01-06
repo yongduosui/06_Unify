@@ -208,3 +208,5 @@ def get_final_mask_epoch(model, percent):
     mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_train'], wei_thre)
 
     return mask_dict
+
+

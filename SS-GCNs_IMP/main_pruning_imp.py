@@ -13,7 +13,7 @@ import pdb
 import pruning
 import copy
 
-def run_fix_mask(args, seed, rewind_weight):
+def run_fix_mask(args, seed, rewind_weight_mask):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -30,7 +30,7 @@ def run_fix_mask(args, seed, rewind_weight):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-    net_gcn.load_state_dict(rewind_weight)
+    net_gcn.load_state_dict(rewind_weight_mask)
     
     for name, param in net_gcn.named_parameters():
         if 'mask' in name:
@@ -63,7 +63,7 @@ def run_fix_mask(args, seed, rewind_weight):
     return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch']
 
 
-def run_get_mask(args, seed):
+def run_get_mask(args, seed, rewind_weight_mask=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -80,7 +80,10 @@ def run_get_mask(args, seed):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-    
+
+    if rewind_weight_mask:
+        net_gcn.load_state_dict(rewind_weight_mask)
+
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
@@ -89,7 +92,6 @@ def run_get_mask(args, seed):
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
 
-        pdb.set_trace()
         optimizer.zero_grad()
         output = net_gcn(features, adj)
         loss = loss_func(output[idx_train], labels[idx_train])
@@ -146,19 +148,24 @@ if __name__ == "__main__":
     all_result_list = []
     good_result_dict = {'cora': 0.8, 'citeseer': 0.75, 'pubmed': 0.79}
     for i, seed in enumerate(rand_seed_list):
+        
 
         final_mask_dict, rewind_weight = run_get_mask(args, seed)
-        
-        rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
-        rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
-        rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
+        pdb.set_trace()
+        rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
+        rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
+        rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
+        rewind_weight['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
+        rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
+        rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
         best_acc_val[i], final_acc_test[i], final_epoch_list[i] = run_fix_mask(args, seed, rewind_weight)
+
         print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
             .format(seed, best_acc_val[i] * 100, final_epoch_list[i], final_acc_test[i] * 100))
 
         all_result_list.append((seed, final_acc_test[i]))
-        pdb.set_trace()
+        
         if final_acc_test[i] > good_result_dict[args['dataset']]:
             good_result_list.append((seed, final_acc_test[i]))
 
