@@ -78,9 +78,10 @@ def run_get_mask(args, seed):
     loss_func = nn.CrossEntropyLoss()
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
+    pdb.set_trace()
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-
+    
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
@@ -88,7 +89,7 @@ def run_get_mask(args, seed):
     
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
-        # pruning.plot_mask_distribution(net_gcn, epoch, acc_test, "mask_distribution")
+
         optimizer.zero_grad()
         output = net_gcn(features, adj)
         loss = loss_func(output[idx_train], labels[idx_train])
@@ -179,26 +180,3 @@ if __name__ == "__main__":
     for seed, acc in good_result_list:
         print("syd: seed:{} \t acc:{:.2f}".format(seed, acc * 100))
     print("syd:" + "=" * 100)
-
-    # seed_time = 20
-    # acc_val = np.zeros(seed_time)
-    # acc_test = np.zeros(seed_time)
-    # epoch_list = np.zeros(seed_time)
-    # for seed in range(seed_time):
-
-    #     final_mask_dict, rewind_weight = run_get_mask(args, seed)
-
-    #     rewind_weight['adj_mask'] = final_mask_dict['adj_mask']
-    #     rewind_weight['net_layer.0.weight_mask_weight'] = final_mask_dict['weight1_mask']
-    #     rewind_weight['net_layer.1.weight_mask_weight'] = final_mask_dict['weight2_mask']
-
-    #     acc_val[seed], acc_test[seed], epoch_list[seed] = run_fix_mask(args, seed, rewind_weight)
-    #     print("Seed:[{}], Val:[{:.2f}], Test:[{:.2f}] at epoch:[{}]".format(seed, acc_val[seed] * 100, acc_test[seed] * 100, epoch_list[seed]))
-
-    # print('Finish !')
-    # print("syd:" + "-" * 100)
-    # print("syd: Pruning Percent:[{}]".format(args['pruning_percent']))
-    # print('syd: Val  mean : [{:.2f}]  std : [{:.2f}]'.format(acc_val.mean() * 100, acc_val.std() * 100))
-    # print('syd: Test mean : [{:.2f}]  std : [{:.2f}]'.format(acc_test.mean() * 100, acc_test.std() * 100))
-    # print('syd: Mean Epoch: [{:.2f}]'.format(epoch_list.mean()))
-    # print("syd:" + "-" * 100)
