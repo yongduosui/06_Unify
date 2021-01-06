@@ -78,7 +78,6 @@ def run_get_mask(args, seed):
     loss_func = nn.CrossEntropyLoss()
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
-    pdb.set_trace()
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
     
@@ -90,6 +89,7 @@ def run_get_mask(args, seed):
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
     for epoch in range(args['total_epoch']):
 
+        pdb.set_trace()
         optimizer.zero_grad()
         output = net_gcn(features, adj)
         loss = loss_func(output[idx_train], labels[idx_train])

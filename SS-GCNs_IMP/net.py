@@ -12,7 +12,7 @@ class net_gcn(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
         self.adj_mask1_train = nn.Parameter(self.generate_adj_mask(adj))
-        self.adj_mask2_fixed = nn.Parameter(self.generate_adj_mask(adj))
+        self.adj_mask2_fixed = nn.Parameter(self.generate_adj_mask(adj), requires_grad=False)
     
     def forward(self, x, adj, val_test=False):
 
