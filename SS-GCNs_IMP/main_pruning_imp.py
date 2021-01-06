@@ -142,8 +142,8 @@ if __name__ == "__main__":
     seed = 307
     rewind_weight = None
     for p in range(10):
-        pdb.set_trace()
         
+
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']

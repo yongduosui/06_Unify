@@ -209,6 +209,7 @@ def get_final_mask_epoch(model, percent):
 
 def print_sparsity(model):
 
+    pdb.set_trace()
     adj_nonzero = model.adj_nonzero
     adj_mask_nonzero = model.adj_mask2_fixed.sum().item()
 
