@@ -249,7 +249,3 @@ def get_final_mask_epoch(model, percent):
 
     bn = torch.zeros(total)
     index = 0
-
-
-    
-

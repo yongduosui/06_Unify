@@ -27,7 +27,6 @@ def run_fix_mask(args, seed, rewind_weight):
     labels = labels.cuda()
     loss_func = nn.CrossEntropyLoss()
 
-
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()

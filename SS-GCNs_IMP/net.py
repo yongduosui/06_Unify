@@ -11,14 +11,15 @@ class net_gcn(nn.Module):
         self.net_layer = nn.ModuleList([nn.Linear(embedding_dim[ln], embedding_dim[ln+1], bias=False) for ln in range(self.layer_num)])
         self.relu = nn.ReLU(inplace=True)
         self.dropout = nn.Dropout(p=0.5)
-        self.adj_mask = nn.Parameter(self.generate_adj_mask(adj))
+        self.adj_mask1_train = nn.Parameter(self.generate_adj_mask(adj))
+        self.adj_mask2_fixed = nn.Parameter(self.generate_adj_mask(adj))
     
     def forward(self, x, adj, val_test=False):
 
-        adj = torch.mul(adj, self.adj_mask)
+        adj = torch.mul(adj, self.adj_mask1_train)
+        adj = torch.mul(adj, self.adj_mask2_fixed)
         for ln in range(self.layer_num):
             x = torch.mm(adj, x)
-            # x = torch.spmm(adj, x)
             x = self.net_layer[ln](x)
             if ln == self.layer_num - 1:
                 break
