@@ -104,8 +104,16 @@ def get_mask_distribution(model, if_numpy=True):
     adj_mask_tensor = model.adj_mask1_train.flatten()
     nonzero = torch.abs(adj_mask_tensor) > 0
     adj_mask_tensor = adj_mask_tensor[nonzero] # 13264
-    weight_mask_tensor = model.net_layer[0].weight_mask_train.flatten()    # 22928
-    weight_mask_tensor = torch.cat((weight_mask_tensor, model.net_layer[1].weight_mask_train.flatten())) # 112
+
+    weight_mask_tensor0 = model.net_layer[0].weight_mask_train.flatten()    # 22928
+    nonzero = torch.abs(weight_mask_tensor0) > 0
+    weight_mask_tensor0 = weight_mask_tensor0[nonzero]
+
+    weight_mask_tensor1 = model.net_layer[1].weight_mask_train.flatten()    # 22928
+    nonzero = torch.abs(weight_mask_tensor1) > 0
+    weight_mask_tensor1 = weight_mask_tensor1[nonzero]
+
+    weight_mask_tensor = torch.cat([weight_mask_tensor0, weight_mask_tensor1]) # 112
     # np.savez('mask', adj_mask=adj_mask_tensor.detach().cpu().numpy(), weight_mask=weight_mask_tensor.detach().cpu().numpy())
     if if_numpy:
         return adj_mask_tensor.detach().cpu().numpy(), weight_mask_tensor.detach().cpu().numpy()
