@@ -142,7 +142,7 @@ if __name__ == "__main__":
     seed = 307
     rewind_weight = None
     for p in range(10):
-        pdb.set_trace()
+        
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
@@ -154,6 +154,6 @@ if __name__ == "__main__":
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
         print("=" * 120)
-        print("syd : Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
+        print("syd : Sparsity:[0.9^{}={:.2f}%], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+            .format(p + 1, 0.9 ** (p + 1) * 100, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
         print("=" * 120)
