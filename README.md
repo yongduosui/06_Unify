@@ -15,7 +15,7 @@ https://github.com/Shen-Lab/SS-GCNs
 
 ### 2.2 Unify Pruning
 
-## 1. IMP
+### 1. IMP
 | (0.9^n) |Sparsity | cora (seed:307) | citeseer (seed:118) | pubmed |
 | :---:| :---: | :---: | :---: | :---: | 
 | 0  | 100.0%|81.03±0.64 | 70.94±0.77  | 79.16±0.19 |
@@ -30,7 +30,7 @@ https://github.com/Shen-Lab/SS-GCNs
 | 9  | 38.74%|41.6 | 43.7 | - |
 | 10 | 34.87%|34.3 | 39.4 | - |
 
-## 2. OMP
+### 2. OMP
 
 | (0.9^n) | Sparsity | cora (seed:307) | citeseer (seed:118) | pubmed |
 | :---:| :---: | :---: | :---: | :---: | 
