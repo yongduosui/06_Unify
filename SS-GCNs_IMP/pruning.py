@@ -239,21 +239,22 @@ def print_sparsity(model):
 
 
 def add_trainable_mask_noise(model):
-    cuda0 = torch.device('cuda:0')
+    
+    device = model.adj_mask1_train.device
     model.adj_mask1_train.requires_grad = False
     model.net_layer[0].weight_mask_train.requires_grad = False
     model.net_layer[1].weight_mask_train.requires_grad = False
     c = 1e-5
     rand1 = (2 * torch.rand(model.adj_mask1_train.shape) - 1) * c
-    rand1.to(cuda0)
+    rand1.to(device)
     model.adj_mask1_train.add_(rand1)
 
     rand2 = (2 * torch.rand(model.net_layer[0].weight_mask_train.shape) - 1) * c
-    rand2.to(cuda0)
+    rand2.to(device)
     model.net_layer[0].weight_mask_train.add_(rand2)
 
     rand3 = (2 * torch.rand(model.net_layer[1].weight_mask_train.shape) - 1) * c
-    rand3.to(cuda0)
+    rand3.to(device)
     model.net_layer[1].weight_mask_train.add_(rand3)
 
     model.adj_mask1_train.requires_grad = True
