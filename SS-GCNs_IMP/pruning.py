@@ -207,3 +207,21 @@ def get_final_mask_epoch(model, percent):
     return mask_dict
 
 
+def print_sparsity(model):
+
+    adj_nonzero = model.adj_nonzero
+    adj_mask_nonzero = model.adj_mask2_fixed.sum().item()
+
+    weight1_total = model.net_layer[0].weight_mask_train.numel().item()
+    weight2_total = model.net_layer[1].weight_mask_train.numel().item()
+    weight_total = weight1_total + weight2_total
+
+    weight1_nonzero = model.net_layer[0].weight_mask_train.sum().item()
+    weight2_nonzero = model.net_layer[1].weight_mask_train.sum().item()
+    weight_nonzero = weight1_nonzero + weight2_nonzero
+
+    print("-" * 100)
+    print("Sparsity: Adj:[{:.2f}%] Wei:[{:.2f}%]"
+    .format(adj_nonzero * 100 / adj_mask_nonzero, weight_nonzero * 100 / weight_total))
+    print("-" * 100)
+

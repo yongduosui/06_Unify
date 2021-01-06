@@ -31,6 +31,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
     net_gcn.load_state_dict(rewind_weight_mask)
+    pruning.print_sparsity(net_gcn)
     
     for name, param in net_gcn.named_parameters():
         if 'mask' in name:
@@ -83,6 +84,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
+        pruning.print_sparsity(net_gcn)
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -140,7 +142,8 @@ if __name__ == "__main__":
     seed = 307
     rewind_weight = None
     for p in range(10):
-
+        pdb.set_trace()
+        
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
@@ -150,10 +153,8 @@ if __name__ == "__main__":
         rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
         rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
-        pdb.set_trace()
         best_acc_val, final_acc_test, final_epoch_list = run_fix_mask(args, seed, rewind_weight)
-        pdb.set_trace()
-
+        
         print("Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
             .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100))
 
