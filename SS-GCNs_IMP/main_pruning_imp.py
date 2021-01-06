@@ -145,8 +145,8 @@ if __name__ == "__main__":
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
     rewind_weight = None
-    for p in range(10):
-        pdb.set_trace()
+    for p in range(1):
+        
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
