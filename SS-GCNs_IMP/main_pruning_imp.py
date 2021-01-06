@@ -137,21 +137,12 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
+    seed = 307
+    rewind_weight = None
+    for p in range(10):
 
-    seed_time = 10
-    rand_seed_list = np.random.randint(100, 500, seed_time)
-    final_acc_test = np.zeros(seed_time)
-    best_acc_val = np.zeros(seed_time)
-    final_epoch_list = np.zeros(seed_time)
-
-    good_result_list = []
-    all_result_list = []
-    good_result_dict = {'cora': 0.8, 'citeseer': 0.75, 'pubmed': 0.79}
-    for i, seed in enumerate(rand_seed_list):
+        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
-
-        final_mask_dict, rewind_weight = run_get_mask(args, seed)
-        pdb.set_trace()
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
         rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
@@ -159,31 +150,10 @@ if __name__ == "__main__":
         rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
         rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
-        best_acc_val[i], final_acc_test[i], final_epoch_list[i] = run_fix_mask(args, seed, rewind_weight)
+        pdb.set_trace()
+        best_acc_val, final_acc_test, final_epoch_list = run_fix_mask(args, seed, rewind_weight)
+        pdb.set_trace()
 
-        print("Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
-            .format(seed, best_acc_val[i] * 100, final_epoch_list[i], final_acc_test[i] * 100))
+        print("Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
+            .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100))
 
-        all_result_list.append((seed, final_acc_test[i]))
-        
-        if final_acc_test[i] > good_result_dict[args['dataset']]:
-            good_result_list.append((seed, final_acc_test[i]))
-
-    print('Finish !')
-    print("syd:" + "=" * 100)
-    print("syd: Pruning Percent : [{}]".format(args['pruning_percent']))
-    print('syd: Val Acc : [{:.2f}/{:.2f}]  Test Acc : [{:.2f}/{:.2f}] | at Epoch: [{}]'
-        .format(best_acc_val.mean() * 100, best_acc_val.std() * 100, 
-                final_acc_test.mean() * 100, final_acc_test.std() * 100, 
-                final_epoch_list.mean()))
-    print("syd:" + "-" * 100)
-    print("syd: All Result:")
-    for seed, acc in all_result_list:
-        print("syd: seed:{} \t acc:{:.2f}".format(seed, acc * 100))
-    print("syd:" + "-" * 100)
-    print("syd:" + "-" * 100)
-    print("syd: Good result:")
-    print("syd:" + "-" * 100)
-    for seed, acc in good_result_list:
-        print("syd: seed:{} \t acc:{:.2f}".format(seed, acc * 100))
-    print("syd:" + "=" * 100)

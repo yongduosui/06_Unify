@@ -171,8 +171,6 @@ def get_final_mask(model, percent):
     return mask_dict
 
 
-
-
 def get_each_mask(mask_weight_tensor, threshold):
     
     ones  = torch.ones_like(mask_weight_tensor)
@@ -180,7 +178,6 @@ def get_each_mask(mask_weight_tensor, threshold):
     mask = torch.where(mask_weight_tensor.abs() > threshold, ones, zeros)
     return mask
 
-    
 
 def get_final_mask_epoch(model, percent):
 
