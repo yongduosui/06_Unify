@@ -81,7 +81,9 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-
+    pdb.set_trace()
+    pruning.add_trainable_mask_noise(net_gcn)
+    
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)

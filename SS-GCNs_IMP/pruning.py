@@ -236,3 +236,14 @@ def print_sparsity(model):
     print("-" * 100)
 
     return adj_spar, wei_spar
+
+
+def add_trainable_mask_noise(model):
+
+    c = 1e-5
+    model.adj_mask1_train.add_((2 * torch.rand(model.adj_mask1_train.shape) - 1) * c)
+    model.net_layer[0].weight_mask_train.add_((2 * torch.rand(model.net_layer[0].weight_mask_train.shape) - 1) * c)
+    model.net_layer[1].weight_mask_train.add_((2 * torch.rand(model.net_layer[1].weight_mask_train.shape) - 1) * c)
+
+    
+
