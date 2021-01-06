@@ -80,7 +80,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
-    pdb.set_trace()
+    
     pruning.add_trainable_mask_noise(net_gcn)
 
     net_gcn = net_gcn.cuda()
@@ -119,7 +119,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                                 best_val_acc['test_acc'] * 100,
                                 best_val_acc['epoch']))
         
-        best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
+    
+    best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
 
     return best_epoch_mask, rewind_weight
 

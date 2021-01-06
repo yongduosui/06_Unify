@@ -9,7 +9,7 @@ do
     python -u main_pruning_omp.py \
     --dataset citeseer \
     --embedding-dim 3703 16 6 \
-    --lr 0.008 \
+    --lr 0.01 \
     --weight-decay 5e-4 \
     --pruning_percent $i \
     --total_epoch 500 \
