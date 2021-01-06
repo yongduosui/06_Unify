@@ -79,11 +79,9 @@ def add_mask(model, init_mask_dict=None):
         mask2_train = nn.Parameter(init_mask_dict['mask2_train'])
         mask2_fixed = nn.Parameter(init_mask_dict['mask2_fixed'], requires_grad=False)
 
-    AddTrainableMask.apply(model.net_layer[0], 'weight', mask1_train)
-    AddTrainableMask.apply(model.net_layer[0], 'weight', mask1_fixed)
-    AddTrainableMask.apply(model.net_layer[1], 'weight', mask2_train)
-    AddTrainableMask.apply(model.net_layer[1], 'weight', mask2_fixed)
-        
+    AddTrainableMask.apply(model.net_layer[0], 'weight', mask1_train, mask1_fixed)
+    AddTrainableMask.apply(model.net_layer[1], 'weight', mask2_train, mask2_fixed)
+ 
         
 def generate_mask(model):
 
