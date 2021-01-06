@@ -146,13 +146,13 @@ if __name__ == "__main__":
     seed_time = 10
     rand_seed_list = np.random.randint(100, 500, seed_time)
 
-    rewind_weight = None
     seed_result = []
     good_result = []
     good = {'cora': 0.8, 'citeseer': 0.7}
 
     for seed in rand_seed_list:
 
+        rewind_weight = None
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
