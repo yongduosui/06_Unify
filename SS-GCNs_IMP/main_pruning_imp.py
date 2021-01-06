@@ -153,7 +153,7 @@ if __name__ == "__main__":
         rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
-        print("=" * 100)
-        print("syd : Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}]"
+        print("=" * 120)
+        print("syd : Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
             .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
-        print("=" * 100)
+        print("=" * 120)

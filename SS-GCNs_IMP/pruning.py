@@ -178,7 +178,7 @@ def get_each_mask(mask_weight_tensor, threshold):
     mask = torch.where(mask_weight_tensor.abs() > threshold, ones, zeros)
     return mask
 
-
+##### pruning remain mask percent #######
 def get_final_mask_epoch(model, percent):
 
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
