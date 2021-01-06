@@ -31,7 +31,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
     net_gcn.load_state_dict(rewind_weight_mask)
-    pruning.print_sparsity(net_gcn)
+    adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     
     for name, param in net_gcn.named_parameters():
         if 'mask' in name:
@@ -61,7 +61,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
                  .format(epoch, acc_val * 100, acc_test * 100, 
                                 best_val_acc['val_acc'] * 100, best_val_acc['test_acc'] * 100, best_val_acc['epoch']))
 
-    return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch']
+    return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch'], adj_spar, wei_spar
 
 
 def run_get_mask(args, seed, rewind_weight_mask=None):
@@ -84,7 +84,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
-        pruning.print_sparsity(net_gcn)
+        adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -152,8 +152,8 @@ if __name__ == "__main__":
         rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
         rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
-        best_acc_val, final_acc_test, final_epoch_list = run_fix_mask(args, seed, rewind_weight)
+        best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
         
-        print("Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
-            .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100))
+        print("Sparsity:[0.9^{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}]"
+            .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
 
