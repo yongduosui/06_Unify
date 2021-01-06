@@ -6,7 +6,7 @@ do
     echo syd ------------------------------------------------------
     echo syd s1: $s1 s2: $s2 sp: $i
     CUDA_VISIBLE_DEVICES=${GPU} \
-    python -u main_pruning_imp.py \
+    python -u main_pruning_omp.py \
     --dataset cora \
     --embedding-dim 1433 16 7 \
     --lr 0.008 \
