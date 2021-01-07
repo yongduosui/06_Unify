@@ -10,7 +10,7 @@ do
     --lr 0.008 \
     --weight-decay 8e-5 \
     --pruning_percent ${i} \
-    --total_epoch 300 \
+    --total_epoch 500 \
     --s1 $s1 \
     --s2 $s2
 done
