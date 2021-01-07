@@ -45,7 +45,7 @@ patience = 20
 lr = 0.001
 l2_coef = 0.0
 drop_prob = 0.0
-hid_units = 512
+hid_units = 16
 sparse = True
 
 nonlinearity = 'prelu' # special name to separate parameters
