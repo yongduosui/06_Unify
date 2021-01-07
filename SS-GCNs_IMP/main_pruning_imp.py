@@ -88,9 +88,11 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
         print("load :{}".format(args['weight_dir']))
         encoder_weight = {}
         cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
-        encoder_weight['weight'] = cl_ckpt['gcn.fc.weight']
+        encoder_weight['weight_orig_weight'] = cl_ckpt['gcn.fc.weight']
         pdb.set_trace()
-        net_gcn.net_layer[0].load_state_dict(encoder_weight)
+        ori_state_dict = net_gcn.net_layer[0].state_dict()
+        ori_state_dict.update(encoder_weight)
+        net_gcn.net_layer[0].load_state_dict(ori_state_dict)
 
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
