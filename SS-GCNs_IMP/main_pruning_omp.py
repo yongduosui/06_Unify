@@ -66,7 +66,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch'], adj_spar, wei_spar
 
 
-def run_get_mask(args, seed, rewind_weight_mask=None):
+def run_get_mask(args, seed, rewind_weight_mask=None, adj_percent=None, wei_percent=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -120,8 +120,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                 best_val_acc['test_acc'] = acc_test
                 best_val_acc['val_acc'] = acc_val
                 best_val_acc['epoch'] = epoch
-                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, adj_percent=args['pruning_percent_adj'], 
-                                                                        wei_percent=args['pruning_percent_wei'])
+                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, adj_percent=adj_percent, 
+                                                                        wei_percent=wei_percent)
 
             print("(Get Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_val * 100, acc_test * 100, 
@@ -161,9 +161,12 @@ if __name__ == "__main__":
     seed_dict = {'cora': 3946, 'citeseer': 2239}
     seed = seed_dict[args['dataset']]
     rewind_weight = None
-    for p in range(1):
+
+    percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(10)]
+
+    for adj_percent, wei_percent in percent_list:
         
-        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
+        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight, adj_percent, wei_percent)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
