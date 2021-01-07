@@ -1,5 +1,5 @@
 GPU=$1
-PER=0.1
+PER=0.05
 SEED=31
 python -u main_double.py \
 --dataset citeseer \

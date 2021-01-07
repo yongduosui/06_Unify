@@ -1,5 +1,5 @@
 GPU=$1
-PER=0.1
+PER=0.5
 SEED=39
 python -u main_single.py \
 --dataset cora \
