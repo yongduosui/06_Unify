@@ -43,7 +43,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
-    for epoch in range(400):
+    for epoch in range(1000):
 
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -84,6 +84,15 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
 
+    if args['weight_dir']:
+        print("load : {}".format(args['weight_dir']))
+        encoder_weight = {}
+        cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
+        encoder_weight['weight_orig_weight'] = cl_ckpt['gcn.fc.weight']
+        ori_state_dict = net_gcn.net_layer[0].state_dict()
+        ori_state_dict.update(encoder_weight)
+        net_gcn.net_layer[0].load_state_dict(ori_state_dict)
+
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
@@ -111,7 +120,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                 best_val_acc['test_acc'] = acc_test
                 best_val_acc['val_acc'] = acc_val
                 best_val_acc['epoch'] = epoch
-                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
+                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, adj_percent=args['pruning_percent_adj'], 
+                                                                        wei_percent=args['pruning_percent_wei'])
 
             print("(Get Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_val * 100, acc_test * 100, 
@@ -129,6 +139,9 @@ def parser_loader():
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--total_epoch', type=int, default=300)
     parser.add_argument('--pruning_percent', type=float, default=0.1)
+    parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
+    parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
+    parser.add_argument('--weight_dir', type=str, default='')
     ###### Others settings #######
     parser.add_argument('--dataset', type=str, default='citeseer')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
@@ -145,7 +158,7 @@ if __name__ == "__main__":
     # seed_time = 30
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
-    seed_dict = {'cora': 307, 'citeseer': 118}
+    seed_dict = {'cora': 3946, 'citeseer': 2239}
     seed = seed_dict[args['dataset']]
     rewind_weight = None
     for p in range(1):
@@ -161,6 +174,6 @@ if __name__ == "__main__":
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
         print("=" * 120)
-        print("syd : Sparsity:[0.9^{}={:.2f}%], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(p + 1, 0.9 ** (p + 1) * 100, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
+        print("syd : Sparsity:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+            .format(p + 1,  best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
         print("=" * 120)
