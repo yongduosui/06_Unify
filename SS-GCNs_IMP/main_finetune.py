@@ -29,10 +29,10 @@ def run(args, seed):
 
     net_gcn = net.net_gcn_baseline(embedding_dim=args['embedding_dim'])
     net_gcn = net_gcn.cuda()
+    
     encoder_weight = {}
     cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
     encoder_weight['weight'] = cl_ckpt['gcn.fc.weight']
-    
     net_gcn.net_layer[0].load_state_dict(encoder_weight)
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])

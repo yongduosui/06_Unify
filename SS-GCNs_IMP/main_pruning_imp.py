@@ -84,10 +84,20 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
 
+    if args['weight_dir']:
+        print("load :{}".format(args['weight_dir']))
+        encoder_weight = {}
+        cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
+        encoder_weight['weight'] = cl_ckpt['gcn.fc.weight']
+        pdb.set_trace()
+        net_gcn.net_layer[0].load_state_dict(encoder_weight)
+
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     
+    
+
     pruning.add_trainable_mask_noise(net_gcn)
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -131,6 +141,7 @@ def parser_loader():
     parser.add_argument('--total_epoch', type=int, default=300)
     parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
     parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
+    parser.add_argument('--weight_dir', type=str, default='')
     ###### Others settings #######
     parser.add_argument('--dataset', type=str, default='citeseer')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
