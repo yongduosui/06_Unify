@@ -8,6 +8,7 @@ echo syd ------------------------------------------------------
 echo syd s1: $s1 s2: $s2 adj: ${adj} wei: ${wei}
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning_imp.py \
+--weight_dir ../GraphCL/cite_double_dgi.pkl \
 --dataset citeseer \
 --embedding-dim 3703 ${DIM} 6 \
 --lr 0.01 \
