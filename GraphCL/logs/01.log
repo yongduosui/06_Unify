@@ -1,0 +1,49 @@
+----------------------------------------------------------------------------------------------------
+Namespace(aug_type='edge', dataset='citeseer', drop_percent=0.2, gpu=0, save_name='cite_best_dgi.pkl', seed=39)
+----------------------------------------------------------------------------------------------------
+/data3/Syd/06_IMPROVE/07_Contrastive_GNN/08_DGI_double/utils/process.py:183: RuntimeWarning: divide by zero encountered in power
+  r_inv = np.power(rowsum, -1).flatten()
+Begin Aug:[edge]
+Using CUDA
+Loss:[0.6931]
+Traceback (most recent call last):
+  File "execute.py", line 206, in <module>
+    loss.backward()
+  File "/data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/tensor.py", line 198, in backward
+    torch.autograd.backward(self, gradient, retain_graph, create_graph)
+  File "/data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/autograd/__init__.py", line 100, in backward
+    allow_unreachable=True)  # allow_unreachable flag
+RuntimeError: CUDA out of memory. Tried to allocate 3.25 GiB (GPU 0; 10.92 GiB total capacity; 271.10 MiB already allocated; 815.50 MiB free; 296.00 MiB reserved in total by PyTorch) (malloc at /pytorch/c10/cuda/CUDACachingAllocator.cpp:289)
+frame #0: c10::Error::Error(c10::SourceLocation, std::string const&) + 0x46 (0x7fe6f8257536 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x1cf1e (0x7fe6f84a0f1e in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libc10_cuda.so)
+frame #2: <unknown function> + 0x1df9e (0x7fe6f84a1f9e in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libc10_cuda.so)
+frame #3: at::native::empty_cuda(c10::ArrayRef<long>, c10::TensorOptions const&, c10::optional<c10::MemoryFormat>) + 0x135 (0x7fe6fb04dfd5 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0xf9310b (0x7fe6f964610b in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0xfdc9f7 (0x7fe6f968f9f7 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0x1075389 (0x7fe730fda389 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #7: <unknown function> + 0x10756c7 (0x7fe730fda6c7 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #8: <unknown function> + 0xe3c42e (0x7fe730da142e in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #9: at::TensorIterator::allocate_outputs() + 0x38c (0x7fe730da194c in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #10: at::TensorIterator::build() + 0x208 (0x7fe730da2d28 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #11: at::TensorIterator::binary_op(at::Tensor&, at::Tensor const&, at::Tensor const&, bool) + 0x146 (0x7fe730da3216 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #12: at::native::mul(at::Tensor const&, at::Tensor const&) + 0x3a (0x7fe730ac2eba in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #13: <unknown function> + 0xf8f998 (0x7fe6f9642998 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cuda.so)
+frame #14: <unknown function> + 0x10c3ec0 (0x7fe731028ec0 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #15: at::Tensor c10::Dispatcher::callUnboxed<at::Tensor, at::Tensor const&, at::Tensor const&>(c10::OperatorHandle const&, at::Tensor const&, at::Tensor const&) const + 0xb3 (0x7fe73f160b43 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_python.so)
+frame #16: <unknown function> + 0xc66a91 (0x7fe730bcba91 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #17: at::native::_trilinear(at::Tensor const&, at::Tensor const&, at::Tensor const&, c10::ArrayRef<long>, c10::ArrayRef<long>, c10::ArrayRef<long>, c10::ArrayRef<long>, long) + 0xec0 (0x7fe730bcd120 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #18: <unknown function> + 0x116186e (0x7fe7310c686e in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #19: <unknown function> + 0x118833b (0x7fe7310ed33b in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #20: <unknown function> + 0x2ac7689 (0x7fe732a2c689 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #21: <unknown function> + 0x118833b (0x7fe7310ed33b in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #22: <unknown function> + 0x28e2bc6 (0x7fe732847bc6 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #23: torch::autograd::generated::TrilinearBackward::apply(std::vector<at::Tensor, std::allocator<at::Tensor> >&&) + 0x606 (0x7fe732848366 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #24: <unknown function> + 0x2d89c05 (0x7fe732ceec05 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #25: torch::autograd::Engine::evaluate_function(std::shared_ptr<torch::autograd::GraphTask>&, torch::autograd::Node*, torch::autograd::InputBuffer&) + 0x16f3 (0x7fe732cebf03 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #26: torch::autograd::Engine::thread_main(std::shared_ptr<torch::autograd::GraphTask> const&, bool) + 0x3d2 (0x7fe732cecce2 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #27: torch::autograd::Engine::thread_init(int) + 0x39 (0x7fe732ce5359 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_cpu.so)
+frame #28: torch::autograd::python::PythonEngine::thread_init(int) + 0x38 (0x7fe73f424378 in /data3/Syd/.conda/envs/syd/lib/python3.6/site-packages/torch/lib/libtorch_python.so)
+frame #29: <unknown function> + 0xc819d (0x7fe742ad719d in /data3/Syd/.conda/envs/syd/bin/../lib/libstdc++.so.6)
+frame #30: <unknown function> + 0x76ba (0x7fe7543746ba in /lib/x86_64-linux-gnu/libpthread.so.0)
+frame #31: clone + 0x6d (0x7fe7540aa4dd in /lib/x86_64-linux-gnu/libc.so.6)
+
