@@ -48,7 +48,6 @@ drop_prob = 0.0
 hid_units = 512
 sparse = True
 
-pdb.set_trace()
 nonlinearity = 'prelu' # special name to separate parameters
 adj, features, labels, idx_train, idx_val, idx_test = process.load_data(dataset)
 features, _ = process.preprocess_features(features)
