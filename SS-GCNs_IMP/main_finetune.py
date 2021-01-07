@@ -32,7 +32,6 @@ def run(args, seed):
     encoder_weight = {}
     cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
     encoder_weight['weight'] = cl_ckpt['gcn.fc.weight']
-    pdb.set_trace()
     
     net_gcn.net_layer[0].load_state_dict(encoder_weight)
 
