@@ -29,6 +29,10 @@ def run(args, seed):
 
     net_gcn = net.net_gcn_baseline(embedding_dim=args['embedding_dim'])
     net_gcn = net_gcn.cuda()
+    
+    cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
+    pdb.set_trace()
+
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
     loss_val = []
     for epoch in range(1000):
@@ -60,6 +64,7 @@ def run(args, seed):
 def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
     parser.add_argument('--dataset', type=str, default='citeseer')
+    parser.add_argument('--weight_dir', type=str, default='')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--weight-decay', type=float, default=5e-4)
