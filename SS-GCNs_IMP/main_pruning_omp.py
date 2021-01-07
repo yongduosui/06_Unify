@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
     percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(10)]
 
-    for adj_percent, wei_percent in percent_list:
+    for p, (adj_percent, wei_percent) in enumerate(percent_list):
         
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight, adj_percent, wei_percent)
         
