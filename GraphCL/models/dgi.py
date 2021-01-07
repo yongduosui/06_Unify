@@ -5,7 +5,7 @@ import pdb
 
 class DGI_double(nn.Module):
     def __init__(self, n_in, n_h, activation):
-        super(DGI, self).__init__()
+        super(DGI_double, self).__init__()
         self.gcn = GCN(n_in, n_h, activation)
         self.read = AvgReadout()
         self.sigm = nn.Sigmoid()
@@ -58,7 +58,7 @@ class DGI_double(nn.Module):
 
 class DGI_single(nn.Module):
     def __init__(self, n_in, n_h, activation):
-        super(DGI, self).__init__()
+        super(DGI_single, self).__init__()
         self.gcn = GCN(n_in, n_h, activation)
         self.read = AvgReadout()
         self.sigm = nn.Sigmoid()
