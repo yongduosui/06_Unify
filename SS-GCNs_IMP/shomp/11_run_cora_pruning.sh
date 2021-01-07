@@ -7,6 +7,7 @@ for i in 0.1 0.19 0.271 0.3439 0.4095 0.4686 0.5217 0.5695 0.6126 0.6513
 do    
     CUDA_VISIBLE_DEVICES=${GPU} \
     python -u main_pruning_omp.py \
+    --weight_dir ../GraphCL/cora_single_dgi.pkl \
     --dataset cora \
     --embedding-dim 1433 16 7 \
     --lr 0.008 \

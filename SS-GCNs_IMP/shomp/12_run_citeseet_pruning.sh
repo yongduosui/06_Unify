@@ -7,6 +7,7 @@ for i in 0.1 0.19 0.271 0.3439 0.4095 0.4686 0.5217 0.5695 0.6126 0.6513
 do
     CUDA_VISIBLE_DEVICES=${GPU} \
     python -u main_pruning_omp.py \
+    --weight_dir ../GraphCL/cite_double_dgi.pkl \
     --dataset citeseer \
     --embedding-dim 3703 16 6 \
     --lr 0.01 \
