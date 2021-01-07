@@ -3,7 +3,7 @@ import scipy.sparse as sp
 import torch
 import torch.nn as nn
 import random
-from models import DGI, LogReg
+from models import DGI_double, LogReg
 from utils import process
 import pdb
 import aug
@@ -134,7 +134,7 @@ idx_train = torch.LongTensor(idx_train)
 idx_val = torch.LongTensor(idx_val)
 idx_test = torch.LongTensor(idx_test)
 
-model = DGI(ft_size, hid_units, nonlinearity)
+model = DGI_double(ft_size, hid_units, nonlinearity)
 optimiser = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=l2_coef)
 
 if torch.cuda.is_available():

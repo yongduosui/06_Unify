@@ -3,7 +3,7 @@ import torch.nn as nn
 from layers import GCN, AvgReadout, Discriminator, Discriminator2
 import pdb
 
-class DGI(nn.Module):
+class DGI_double(nn.Module):
     def __init__(self, n_in, n_h, activation):
         super(DGI, self).__init__()
         self.gcn = GCN(n_in, n_h, activation)
@@ -54,3 +54,50 @@ class DGI(nn.Module):
 
         return h_1.detach(), c.detach()
 
+
+
+class DGI_single(nn.Module):
+    def __init__(self, n_in, n_h, activation):
+        super(DGI, self).__init__()
+        self.gcn = GCN(n_in, n_h, activation)
+        self.read = AvgReadout()
+        self.sigm = nn.Sigmoid()
+        self.disc = Discriminator(n_h)
+        self.disc2 = Discriminator2(n_h)
+
+    def forward(self, seq1, seq2, seq3, adj, aug_adj, sparse, msk, samp_bias1, samp_bias2, aug_type):
+        
+        h_1 = self.gcn(seq1, adj, sparse)
+
+        if aug_type == 'edge':
+            
+            h_3 = self.gcn(seq1, aug_adj, sparse)
+            c = self.read(h_3, msk)
+            c = self.sigm(c)
+
+        elif aug_type == 'mask':
+
+            h_3 = self.gcn(seq3, adj, sparse)
+            c = self.read(h_3, msk)
+            c = self.sigm(c)
+
+        elif aug_type == 'node' or aug_type == 'subgraph':
+            
+            h_3 = self.gcn(seq3, aug_adj, sparse)
+            c = self.read(h_3, msk)
+            c = self.sigm(c)
+
+        else:
+            assert False
+
+        h_2 = self.gcn(seq2, adj, sparse)
+        ret = self.disc(c, h_1, h_2, samp_bias1, samp_bias2)
+        
+        return ret
+
+    # Detach the return variables
+    def embed(self, seq, adj, sparse, msk):
+        h_1 = self.gcn(seq, adj, sparse)
+        c = self.read(h_1, msk)
+
+        return h_1.detach(), c.detach()
