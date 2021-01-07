@@ -1,6 +1,6 @@
 GPU=$1
 CUDA_VISIBLE_DEVICES=${GPU} \
-python -u main.py \
+python -u main_finetune.py \
 --dataset citeseer \
 --embedding-dim 3703 512 6 \
 --lr 0.01 \
