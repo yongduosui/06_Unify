@@ -160,12 +160,12 @@ if __name__ == "__main__":
     # for seed in rand_seed_list:
     seed_dict = {'cora': 3946, 'citeseer': 2239}
     seed = seed_dict[args['dataset']]
-    rewind_weight = None
 
     percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(10)]
 
     for p, (adj_percent, wei_percent) in enumerate(percent_list):
         
+        rewind_weight = None
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight, adj_percent, wei_percent)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
