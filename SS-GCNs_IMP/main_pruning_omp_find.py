@@ -43,7 +43,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
-    for epoch in range(400):
+    for epoch in range(1000):
 
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -66,7 +66,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch'], adj_spar, wei_spar
 
 
-def run_get_mask(args, seed, rewind_weight_mask=None):
+def run_get_mask(args, seed, rewind_weight_mask=None, adj_percent=None, wei_percent=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -83,6 +83,15 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
+
+    if args['weight_dir']:
+        print("load : {}".format(args['weight_dir']))
+        encoder_weight = {}
+        cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
+        encoder_weight['weight_orig_weight'] = cl_ckpt['gcn.fc.weight']
+        ori_state_dict = net_gcn.net_layer[0].state_dict()
+        ori_state_dict.update(encoder_weight)
+        net_gcn.net_layer[0].load_state_dict(ori_state_dict)
 
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
@@ -111,7 +120,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                 best_val_acc['test_acc'] = acc_test
                 best_val_acc['val_acc'] = acc_val
                 best_val_acc['epoch'] = epoch
-                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, percent=args['pruning_percent'])
+                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, adj_percent=adj_percent, 
+                                                                        wei_percent=wei_percent)
 
             print("(Get Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_val * 100, acc_test * 100, 
@@ -129,6 +139,9 @@ def parser_loader():
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--total_epoch', type=int, default=300)
     parser.add_argument('--pruning_percent', type=float, default=0.1)
+    parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
+    parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
+    parser.add_argument('--weight_dir', type=str, default='')
     ###### Others settings #######
     parser.add_argument('--dataset', type=str, default='citeseer')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
@@ -142,7 +155,9 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-
+    # seed_time = 30
+    # rand_seed_list = np.random.randint(100, 500, seed_time)
+    # for seed in rand_seed_list:
     seed_time = 500
     rand_seed_list = np.random.randint(100, 5000, seed_time)
 
@@ -150,31 +165,36 @@ if __name__ == "__main__":
     good_result = []
     good = {'cora': 0.8, 'citeseer': 0.7}
 
+    percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(1)]
+
     for seed in rand_seed_list:
 
-        rewind_weight = None
-        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
-        
-        rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
-        rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
-        rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
-        rewind_weight['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
-        rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
-        rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
+        for p, (adj_percent, wei_percent) in enumerate(percent_list):
+            
+            rewind_weight = None
+            final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight, adj_percent, wei_percent)
+            
+            rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
+            rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
+            rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
+            rewind_weight['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
+            rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
+            rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
-        best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
-        print("=" * 120)
-        print("syd : Seed:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(seed, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
-        print("=" * 120)
-
-        seed_result.append((seed, final_acc_test))
-        if final_acc_test > good[args['dataset']]:
-            good_result.append((seed, final_acc_test))
-    
-    print("syd all seed :" + "=" * 100)
-    for seed, result in seed_result:
-        print("syd: seed:[{}] acc:[{:.2f}]".format(seed, result * 100))
-    print("syd good seed :" + "=" * 100)
-    for seed, result in good_result:
-        print("syd: seed:[{}] acc:[{:.2f}]".format(seed, result * 100))
+            best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
+            print("=" * 120)
+            print("syd : Seed:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+                .format(seed, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
+            print("=" * 120)
+            
+            seed_result.append((seed, final_acc_test))
+            if final_acc_test > good[args['dataset']]:
+                good_result.append((seed, final_acc_test))
+            
+        print("syd all seed :" + "=" * 100)
+        for seed, result in seed_result:
+            print("syd: seed:[{}] acc:[{:.2f}]".format(seed, result * 100))
+        print("syd good seed :" + "=" * 100)
+        for seed, result in good_result:
+            print("syd: seed:[{}] acc:[{:.2f}]".format(seed, result * 100))
+        print("syd all seed :" + "=" * 100)
