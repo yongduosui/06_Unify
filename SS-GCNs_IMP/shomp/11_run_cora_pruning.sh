@@ -1,4 +1,5 @@
 GPU=$1
+DIM=512
 adj=0.05
 wei=0.1
 s1=1e-6
@@ -9,7 +10,7 @@ do
     python -u main_pruning_omp.py \
     --weight_dir ../GraphCL/cora_single_dgi.pkl \
     --dataset cora \
-    --embedding-dim 1433 16 7 \
+    --embedding-dim 1433 ${DIM} 7 \
     --lr 0.008 \
     --weight-decay 8e-5 \
     --pruning_percent_wei ${wei} \
