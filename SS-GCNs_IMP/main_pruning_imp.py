@@ -85,7 +85,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     net_gcn = net_gcn.cuda()
 
     if args['weight_dir']:
-        print("load :{}".format(args['weight_dir']))
+        print("load : {}".format(args['weight_dir']))
         encoder_weight = {}
         cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
         encoder_weight['weight_orig_weight'] = cl_ckpt['gcn.fc.weight']
@@ -98,7 +98,6 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     
     
-
     pruning.add_trainable_mask_noise(net_gcn)
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
