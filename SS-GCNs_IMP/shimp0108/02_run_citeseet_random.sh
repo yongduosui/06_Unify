@@ -19,5 +19,6 @@ python -u main_pruning_imp.py \
 --total_epoch ${EPOCH} \
 --s1 $S1 \
 --s2 $S2 \
---init_soft_mask_type ${INIT}
+--init_soft_mask_type ${INIT} \
+--rewind_soft_mask
 echo syd ------------------------------------------------------

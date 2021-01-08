@@ -95,6 +95,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
+        if not args['rewind_soft_mask']:
+            pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'])
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     else:
         pdb.set_trace()
@@ -137,13 +139,13 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
     ###### Unify pruning settings #######
-
     parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--total_epoch', type=int, default=300)
     parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
     parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
     parser.add_argument('--weight_dir', type=str, default='')
+    parser.add_argument('--rewind_soft_mask', action='store_true')
     parser.add_argument('--init_soft_mask_type', type=str, default='', help='all_one, kaiming, normal, uniform')
     ###### Others settings #######
     parser.add_argument('--dataset', type=str, default='citeseer')
@@ -173,11 +175,11 @@ if __name__ == "__main__":
         
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
         
-        rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
+        # rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
-        rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
+        # rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
-        rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
+        # rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
         rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
