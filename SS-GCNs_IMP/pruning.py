@@ -6,7 +6,8 @@ import random
 import os
 import matplotlib.pyplot as plt
 import pdb
-
+import torch.nn.init as init
+import math
 # def soft_threshold(w, th):
 # 	'''
 # 	pytorch soft-sign function
@@ -262,4 +263,26 @@ def add_trainable_mask_noise(model):
     model.net_layer[1].weight_mask_train.requires_grad = True
 
     
+def soft_mask_init(model, init_type):
+
+    if init_type == 'all_one':
+        add_trainable_mask_noise(model)
+    elif init_type == 'kaiming':
+        init.kaiming_uniform_(model.adj_mask1_train, a=math.sqrt(5))
+        init.kaiming_uniform_(model.net_layer[0].weight_mask_train, a=math.sqrt(5))
+        init.kaiming_uniform_(model.net_layer[1].weight_mask_train, a=math.sqrt(5))
+    elif init_type == 'normal':
+        init.normal_(model.adj_mask1_train, mean=0.0, std=1.0)
+        init.normal_(model.net_layer[0].weight_mask_train, mean=0.0, std=1.0)
+        init.normal_(model.net_layer[1].weight_mask_train, mean=0.0, std=1.0)
+
+    elif init_type == 'uniform':
+        init.uniform_(model.adj_mask1_train, a=0.0, b=1.0)
+        init.uniform_(model.net_layer[0].weight_mask_train, a=0.0, b=1.0)
+        init.uniform_(model.net_layer[1].weight_mask_train, a=0.0, b=1.0)
+    else:
+        assert False
+
+    
+
 

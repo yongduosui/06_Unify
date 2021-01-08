@@ -66,7 +66,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch'], adj_spar, wei_spar
 
 
-def run_get_mask(args, seed, rewind_weight_mask=None):
+def run_get_mask(args, seed, rewind_weight_mask=None, adj_percent=None, wei_percent=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -96,10 +96,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
-    else:
-        pdb.set_trace()
-        pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'])
-
+    
+    pruning.add_trainable_mask_noise(net_gcn)
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     acc_test = 0.0
@@ -122,8 +120,8 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
                 best_val_acc['test_acc'] = acc_test
                 best_val_acc['val_acc'] = acc_val
                 best_val_acc['epoch'] = epoch
-                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, adj_percent=args['pruning_percent_adj'], 
-                                                                        wei_percent=args['pruning_percent_wei'])
+                best_epoch_mask = pruning.get_final_mask_epoch(net_gcn, adj_percent=adj_percent, 
+                                                                        wei_percent=wei_percent)
 
             print("(Get Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
                  .format(epoch, acc_val * 100, acc_test * 100, 
@@ -137,14 +135,13 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
 def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
     ###### Unify pruning settings #######
-
     parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--total_epoch', type=int, default=300)
+    parser.add_argument('--pruning_percent', type=float, default=0.1)
     parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
     parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
     parser.add_argument('--weight_dir', type=str, default='')
-    parser.add_argument('--init_soft_mask_type', type=str, default='', help='all_one, kaiming, normal, uniform')
     ###### Others settings #######
     parser.add_argument('--dataset', type=str, default='citeseer')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
@@ -161,17 +158,15 @@ if __name__ == "__main__":
     # seed_time = 30
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
-    # seed_dict = {'cora': 307, 'citeseer': 118}
-    ####################81.9 ##############72.1######################
-    # seed_dict = {'cora': 3946, 'citeseer': 2239} # DIM: 16
-
-    seed_dict = {'cora': 2377, 'citeseer': 4428} # DIM: 512, cora: 2829: 81.9, 2377: 81.1    | cite 4417: 72.1,  4428: 71.3
-
+    seed_dict = {'cora': 3946, 'citeseer': 2239}
     seed = seed_dict[args['dataset']]
-    rewind_weight = None
-    for p in range(10):
+
+    percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(10)]
+
+    for p, (adj_percent, wei_percent) in enumerate(percent_list):
         
-        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
+        rewind_weight = None
+        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight, adj_percent, wei_percent)
         
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
@@ -183,5 +178,5 @@ if __name__ == "__main__":
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)
         print("=" * 120)
         print("syd : Sparsity:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(p + 1, best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
+            .format(p + 1,  best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
         print("=" * 120)
