@@ -6,7 +6,7 @@ from scipy.sparse.linalg.eigen.arpack import eigsh
 import sys
 
 import torch
-import metis
+# import metis
 
 
 def parse_index_file(filename):
@@ -211,16 +211,16 @@ def load_adj_raw(dataset_str):
     return adj_raw
 
 
-def partition(adj_raw, n):
+# def partition(adj_raw, n):
 
-    node_num = adj_raw.shape[0]
-    adj_list = [[] for _ in range(node_num)]
-    for i, j in zip(adj_raw.row, adj_raw.col):
-        if i == j:
-            continue
-        adj_list[i].append(j)
+#     node_num = adj_raw.shape[0]
+#     adj_list = [[] for _ in range(node_num)]
+#     for i, j in zip(adj_raw.row, adj_raw.col):
+#         if i == j:
+#             continue
+#         adj_list[i].append(j)
 
-    _, ss_labels =  metis.part_graph(adj_list, nparts=n, seed=0)
-    ss_labels = torch.tensor(ss_labels, dtype=torch.int64)
+#     _, ss_labels =  metis.part_graph(adj_list, nparts=n, seed=0)
+#     ss_labels = torch.tensor(ss_labels, dtype=torch.int64)
 
-    return ss_labels
+#     return ss_labels

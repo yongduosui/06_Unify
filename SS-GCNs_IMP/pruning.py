@@ -268,6 +268,7 @@ def soft_mask_init(model, init_type):
     if init_type == 'all_one':
         add_trainable_mask_noise(model)
     elif init_type == 'kaiming':
+        
         init.kaiming_uniform_(model.adj_mask1_train, a=math.sqrt(5))
         model.adj_mask1_train.requires_grad = False
         model.adj_mask1_train.mul_(model.adj_mask1_train)

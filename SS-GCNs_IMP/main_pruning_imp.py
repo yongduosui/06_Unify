@@ -99,7 +99,7 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
             pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'])
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     else:
-        
+        pdb.set_trace()
         pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'])
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     for p in range(10):
         
         final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
-        pdb.set_trace()
+        
         # rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
         # rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
