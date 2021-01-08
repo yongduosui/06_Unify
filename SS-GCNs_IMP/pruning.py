@@ -220,12 +220,12 @@ def print_sparsity(model):
     adj_mask_nonzero = model.adj_mask2_fixed.sum().item()
     adj_spar = adj_mask_nonzero * 100 / adj_nonzero
 
-    weight1_total = model.net_layer[0].weight_mask_train.numel()
-    weight2_total = model.net_layer[1].weight_mask_train.numel()
+    weight1_total = model.net_layer[0].weight_mask_fixed.numel()
+    weight2_total = model.net_layer[1].weight_mask_fixed.numel()
     weight_total = weight1_total + weight2_total
 
-    weight1_nonzero = model.net_layer[0].weight_mask_train.sum().item()
-    weight2_nonzero = model.net_layer[1].weight_mask_train.sum().item()
+    weight1_nonzero = model.net_layer[0].weight_mask_fixed.sum().item()
+    weight2_nonzero = model.net_layer[1].weight_mask_fixed.sum().item()
     weight_nonzero = weight1_nonzero + weight2_nonzero
 
     wei_spar = weight_nonzero * 100 / weight_total
@@ -269,6 +269,9 @@ def soft_mask_init(model, init_type):
         add_trainable_mask_noise(model)
     elif init_type == 'kaiming':
         init.kaiming_uniform_(model.adj_mask1_train, a=math.sqrt(5))
+        model.adj_mask1_train.requires_grad = False
+        model.adj_mask1_train.mul_(model.adj_mask1_train)
+        model.adj_mask1_train.requires_grad = True
         init.kaiming_uniform_(model.net_layer[0].weight_mask_train, a=math.sqrt(5))
         init.kaiming_uniform_(model.net_layer[1].weight_mask_train, a=math.sqrt(5))
     elif init_type == 'normal':
