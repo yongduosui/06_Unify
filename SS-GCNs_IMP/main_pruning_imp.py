@@ -66,7 +66,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch'], adj_spar, wei_spar
 
 
-def run_get_mask(args, seed, rewind_weight_mask=None):
+def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -93,14 +93,15 @@ def run_get_mask(args, seed, rewind_weight_mask=None):
         ori_state_dict.update(encoder_weight)
         net_gcn.net_layer[0].load_state_dict(ori_state_dict)
 
+    
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
-        if not args['rewind_soft_mask']:
-            pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'])
+        if not args['rewind_soft_mask'] or args['init_soft_mask_type'] == 'all_one':
+            pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed + imp_num)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
+
     else:
-        pdb.set_trace()
-        pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'])
+        pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -160,24 +161,22 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    # seed_time = 30
-    # rand_seed_list = np.random.randint(100, 500, seed_time)
-    # for seed in rand_seed_list:
-    # seed_dict = {'cora': 307, 'citeseer': 118}
     ####################81.9 ##############72.1######################
     # seed_dict = {'cora': 3946, 'citeseer': 2239} # DIM: 16
     seed_dict = {'cora': 2377, 'citeseer': 4428} # DIM: 512, cora: 2829: 81.9, 2377: 81.1    | cite 4417: 72.1,  4428: 71.3
     seed = seed_dict[args['dataset']]
     rewind_weight = None
-    for p in range(10):
-        
-        final_mask_dict, rewind_weight = run_get_mask(args, seed, rewind_weight)
-        
-        # rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
+    for p in range(20):
+
+        final_mask_dict, rewind_weight = run_get_mask(args, seed, p, rewind_weight)
+        # rewind_weight['adj_mask1_train'].mul_(final_mask_dict['adj_mask'].to(rewind_weight['adj_mask1_train'].device))
+        rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']
-        # rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
+        # rewind_weight['net_layer.0.weight_mask_train'].mul_(final_mask_dict['weight1_mask'].to(rewind_weight['net_layer.0.weight_mask_train'].device))
+        rewind_weight['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
         rewind_weight['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
-        # rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
+        # rewind_weight['net_layer.1.weight_mask_train'].mul_(final_mask_dict['weight2_mask'].to(rewind_weight['net_layer.1.weight_mask_train'].device))
+        rewind_weight['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
         rewind_weight['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
 
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, rewind_weight)

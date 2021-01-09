@@ -214,6 +214,51 @@ def get_final_mask_epoch(model, adj_percent, wei_percent):
     return mask_dict
 
 
+##### random pruning #######
+def random_pruning(model, adj_percent, wei_percent):
+
+    model.adj_mask1_train.requires_grad = False
+    model.net_layer[0].weight_mask_train.requires_grad = False
+    model.net_layer[1].weight_mask_train.requires_grad = False
+
+    adj_nonzero = model.adj_mask1_train.nonzero()
+    wei1_nonzero = model.net_layer[0].weight_mask_train.nonzero()
+    wei2_nonzero = model.net_layer[1].weight_mask_train.nonzero()
+
+    adj_total = adj_nonzero.shape[0]
+    wei1_total = wei1_nonzero.shape[0]
+    wei2_total = wei2_nonzero.shape[0]
+
+    adj_pruned_num = int(adj_total * adj_percent)
+    wei1_pruned_num = int(wei1_total * wei_percent)
+    wei2_pruned_num = int(wei2_total * wei_percent)
+
+    adj_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
+    wei1_index = random.sample([i for i in range(wei1_total)], wei1_pruned_num)
+    wei2_index = random.sample([i for i in range(wei2_total)], wei2_pruned_num)
+
+    adj_pruned = adj_nonzero[adj_index].tolist()
+    wei1_pruned = wei1_nonzero[wei1_index].tolist()
+    wei2_pruned = wei2_nonzero[wei2_index].tolist()
+
+    for i, j in adj_pruned:
+        model.adj_mask1_train[i][j] = 0
+    
+    for i, j in wei1_pruned:
+        model.net_layer[0].weight_mask_train[i][j] = 0
+    
+    for i, j in wei2_pruned:
+        model.net_layer[1].weight_mask_train[i][j] = 0
+    
+    model.adj_mask2_fixed = model.adj_mask1_train
+    model.net_layer[0].weight_mask_fixed = model.net_layer[0].weight_mask_train
+    model.net_layer[1].weight_mask_fixed = model.net_layer[1].weight_mask_train
+
+    model.adj_mask1_train.requires_grad = True
+    model.net_layer[0].weight_mask_train.requires_grad = True
+    model.net_layer[1].weight_mask_train.requires_grad = True
+
+    
 def print_sparsity(model):
 
     adj_nonzero = model.adj_nonzero
@@ -263,27 +308,69 @@ def add_trainable_mask_noise(model):
     model.net_layer[1].weight_mask_train.requires_grad = True
 
     
-def soft_mask_init(model, init_type):
+def soft_mask_init(model, init_type, seed):
 
+    setup_seed(seed)
     if init_type == 'all_one':
         add_trainable_mask_noise(model)
     elif init_type == 'kaiming':
         
         init.kaiming_uniform_(model.adj_mask1_train, a=math.sqrt(5))
+        # init.constant_(model.adj_mask1_train, 1.0)
         model.adj_mask1_train.requires_grad = False
-        model.adj_mask1_train.mul_(model.adj_mask1_train)
+        model.adj_mask1_train.mul_(model.adj_mask2_fixed)
         model.adj_mask1_train.requires_grad = True
         init.kaiming_uniform_(model.net_layer[0].weight_mask_train, a=math.sqrt(5))
+
+        model.net_layer[0].weight_mask_train.requires_grad = False
+        model.net_layer[0].weight_mask_train.mul_(model.net_layer[0].weight_mask_fixed)
+        model.net_layer[0].weight_mask_train.requires_grad = True
+
         init.kaiming_uniform_(model.net_layer[1].weight_mask_train, a=math.sqrt(5))
+
+        model.net_layer[1].weight_mask_train.requires_grad = False
+        model.net_layer[1].weight_mask_train.mul_(model.net_layer[1].weight_mask_fixed)
+        model.net_layer[1].weight_mask_train.requires_grad = True
+
+
     elif init_type == 'normal':
-        init.normal_(model.adj_mask1_train, mean=0.0, std=1.0)
-        init.normal_(model.net_layer[0].weight_mask_train, mean=0.0, std=1.0)
-        init.normal_(model.net_layer[1].weight_mask_train, mean=0.0, std=1.0)
+        mean = 1.0
+        std = 0.1
+        init.normal_(model.adj_mask1_train, mean=mean, std=std)
+        model.adj_mask1_train.requires_grad = False
+        model.adj_mask1_train.mul_(model.adj_mask2_fixed)
+        model.adj_mask1_train.requires_grad = True
+        init.normal_(model.net_layer[0].weight_mask_train, mean=mean, std=std)
+
+        model.net_layer[0].weight_mask_train.requires_grad = False
+        model.net_layer[0].weight_mask_train.mul_(model.net_layer[0].weight_mask_fixed)
+        model.net_layer[0].weight_mask_train.requires_grad = True
+
+        init.normal_(model.net_layer[1].weight_mask_train, mean=mean, std=std)
+
+        model.net_layer[1].weight_mask_train.requires_grad = False
+        model.net_layer[1].weight_mask_train.mul_(model.net_layer[1].weight_mask_fixed)
+        model.net_layer[1].weight_mask_train.requires_grad = True
 
     elif init_type == 'uniform':
-        init.uniform_(model.adj_mask1_train, a=0.0, b=1.0)
-        init.uniform_(model.net_layer[0].weight_mask_train, a=0.0, b=1.0)
-        init.uniform_(model.net_layer[1].weight_mask_train, a=0.0, b=1.0)
+        a = 0.8
+        b = 1.2
+        init.uniform_(model.adj_mask1_train, a=a, b=b)
+        model.adj_mask1_train.requires_grad = False
+        model.adj_mask1_train.mul_(model.adj_mask2_fixed)
+        model.adj_mask1_train.requires_grad = True
+        init.uniform_(model.net_layer[0].weight_mask_train, a=a, b=b)
+
+        model.net_layer[0].weight_mask_train.requires_grad = False
+        model.net_layer[0].weight_mask_train.mul_(model.net_layer[0].weight_mask_fixed)
+        model.net_layer[0].weight_mask_train.requires_grad = True
+
+        init.uniform_(model.net_layer[1].weight_mask_train, a=a, b=b)
+
+        model.net_layer[1].weight_mask_train.requires_grad = False
+        model.net_layer[1].weight_mask_train.mul_(model.net_layer[1].weight_mask_fixed)
+        model.net_layer[1].weight_mask_train.requires_grad = True
+
     else:
         assert False
 

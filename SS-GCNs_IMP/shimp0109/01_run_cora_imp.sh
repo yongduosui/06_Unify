@@ -1,10 +1,8 @@
 GPU=$1
 DIM=512
-# INIT=kaiming
-# INIT=normal
 INIT=all_one
 ADJ=0.05
-WEI=0.1
+WEI=0.2
 S1=1e-6
 S2=5e-5
 EPOCH=500
