@@ -2,8 +2,8 @@ GPU=$1
 DIM=512
 s1=1e-5
 s2=5e-4
-adj=0.1
-wei=0.1
+adj=0.05
+wei=0.2
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning_omp_find.py \
 --dataset pubmed \
