@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # seed_time = 30
     # rand_seed_list = np.random.randint(100, 500, seed_time)
     # for seed in rand_seed_list:
-    seed_dict = {'cora': 3946, 'citeseer': 2239}
+    seed_dict = {'cora': 3946, 'citeseer': 2239, 'pubmed': 3333}
     seed = seed_dict[args['dataset']]
 
     percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(20)]
