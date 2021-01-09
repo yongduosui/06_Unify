@@ -10,8 +10,8 @@ echo syd ------------------------------------------------------
 echo syd s1: $s1 s2: $s2 adj: ${ADJ} wei: ${WEI} init: ${INIT}
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning_imp.py \
---dataset citeseer \
---embedding-dim 3703 ${DIM} 6 \
+--dataset pubmed \
+--embedding-dim 500 ${DIM} 6 \
 --lr 0.01 \
 --weight-decay 5e-4 \
 --pruning_percent_wei ${WEI} \
