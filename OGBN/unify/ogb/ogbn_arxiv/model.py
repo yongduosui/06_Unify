@@ -5,6 +5,7 @@ from gcn_lib.sparse.torch_nn import norm_layer
 import torch.nn.functional as F
 from torch.utils.checkpoint import checkpoint
 import logging
+import pdb
 
 
 class DeeperGCN(torch.nn.Module):
@@ -78,7 +79,8 @@ class DeeperGCN(torch.nn.Module):
             self.norms.append(norm_layer(norm, hidden_channels))
 
     def forward(self,  x, edge_index):
-
+        
+        pdb.set_trace()
         h = self.node_features_encoder(x)
 
         if self.block == 'res+':
