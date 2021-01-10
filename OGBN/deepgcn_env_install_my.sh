@@ -1,7 +1,7 @@
 conda create -n deepgcn python=3.7
 source activate deepgcn
 # make sure pytorch version >=1.4.0
-conda install -y pytorch=1.4.0 torchvision cudatoolkit=10.0 python=3.7 -c pytorch
+conda install -y pytorch=1.4.0 torchvision cudatoolkit=10.1 python=3.7 -c pytorch
 pip install torch==1.4.0 torchvision==0.5.0
 pip install tensorboard
 
