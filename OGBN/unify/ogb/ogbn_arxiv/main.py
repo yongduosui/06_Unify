@@ -8,6 +8,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from model import DeeperGCN
 from utils.ckpt_util import save_ckpt
 import logging
+import pruning
 import time
 import pdb
 
@@ -82,7 +83,7 @@ def main():
     logging.info('%s' % args)
 
     model = DeeperGCN(args).to(device)
-    
+    pdb.set_trace()
     logging.info(model)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -120,8 +121,6 @@ def main():
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}]'
               .format(epoch, args.epochs, epoch_loss, train_accuracy * 100, valid_accuracy * 100, test_accuracy * 100, results['final_test'] * 100))
-
-    #logging.info("%s" % results)
 
     end_time = time.time()
     total_time = end_time - start_time

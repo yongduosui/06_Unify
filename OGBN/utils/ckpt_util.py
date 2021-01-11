@@ -21,7 +21,7 @@ def save_ckpt(model, optimizer, loss, epoch, save_path, name_pre, name_post='bes
 
     filename = '{}/{}_{}.pth'.format(save_path, name_pre, name_post)
     torch.save(state, filename)
-    print('model has been saved as {}'.format(filename))
+    #print('model has been saved as {}'.format(filename))
 
 
 def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax means max best
