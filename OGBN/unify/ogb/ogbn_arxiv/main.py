@@ -11,6 +11,8 @@ import logging
 import pruning
 import time
 import pdb
+import warnings
+warnings.filterwarnings('ignore')
 
 @torch.no_grad()
 def test(model, x, edge_index, y_true, split_idx, evaluator):

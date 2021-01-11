@@ -2,6 +2,18 @@ GPU=$1
 EXP=debug_all_fixed
 S1=1e-4
 S2=1e-4
+# CUDA_VISIBLE_DEVICES=${GPU} \
+# python -u main.py \
+# --use_gpu \
+# --self_loop \
+# --num_layers 28 \
+# --block res+ \
+# --gcn_aggr softmax_sg \
+# --t 0.1 \
+# --save ${EXP} \
+# --s1 ${S1} \
+# --s2 ${S2} \
+# --baseline
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main.py \
 --use_gpu \
@@ -12,5 +24,4 @@ python -u main.py \
 --t 0.1 \
 --save ${EXP} \
 --s1 ${S1} \
---s2 ${S2} \
---baseline
+--s2 ${S2}
