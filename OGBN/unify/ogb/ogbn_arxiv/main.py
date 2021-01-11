@@ -36,17 +36,14 @@ def test(model, x, edge_index, y_true, split_idx, evaluator):
 
 
 def train(model, x, edge_index, y_true, train_idx, optimizer):
+
     model.train()
-
     optimizer.zero_grad()
-
     pred = model(x, edge_index)[train_idx]
-
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
     loss.backward()
-    
+    pruning.subgradient_update_mask(model, args) # l1 norm
     optimizer.step()
-
     return loss.item()
 
 
@@ -84,6 +81,8 @@ def main():
 
     model = DeeperGCN(args).to(device)
     pdb.set_trace()
+    pruning.add_mask(model)
+
     logging.info(model)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)

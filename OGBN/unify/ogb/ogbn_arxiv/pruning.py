@@ -65,39 +65,19 @@ class AddTrainableMask(ABC):
         return method
 
 
-def add_mask(model, init_mask_dict=None):
+def add_mask(model):
 
-    if init_mask_dict is None:
-        
-        mask1_train = nn.Parameter(torch.ones_like(model.net_layer[0].weight))
-        mask1_fixed = nn.Parameter(torch.ones_like(model.net_layer[0].weight), requires_grad=False)
-        mask2_train = nn.Parameter(torch.ones_like(model.net_layer[1].weight))
-        mask2_fixed = nn.Parameter(torch.ones_like(model.net_layer[1].weight), requires_grad=False)
-        
-    else:
-        mask1_train = nn.Parameter(init_mask_dict['mask1_train'])
-        mask1_fixed = nn.Parameter(init_mask_dict['mask1_fixed'], requires_grad=False)
-        mask2_train = nn.Parameter(init_mask_dict['mask2_train'])
-        mask2_fixed = nn.Parameter(init_mask_dict['mask2_fixed'], requires_grad=False)
-
-    AddTrainableMask.apply(model.net_layer[0], 'weight', mask1_train, mask1_fixed)
-    AddTrainableMask.apply(model.net_layer[1], 'weight', mask2_train, mask2_fixed)
- 
-        
-def generate_mask(model):
-
-    mask_dict = {}
-    mask_dict['mask1'] = torch.zeros_like(model.net_layer[0].weight)
-    mask_dict['mask2'] = torch.zeros_like(model.net_layer[1].weight)
-
-    return mask_dict
+    for i in range(28):
+        mask_train = nn.Parameter(torch.ones_like(model.gcns[i].mlp[0].weight))
+        mask_fixed = nn.Parameter(torch.ones_like(model.gcns[i].mlp[0].weight), requires_grad=False)
+        AddTrainableMask.apply(model.gcns[i].mlp[0], 'weight', mask_train, mask_fixed)
 
 
 def subgradient_update_mask(model, args):
 
-    model.adj_mask1_train.grad.data.add_(args['s1'] * torch.sign(model.adj_mask1_train.data))
-    model.net_layer[0].weight_mask_train.grad.data.add_(args['s2'] * torch.sign(model.net_layer[0].weight_mask_train.data))
-    model.net_layer[1].weight_mask_train.grad.data.add_(args['s2'] * torch.sign(model.net_layer[1].weight_mask_train.data))
+    model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
+    for i in range(28):
+        model.gcns[i].mlp[0].weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.gcns[i].mlp[0].weight_mask_train.data))
 
 
 def get_mask_distribution(model, if_numpy=True):

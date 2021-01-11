@@ -12,6 +12,11 @@ import glob
 class ArgsInit(object):
     def __init__(self):
         parser = argparse.ArgumentParser(description='DeeperGCN')
+
+        ### s1 s2
+        parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
+        parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
+
         # dataset
         parser.add_argument('--dataset', type=str, default='ogbn-arxiv',
                             help='dataset name (default: ogbn-arxiv)')
