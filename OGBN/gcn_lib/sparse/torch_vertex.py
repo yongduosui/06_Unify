@@ -60,11 +60,17 @@ class GENConv(GenMessagePassing):
             else:
                 self.edge_encoder = torch.nn.Linear(edge_feat_dim, in_dim)
 
-        
+        self.edge_mask1_train = None
+        self.edge_mask1_train = None 
+
     def forward(self, x, edge_mask1_train, edge_mask2_fixed, edge_index, edge_attr=None):
         x = x
-        self.edge_mask1_train = edge_mask1_train
-        self.edge_mask2_fixed = edge_mask2_fixed
+        if self.edge_mask1_train == None:
+            self.edge_mask1_train = edge_mask1_train
+            self.edge_mask2_fixed = edge_mask2_fixed
+        else:
+            self.edge_mask1_train.data = edge_mask1_train
+            self.edge_mask2_fixed.data = edge_mask2_fixed
 
         if self.encode_edge and edge_attr is not None:
             edge_emb = self.edge_encoder(edge_attr)
