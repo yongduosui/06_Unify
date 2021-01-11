@@ -41,6 +41,7 @@ def train(model, x, edge_index, y_true, train_idx, optimizer):
     optimizer.zero_grad()
     pred = model(x, edge_index)[train_idx]
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
+    pdb.set_trace()
     loss.backward()
     pruning.subgradient_update_mask(model, args) # l1 norm
     optimizer.step()
@@ -80,7 +81,7 @@ def main():
     logging.info('%s' % args)
 
     model = DeeperGCN(args).to(device)
-    pdb.set_trace()
+    
     pruning.add_mask(model)
 
     logging.info(model)
