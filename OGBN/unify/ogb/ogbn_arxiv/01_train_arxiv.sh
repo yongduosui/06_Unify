@@ -1,4 +1,5 @@
 GPU=$1
+EXP=debug_ckpt
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main.py \
 --use_gpu \
@@ -6,4 +7,5 @@ python -u main.py \
 --num_layers 28 \
 --block res+ \
 --gcn_aggr softmax_sg \
---t 0.1
+--t 0.1 \
+--save debug_ckpt
