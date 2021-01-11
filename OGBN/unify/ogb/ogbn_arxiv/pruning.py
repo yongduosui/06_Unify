@@ -91,7 +91,7 @@ def get_soft_mask_distribution(model):
         weight_mask = model.gcns[i].mlp[0].weight_mask_train.flatten()
         nonzero = torch.abs(weight_mask) > 0
         weight_mask = weight_mask[nonzero]
-        weight_mask_vector.cat(weight_mask_vector, weight_mask)
+        weight_mask_vector = torch.cat(weight_mask_vector, weight_mask)
     
     return adj_mask_vector.detach().cpu(), weight_mask_vector.detach().cpu()
 
