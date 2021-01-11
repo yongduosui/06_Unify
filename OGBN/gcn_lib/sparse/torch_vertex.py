@@ -61,7 +61,7 @@ class GENConv(GenMessagePassing):
                 self.edge_encoder = torch.nn.Linear(edge_feat_dim, in_dim)
 
         
-        self.egde_mask1_train = nn.Parameter(torch.ones(edge_num, 1), requires_grad=True)
+        self.edge_mask1_train = nn.Parameter(torch.ones(edge_num, 1), requires_grad=True)
         self.edge_mask2_fixed = nn.Parameter(torch.ones(edge_num, 1), requires_grad=False)
 
     def forward(self, x, edge_index, edge_attr=None):
@@ -110,7 +110,7 @@ class GENConv(GenMessagePassing):
                     out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
 
             pdb.set_trace()
-            inputs = inputs * self.egde_mask1_train * self.edge_mask2_fixed
+            inputs = inputs * self.edge_mask1_train * self.edge_mask2_fixed
 
             out = scatter(inputs*out, index, dim=self.node_dim,
                           dim_size=dim_size, reduce='sum')
