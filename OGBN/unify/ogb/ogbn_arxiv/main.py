@@ -35,7 +35,7 @@ def test(model, x, edge_index, y_true, split_idx, evaluator):
     return train_acc, valid_acc, test_acc
 
 
-def train(model, x, edge_index, y_true, train_idx, optimizer):
+def train(model, x, edge_index, y_true, train_idx, optimizer, args):
 
     model.train()
     optimizer.zero_grad()
@@ -81,7 +81,6 @@ def main():
     logging.info('%s' % args)
 
     model = DeeperGCN(args).to(device)
-    
     pruning.add_mask(model)
 
     logging.info(model)
@@ -97,7 +96,7 @@ def main():
 
     for epoch in range(1, args.epochs + 1):
 
-        epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer)
+        epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
         logging.info('Epoch {}, training loss {:.4f}'.format(epoch, epoch_loss))
         model.print_params(epoch=epoch)
 
