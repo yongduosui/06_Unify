@@ -118,8 +118,8 @@ def main():
                       sub_dir, name_post='valid_best')
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
-              'Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.6f}] Valid:[{:.6f}] Test:[{:.6f}] | Update Test:[{:.6f}]'
-              .format(epoch, args.epochs, epoch_loss, train_accuracy, valid_accuracy, test_accuracy, results['final_test']))
+              'Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}]'
+              .format(epoch, args.epochs, epoch_loss, train_accuracy * 100, valid_accuracy * 100, test_accuracy * 100, results['final_test'] * 100))
 
     #logging.info("%s" % results)
 
