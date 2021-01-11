@@ -132,6 +132,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
 if __name__ == "__main__":
     args = ArgsInit().save_exp()
     rewind_weight = None
-    for p in range(20):
+    for imp_num in range(20):
 
         final_mask_dict, rewind_weight = main_get_mask(args, imp_num, rewind_weight)
