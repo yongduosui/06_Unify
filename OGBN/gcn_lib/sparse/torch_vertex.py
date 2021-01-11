@@ -108,9 +108,9 @@ class GENConv(GenMessagePassing):
             else:
                 with torch.no_grad():
                     out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
-                    
+
             pdb.set_trace()
-            out = out * self.egde_mask1_train * self.edge_mask2_fixed
+            inputs = inputs * self.egde_mask1_train * self.edge_mask2_fixed
 
             out = scatter(inputs*out, index, dim=self.node_dim,
                           dim_size=dim_size, reduce='sum')
