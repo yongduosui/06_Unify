@@ -7,6 +7,8 @@ from .torch_edge import DilatedKnnGraph
 from .torch_message import GenMessagePassing, MsgNorm
 from torch_geometric.utils import remove_self_loops, add_self_loops
 import pdb
+from torch_scatter import scatter, scatter_softmax
+from torch_geometric.utils import degree
 
 class GENConv(GenMessagePassing):
     """
@@ -65,7 +67,7 @@ class GENConv(GenMessagePassing):
             edge_emb = self.edge_encoder(edge_attr)
         else:
             edge_emb = edge_attr
-            
+
         pdb.set_trace()
         m = self.propagate(edge_index, x=x, edge_attr=edge_emb)
 
@@ -88,6 +90,49 @@ class GENConv(GenMessagePassing):
 
     def update(self, aggr_out):
         return aggr_out
+
+
+    def aggregate(self, inputs, index, ptr=None, dim_size=None):
+
+        if self.aggr in ['add', 'mean', 'max', None]:
+            return super(GENConv, self).aggregate(inputs, index, ptr, dim_size)
+
+        elif self.aggr in ['softmax_sg', 'softmax', 'softmax_sum']:
+
+            if self.learn_t:
+                out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
+            else:
+                with torch.no_grad():
+                    out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
+
+            out = scatter(inputs*out, index, dim=self.node_dim,
+                          dim_size=dim_size, reduce='sum')
+
+            if self.aggr == 'softmax_sum':
+                self.sigmoid_y = torch.sigmoid(self.y)
+                degrees = degree(index, num_nodes=dim_size).unsqueeze(1)
+                out = torch.pow(degrees, self.sigmoid_y) * out
+
+            return out
+
+
+        elif self.aggr in ['power', 'power_sum']:
+            min_value, max_value = 1e-7, 1e1
+            torch.clamp_(inputs, min_value, max_value)
+            out = scatter(torch.pow(inputs, self.p), index, dim=self.node_dim,
+                          dim_size=dim_size, reduce='mean')
+            torch.clamp_(out, min_value, max_value)
+            out = torch.pow(out, 1/self.p)
+
+            if self.aggr == 'power_sum':
+                self.sigmoid_y = torch.sigmoid(self.y)
+                degrees = degree(index, num_nodes=dim_size).unsqueeze(1)
+                out = torch.pow(degrees, self.sigmoid_y) * out
+
+            return out
+
+        else:
+            raise NotImplementedError('To be implemented')
 
 
 class MRConv(nn.Module):
