@@ -112,14 +112,13 @@ def main():
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
 
-            save_ckpt(model, optimizer,
-                      round(epoch_loss, 4), epoch,
-                      args.model_save_path,
-                      sub_dir, name_post='valid_best')
+            save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='valid_best')
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}]'
               .format(epoch, args.epochs, epoch_loss, train_accuracy * 100, valid_accuracy * 100, test_accuracy * 100, results['final_test'] * 100))
+
+    save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='last_epoch')
 
     end_time = time.time()
     total_time = end_time - start_time
