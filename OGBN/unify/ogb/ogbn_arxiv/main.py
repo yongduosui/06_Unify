@@ -9,7 +9,7 @@ from model import DeeperGCN
 from utils.ckpt_util import save_ckpt
 import logging
 import time
-
+import pdb
 
 @torch.no_grad()
 def test(model, x, edge_index, y_true, split_idx, evaluator):
