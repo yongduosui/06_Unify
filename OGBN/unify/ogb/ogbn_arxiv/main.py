@@ -126,7 +126,10 @@ def main():
     end_time = time.time()
     total_time = end_time - start_time
     logging.info('Total time: {}'.format(time.strftime('%H:%M:%S', time.gmtime(total_time))))
-
+    print('-' * 100)
+    print("syd : Final Result Train:[{:.2f}]  Valid:[{:.2f}]  Test:[{:.2f}]"
+        .format(results['final_train'] * 100, results['highest_valid'] * 100, results['final_test'] * 100))
+    print('-' * 100)
 
 if __name__ == "__main__":
     main()
