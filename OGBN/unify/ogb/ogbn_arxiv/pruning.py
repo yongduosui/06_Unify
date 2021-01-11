@@ -86,7 +86,7 @@ def get_soft_mask_distribution(model):
     nonzero = torch.abs(adj_mask_vector) > 0
     adj_mask_vector = adj_mask_vector[nonzero] # 13264
 
-    weight_mask_vector = torch.tensor([])
+    weight_mask_vector = torch.tensor([]).to(torch.device("cuda:0"))
     for i in range(28):
         weight_mask = model.gcns[i].mlp[0].weight_mask_train.flatten()
         nonzero = torch.abs(weight_mask) > 0
