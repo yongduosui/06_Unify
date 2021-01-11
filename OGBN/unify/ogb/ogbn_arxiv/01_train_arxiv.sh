@@ -11,5 +11,5 @@ python -u main.py \
 --gcn_aggr softmax_sg \
 --t 0.1 \
 --save ${EXP} \
---s1 ${s1} \
---s2 ${s2}
+--s1 ${S1} \
+--s2 ${S2}
