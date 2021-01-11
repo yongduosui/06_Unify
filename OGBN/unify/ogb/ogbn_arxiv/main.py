@@ -86,7 +86,7 @@ def main():
         if 'mask' in name:
             if args.baseline:
                 param.requires_grad = False
-            print("NAME:[{}}\tSHAPE:[{}]\tGRAD:[{}}".format(name, param.shape, param.requires_grad))
+            print("NAME:[{}]\tSHAPE:[{}]\tGRAD:[{}]".format(name, param.shape, param.requires_grad))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
