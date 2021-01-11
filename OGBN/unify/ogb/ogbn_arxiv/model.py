@@ -1,5 +1,6 @@
 import __init__
 import torch
+from torch import nn
 from gcn_lib.sparse.torch_vertex import GENConv
 from gcn_lib.sparse.torch_nn import norm_layer
 import torch.nn.functional as F
