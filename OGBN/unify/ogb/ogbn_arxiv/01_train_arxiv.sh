@@ -1,5 +1,7 @@
 GPU=$1
 EXP=debug_ckpt
+S1=1e-4
+S2=1e-4
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main.py \
 --use_gpu \
@@ -8,4 +10,6 @@ python -u main.py \
 --block res+ \
 --gcn_aggr softmax_sg \
 --t 0.1 \
---save debug_ckpt
+--save ${EXP} \
+--s1 ${s1} \
+--s2 ${s2}
