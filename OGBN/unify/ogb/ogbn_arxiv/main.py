@@ -43,6 +43,7 @@ def train(model, x, edge_index, y_true, train_idx, optimizer):
 
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
     loss.backward()
+    pdb.set_trace()
     optimizer.step()
 
     return loss.item()

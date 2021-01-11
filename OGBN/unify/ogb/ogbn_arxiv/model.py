@@ -99,7 +99,7 @@ class DeeperGCN(torch.nn.Module):
                     h1 = self.norms[layer - 1](h)
                     h2 = F.relu(h1)
                     h2 = F.dropout(h2, p=self.dropout, training=self.training)
-                    print("layer{}".format(layer))
+                    
                     if layer % self.ckp_k != 0:
                         res = checkpoint(self.gcns[layer], h2, self.edge_mask1_train, self.edge_mask2_fixed, edge_index)
                         h = res + h
