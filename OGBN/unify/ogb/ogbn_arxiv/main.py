@@ -42,7 +42,9 @@ def train(model, x, edge_index, y_true, train_idx, optimizer, args):
     pred = model(x, edge_index)[train_idx]
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
     loss.backward()
-    pruning.subgradient_update_mask(model, args) # l1 norm
+    if not args.baseline:
+        pruning.subgradient_update_mask(model, args) # l1 norm
+
     optimizer.step()
     return loss.item()
 
@@ -77,22 +79,19 @@ def main():
     args.in_channels = data.x.size(-1)
     args.num_tasks = dataset.num_classes
 
-    logging.info('%s' % args)
-
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
 
-    logging.info(model)
+    for name, param in model.named_parameters():
+        if 'mask' in name:
+            if args.baseline:
+                param.requires_grad = False
+            print("NAME:[{}}\tSHAPE:[{}]\tGRAD:[{}}".format(name, param.shape, param.requires_grad))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
-    results = {'highest_valid': 0,
-               'final_train': 0,
-               'final_test': 0,
-               'highest_train': 0}
-
+    results = {'highest_valid': 0, 'final_train': 0, 'final_test': 0, 'highest_train': 0}
     start_time = time.time()
-
     for epoch in range(1, args.epochs + 1):
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)

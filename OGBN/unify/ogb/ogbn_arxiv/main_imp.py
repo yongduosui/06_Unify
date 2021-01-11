@@ -83,8 +83,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     print("-" * 120)
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
-    pdb.set_trace()
-    adj, wei = pruning.get_soft_mask_distribution(model)
 
     if rewind_weight_mask:
         model.load_state_dict(rewind_weight_mask)

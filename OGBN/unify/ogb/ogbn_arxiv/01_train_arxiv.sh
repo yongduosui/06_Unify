@@ -1,5 +1,5 @@
 GPU=$1
-EXP=debug_ckpt
+EXP=debug_all_fixed
 S1=1e-4
 S2=1e-4
 CUDA_VISIBLE_DEVICES=${GPU} \
@@ -12,4 +12,5 @@ python -u main.py \
 --t 0.1 \
 --save ${EXP} \
 --s1 ${S1} \
---s2 ${S2}
+--s2 ${S2} \
+--baseline

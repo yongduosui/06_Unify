@@ -18,6 +18,8 @@ class ArgsInit(object):
         parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
         parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
         parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
+
+        parser.add_argument('--baseline', action='store_true')
         # dataset
         parser.add_argument('--dataset', type=str, default='ogbn-arxiv',
                             help='dataset name (default: ogbn-arxiv)')
