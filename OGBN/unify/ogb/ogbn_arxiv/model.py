@@ -80,7 +80,7 @@ class DeeperGCN(torch.nn.Module):
 
     def forward(self,  x, edge_index):
         
-        pdb.set_trace()
+        
         h = self.node_features_encoder(x)
 
         if self.block == 'res+':

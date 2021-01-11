@@ -6,7 +6,7 @@ from .torch_nn import MLP, act_layer, norm_layer, BondEncoder
 from .torch_edge import DilatedKnnGraph
 from .torch_message import GenMessagePassing, MsgNorm
 from torch_geometric.utils import remove_self_loops, add_self_loops
-
+import pdb
 
 class GENConv(GenMessagePassing):
     """
@@ -65,7 +65,8 @@ class GENConv(GenMessagePassing):
             edge_emb = self.edge_encoder(edge_attr)
         else:
             edge_emb = edge_attr
-
+            
+        pdb.set_trace()
         m = self.propagate(edge_index, x=x, edge_attr=edge_emb)
 
         if self.msg_norm is not None:
