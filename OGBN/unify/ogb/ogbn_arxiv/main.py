@@ -81,7 +81,7 @@ def main():
     logging.info('%s' % args)
 
     model = DeeperGCN(args).to(device)
-
+    pdb.set_trace()
     logging.info(model)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
