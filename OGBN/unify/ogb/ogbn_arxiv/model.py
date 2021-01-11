@@ -12,6 +12,7 @@ class DeeperGCN(torch.nn.Module):
     def __init__(self, args):
         super(DeeperGCN, self).__init__()
 
+        self.edge_num=2484941
         self.num_layers = args.num_layers
         self.dropout = args.dropout
         self.block = args.block
@@ -62,6 +63,9 @@ class DeeperGCN(torch.nn.Module):
         self.node_features_encoder = torch.nn.Linear(in_channels, hidden_channels)
         self.node_pred_linear = torch.nn.Linear(hidden_channels, num_tasks)
 
+        self.edge_mask1_train = nn.Parameter(torch.ones(edge_num, 1), requires_grad=True)
+        self.edge_mask2_fixed = nn.Parameter(torch.ones(edge_num, 1), requires_grad=False)
+
         for layer in range(self.num_layers):
 
             if conv == 'gen':
@@ -85,7 +89,7 @@ class DeeperGCN(torch.nn.Module):
 
         if self.block == 'res+':
 
-            h = self.gcns[0](h, edge_index)
+            h = self.gcns[0](h, self.edge_mask1_train, self.edge_mask2_fixed, edge_index)
 
             if self.checkpoint_grad:
 
@@ -95,17 +99,17 @@ class DeeperGCN(torch.nn.Module):
                     h2 = F.dropout(h2, p=self.dropout, training=self.training)
 
                     if layer % self.ckp_k != 0:
-                        res = checkpoint(self.gcns[layer], h2, edge_index)
+                        res = checkpoint(self.gcns[layer], h2, self.edge_mask1_train, self.edge_mask2_fixed, edge_index)
                         h = res + h
                     else:
-                        h = self.gcns[layer](h2, edge_index) + h
+                        h = self.gcns[layer](h2, self.edge_mask1_train, self.edge_mask2_fixed, edge_index) + h
 
             else:
                 for layer in range(1, self.num_layers):
                     h1 = self.norms[layer - 1](h)
                     h2 = F.relu(h1)
                     h2 = F.dropout(h2, p=self.dropout, training=self.training)
-                    h = self.gcns[layer](h2, edge_index) + h
+                    h = self.gcns[layer](h2, self.edge_mask1_train, self.edge_mask2_fixed, edge_index) + h
 
             h = F.relu(self.norms[self.num_layers - 1](h))
             h = F.dropout(h, p=self.dropout, training=self.training)
