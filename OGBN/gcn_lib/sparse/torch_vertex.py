@@ -63,6 +63,7 @@ class GENConv(GenMessagePassing):
         
     def forward(self, x, edge_mask1_train, edge_mask2_fixed, edge_index, edge_attr=None):
         x = x
+        pdb.set_trace()
         self.edge_mask1_train = edge_mask1_train
         self.edge_mask2_fixed = edge_mask2_fixed
 
