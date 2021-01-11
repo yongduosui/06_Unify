@@ -43,7 +43,7 @@ def train(model, x, edge_index, y_true, train_idx, optimizer):
 
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
     loss.backward()
-    pdb.set_trace()
+    
     optimizer.step()
 
     return loss.item()
@@ -82,7 +82,7 @@ def main():
     logging.info('%s' % args)
 
     model = DeeperGCN(args).to(device)
-    pdb.set_trace()
+    
     logging.info(model)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -117,7 +117,11 @@ def main():
                       args.model_save_path,
                       sub_dir, name_post='valid_best')
 
-    logging.info("%s" % results)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
+              'Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.6f}] Valid:[{:.6f}] Test:[{:.6f}] | Update Test:[{:.6f}]'
+              .format(epoch, args.epochs, epoch_loss, train_accuracy, valid_accuracy, test_accuracy, results['final_test']))
+
+    #logging.info("%s" % results)
 
     end_time = time.time()
     total_time = end_time - start_time
