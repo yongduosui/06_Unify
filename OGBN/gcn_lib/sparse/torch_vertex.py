@@ -24,7 +24,7 @@ class GENConv(GenMessagePassing):
                  encode_edge=False, bond_encoder=False,
                  edge_feat_dim=None,
                  norm='batch', mlp_layers=2,
-                 eps=1e-7):
+                 eps=1e-7, edge_num=2484941):
 
         super(GENConv, self).__init__(aggr=aggr,
                                       t=t, learn_t=learn_t,
@@ -60,6 +60,10 @@ class GENConv(GenMessagePassing):
             else:
                 self.edge_encoder = torch.nn.Linear(edge_feat_dim, in_dim)
 
+        
+        self.egde_mask1_train = nn.Parameter(torch.ones(edge_num, 1), requires_grad=True)
+        self.edge_mask2_fixed = nn.Parameter(torch.ones(edge_num, 1), requires_grad=False)
+
     def forward(self, x, edge_index, edge_attr=None):
         x = x
 
@@ -68,7 +72,7 @@ class GENConv(GenMessagePassing):
         else:
             edge_emb = edge_attr
 
-        pdb.set_trace()
+        
         m = self.propagate(edge_index, x=x, edge_attr=edge_emb)
 
         if self.msg_norm is not None:
@@ -104,6 +108,9 @@ class GENConv(GenMessagePassing):
             else:
                 with torch.no_grad():
                     out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
+                    
+            pdb.set_trace()
+            out = out * self.egde_mask1_train * self.edge_mask2_fixed
 
             out = scatter(inputs*out, index, dim=self.node_dim,
                           dim_size=dim_size, reduce='sum')
