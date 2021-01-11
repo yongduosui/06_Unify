@@ -83,7 +83,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-
+    ####### use pre-trained weight #######
     if args['weight_dir']:
         print("load : {}".format(args['weight_dir']))
         encoder_weight = {}
@@ -99,7 +99,6 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
         if not args['rewind_soft_mask'] or args['init_soft_mask_type'] == 'all_one':
             pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed + imp_num)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
-
     else:
         pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)
 
