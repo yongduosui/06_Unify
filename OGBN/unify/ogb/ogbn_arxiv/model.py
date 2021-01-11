@@ -64,7 +64,7 @@ class DeeperGCN(torch.nn.Module):
         self.node_features_encoder = torch.nn.Linear(in_channels, hidden_channels)
         self.node_pred_linear = torch.nn.Linear(hidden_channels, num_tasks)
 
-        self.edge_mask1_train = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=True)
+        self.edge_mask1_train = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=False)
         self.edge_mask2_fixed = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=False)
         
 
