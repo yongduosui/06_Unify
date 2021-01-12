@@ -117,7 +117,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
     return results
 
 
-def main_get_mask(args, imp_num, rewind_weight_mask=None):
+def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None):
 
     device = torch.device("cuda:" + str(args.device))
     dataset = PygNodePropPredDataset(name=args.dataset)
@@ -149,9 +149,20 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     pruning.add_trainable_mask_noise(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch':0}
-    rewind_weight_mask = copy.deepcopy(model.state_dict())
+    
 
-    for epoch in range(1, args.epochs + 1):
+    start_epoch = 1
+    if resume_train_ckpt:
+        print("Resume at epoch:[{}] !".format(resume_train_ckpt['epoch']))
+        start_epoch = resume_train_ckpt['epoch']
+        rewind_weight_mask = resume_train_ckpt['rewind_weight']
+        model.load_state_dict(resume_train_ckpt['model_state_dict'])
+        optimizer.load_state_dict(resume_train_ckpt['optimizer_state_dict'])
+        adj_spar, wei_spar = pruning.print_sparsity(model)
+    else:
+        rewind_weight_mask = copy.deepcopy(model.state_dict())
+
+    for epoch in range(start_epoch, args.epochs + 1):
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
         result = test(model, x, edge_index, y_true, split_idx, evaluator)
@@ -164,7 +175,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
             results['epoch'] = epoch
             pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
             pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
-
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'IMP:[{}] (GET Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
@@ -188,10 +198,17 @@ if __name__ == "__main__":
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
 
+    start_imp = 1
     rewind_weight_mask = None
-    for imp_num in range(1, 21):
+    resume_train_ckpt = None
 
-        rewind_weight_mask = main_get_mask(args, imp_num, rewind_weight_mask)
+    if args.resume_dir:
+        resume_train_ckpt = torch.load(args.resume_dir)
+        start_imp = resume_ckpt['imp_num']
+        
+    for imp_num in range(start_imp, 21):
+
+        rewind_weight_mask = main_get_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt)
         results = main_fixed_mask(args, imp_num, rewind_weight_mask)
 
         print("=" * 120)

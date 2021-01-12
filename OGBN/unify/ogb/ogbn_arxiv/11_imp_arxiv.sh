@@ -17,4 +17,5 @@ python -u main_imp.py \
 --s2 ${S2} \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---epochs 5
+--epochs 10 \
+--resume_dir debug_ckpt/model_ckpt/IMP1_train_ckpt.pth

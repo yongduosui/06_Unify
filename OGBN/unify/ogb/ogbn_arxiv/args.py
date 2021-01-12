@@ -19,6 +19,9 @@ class ArgsInit(object):
         parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
         parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
 
+        parser.add_argument('--resume_dir', type=str, default='')
+        
+
         parser.add_argument('--fixed', default='', type=str, help='{all_fixed, only_adj, only_wei, no_fixed}')
 
         # parser.add_argument('--baseline', action='store_true')
