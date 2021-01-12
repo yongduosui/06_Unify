@@ -18,6 +18,11 @@ import math
 # 		# print('temp:', temp.size())
 # 		return torch.sign(w) * nn.functional.relu(temp)
 
+def print_args(args, str_num=80):
+    for arg, val in args.__dict__.items():
+        print(arg + '.' * (str_num - len(arg) - len(str(val))) + str(val))
+    print()
+    
 def setup_seed(seed):
 
     torch.manual_seed(seed)
