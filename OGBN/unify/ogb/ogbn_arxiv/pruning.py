@@ -237,9 +237,11 @@ def random_pruning(model, adj_percent, wei_percent):
     adj_nonzero = model.edge_mask1_train.nonzero()
     adj_pruned_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
     adj_pruned_list = adj_nonzero[adj_pruned_index].tolist()
-
+    
     for i, j in adj_pruned_list:
         model.edge_mask1_train[i][j] = 0
+    
+    model.edge_mask1_fixed = model.edge_mask1_train
     model.edge_mask1_train.requires_grad = True
     
     for i in range(28):
