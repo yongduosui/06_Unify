@@ -16,6 +16,6 @@ python -u main_imp.py \
 --s2 ${S2} \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---epochs 5 \
---model_save_path ${SAVE}
-# --resume_dir debug_ckpt/model_ckpt/IMP1_train_ckpt.pth
+--epochs 10 \
+--model_save_path ${SAVE} \
+--resume_dir CKPTs/debug/IMP2_train_ckpt.pth
