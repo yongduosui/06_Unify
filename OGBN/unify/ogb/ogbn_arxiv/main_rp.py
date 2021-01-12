@@ -146,7 +146,7 @@ if __name__ == "__main__":
         start_imp += 1
 
     for imp_num in range(start_imp, 20):
-        pdb.set_trace()
+        
         adj_percent, wei_percent = percent_list[imp_num]
         main_fixed_mask(args, imp_num, adj_percent, wei_percent)
 
