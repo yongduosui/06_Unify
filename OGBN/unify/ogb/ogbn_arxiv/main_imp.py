@@ -234,7 +234,7 @@ if __name__ == "__main__":
         rewind_weight_mask = resume_train_ckpt['rewind_weight_mask']
 
         if 'fixed_ckpt' in args.resume_dir:
-            main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt)
+            main_fixed_mask(args, start_imp, rewind_weight_mask, resume_train_ckpt)
             start_imp += 1
 
 
