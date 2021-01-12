@@ -85,6 +85,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
     model.load_state_dict(rewind_weight_mask)
+    print("(FIX MASK) Load rewind weight and mask!")
     adj_spar, wei_spar = pruning.print_sparsity(model)
     
     for name, param in model.named_parameters():
@@ -111,7 +112,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
             save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, 'IMP{}_fixed'.format(imp_num), name_post='valid_best')
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
-              'IMP :[{}] (FIX Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
+              'IMP:[{}] (FIX Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
               .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100, 
@@ -147,6 +148,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     pruning.add_mask(model)
 
     if rewind_weight_mask:
+        print("(GEI MASK) Load rewind weight and mask!")
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
     
@@ -167,18 +169,19 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
             results['highest_valid'] = valid_accuracy
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
-
+            results['epoch'] = epoch
             pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
             save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, 'IMP{}_train'.format(imp_num), name_post='valid_best')
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
-              'IMP :[{}] (Get Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}]'
+              'IMP:[{}] (GET Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
               .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100,
-                                                               results['final_test'] * 100))
+                                                               results['final_test'] * 100,
+                                                               results['epoch']))
     print('-' * 100)
-    print("syd : IMP :[{}] (GET MASK) Final Result Train:[{:.2f}]  Valid:[{:.2f}]  Test:[{:.2f}]"
+    print("syd : IMP:[{}] (GET MASK) Final Result Train:[{:.2f}]  Valid:[{:.2f}]  Test:[{:.2f}]"
         .format(imp_num, results['final_train'] * 100,
                          results['highest_valid'] * 100,
                          results['final_test'] * 100))
