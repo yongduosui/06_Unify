@@ -18,4 +18,4 @@ python -u main_imp.py \
 --pruning_percent_adj ${ADJ} \
 --epochs 10 \
 --model_save_path ${SAVE} \
---resume_dir CKPTs/debug/IMP2_train_ckpt.pth
+--resume_dir CKPTs/debug/IMP2_fixed_ckpt.pth

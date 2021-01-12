@@ -235,6 +235,7 @@ if __name__ == "__main__":
 
         if 'fixed_ckpt' in args.resume_dir:
             main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt)
+            start_imp += 1
 
 
     for imp_num in range(start_imp, 21):
