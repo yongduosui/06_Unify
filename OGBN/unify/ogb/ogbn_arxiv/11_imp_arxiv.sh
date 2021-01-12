@@ -3,7 +3,8 @@ WEI=0.2
 ADJ=0.05
 S1=1e-4
 S2=1e-4
-SAVE=debug
+SAVE=IMP
+
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_imp.py \
 --use_gpu \
@@ -16,6 +17,7 @@ python -u main_imp.py \
 --s2 ${S2} \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---epochs 10 \
---model_save_path ${SAVE} \
---resume_dir CKPTs/debug/IMP2_fixed_ckpt.pth
+--epochs 500 \
+--model_save_path ${SAVE}
+
+# --resume_dir CKPTs/debug/IMP2_fixed_ckpt.pth

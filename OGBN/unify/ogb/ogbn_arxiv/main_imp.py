@@ -127,7 +127,6 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt=None):
                                                                test_accuracy * 100, 
                                                                results['final_test'] * 100,
                                                                results['epoch']))
-    
     print("=" * 120)
     print("syd final: IMP:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
         .format(imp_num,    results['final_train'] * 100,
@@ -172,7 +171,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch':0}
     
-
     start_epoch = 1
     if resume_train_ckpt:
         
@@ -215,7 +213,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
                          results['highest_valid'] * 100,
                          results['final_test'] * 100))
     print('-' * 100)
-
     return rewind_weight_mask
 
 
@@ -236,7 +233,6 @@ if __name__ == "__main__":
         if 'fixed_ckpt' in args.resume_dir:
             main_fixed_mask(args, start_imp, rewind_weight_mask, resume_train_ckpt)
             start_imp += 1
-
 
     for imp_num in range(start_imp, 21):
 
