@@ -254,7 +254,7 @@ def random_pruning(model, adj_percent, wei_percent):
         pdb.set_trace()
 
         for ii, (ai, wj) in enumerate(wei_pruned_list):
-            model.gcns[ii].mlp[0].weight_mask_train[ai][wj] = 0
+            model.gcns[i].mlp[0].weight_mask_train[ai][wj] = 0
 
         pdb.set_trace()
         model.gcns[i].mlp[0].weight_mask_fixed = model.gcns[i].mlp[0].weight_mask_train
