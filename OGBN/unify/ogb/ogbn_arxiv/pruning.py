@@ -137,9 +137,8 @@ def get_each_mask(mask_weight_tensor, threshold):
     return mask
 
 ##### pruning remain mask percent #######
-def get_final_mask_epoch(model, adj_percent, wei_percent):
+def get_final_mask_epoch(model, rewind_weight, adj_percent, wei_percent):
 
-    pdb.set_trace()
     adj_mask, wei_mask = get_soft_mask_distribution(model)
     #adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
     adj_total = adj_mask.shape[0] # 2484941
@@ -150,20 +149,22 @@ def get_final_mask_epoch(model, adj_percent, wei_percent):
     ### get threshold
     adj_thre_index = int(adj_total * adj_percent)
     adj_thre = adj_y[adj_thre_index]
-    
+
     wei_thre_index = int(wei_total * wei_percent)
     wei_thre = wei_y[wei_thre_index]
-
-    mask_dict = {}
+    ### create mask dict 
+    
     ori_edge_mask = model.edge_mask1_train.detach().cpu()
-    # ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
-    mask_dict['edge_mask'] = get_each_mask(ori_edge_mask, adj_thre)
+    rewind_weight['edge_mask1_train'] = get_each_mask(ori_edge_mask, adj_thre)
+    rewind_weight['edge_mask2_fixed'] = rewind_weight['edge_mask1_train']
 
     for i in range(28):
-        key = 'weight{}_mask'.format(i)
-        mask_dict[key] = get_each_mask(model.gcns[i].mlp[0].state_dict()['weight_mask_train'], wei_thre)
+        key_train = 'gcns.{}.mlp.0.weight_mask_train'.format(i)
+        key_fixed = 'gcns.{}.mlp.0.weight_mask_fixed'.format(i)
+        rewind_weight[key_train] = get_each_mask(model.gcns[i].mlp[0].state_dict()['weight_mask_train'], wei_thre)
+        rewind_weight[key_fixed] = rewind_weight[key_train]
 
-    return mask_dict
+    return rewind_weight
 
 
 ##### random pruning #######
@@ -250,7 +251,7 @@ def add_trainable_mask_noise(model, c=1e-5):
         rand = rand * model.gcns[i].mlp[0].weight_mask_train
         model.gcns[i].mlp[0].weight_mask_train.add_(rand)
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = True
-        
+
     
 def soft_mask_init(model, init_type, seed):
 
