@@ -156,7 +156,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
         
         start_epoch = resume_train_ckpt['epoch']
         rewind_weight_mask = resume_train_ckpt['rewind_weight']
-        pdb.set_trace()
         ori_model_dict = model.state_dict()
         over_lap = {k : v for k, v in resume_train_ckpt['model_state_dict'].items() if k in ori_model_dict.keys()}
         ori_model_dict.update(over_lap)
