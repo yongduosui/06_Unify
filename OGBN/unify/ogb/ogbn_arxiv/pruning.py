@@ -134,6 +134,7 @@ def get_each_mask(mask_weight_tensor, threshold):
 ##### pruning remain mask percent #######
 def get_final_mask_epoch(model, adj_percent, wei_percent):
 
+    pdb.set_trace()
     adj_mask, wei_mask = get_soft_mask_distribution(model)
     #adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
     adj_total = adj_mask.shape[0]
@@ -149,11 +150,13 @@ def get_final_mask_epoch(model, adj_percent, wei_percent):
     wei_thre = wei_y[wei_thre_index]
 
     mask_dict = {}
-    ori_adj_mask = model.adj_mask1_train.detach().cpu()
+    ori_edge_mask = model.edge_mask1_train.detach().cpu()
     # ori_adj_mask.add_((2 * torch.rand(ori_adj_mask.shape) - 1) * 1e-5)
-    mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
-    mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_train'], wei_thre)
-    mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_train'], wei_thre)
+    mask_dict['edge_mask'] = get_each_mask(ori_edge_mask, adj_thre)
+
+    for i in range(28):
+        key = 'weight{}_mask'.format(i)
+        mask_dict[key] = get_each_mask(model.gcns[i].mlp[0].state_dict()['weight_mask_train'], wei_thre)
 
     return mask_dict
 
@@ -205,19 +208,19 @@ def random_pruning(model, adj_percent, wei_percent):
     
 def print_sparsity(model):
 
-    adj_nonzero = model.adj_nonzero
-    adj_mask_nonzero = model.adj_mask2_fixed.sum().item()
+    adj_nonzero = model.edge_num
+    adj_mask_nonzero = model.edge_mask2_fixed.sum().item()
     adj_spar = adj_mask_nonzero * 100 / adj_nonzero
 
-    weight1_total = model.net_layer[0].weight_mask_fixed.numel()
-    weight2_total = model.net_layer[1].weight_mask_fixed.numel()
-    weight_total = weight1_total + weight2_total
+    weight_total = 0
+    weight_nonzero = 0
 
-    weight1_nonzero = model.net_layer[0].weight_mask_fixed.sum().item()
-    weight2_nonzero = model.net_layer[1].weight_mask_fixed.sum().item()
-    weight_nonzero = weight1_nonzero + weight2_nonzero
-
+    for i in range(28):
+        weight_total += model.gcns[i].mlp[0].weight_mask_fixed.numel()
+        weight_nonzero += model.gcns[i].mlp[0].weight_mask_fixed.sum().item()
+    
     wei_spar = weight_nonzero * 100 / weight_total
+
     print("-" * 100)
     print("Sparsity: Adj:[{:.2f}%] Wei:[{:.2f}%]"
     .format(adj_spar, wei_spar))
