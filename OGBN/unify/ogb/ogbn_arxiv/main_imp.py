@@ -84,16 +84,17 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     pruning.add_mask(model)
 
     if rewind_weight_mask:
+        pdb.set_trace()
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
     
     pruning.add_trainable_mask_noise(model)
-
     print("Begin IMP:[{}]".format(imp_num))
     print("-" * 120)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0}
-    rewind_weight = copy.deepcopy(model.state_dict())
+    rewind_weight_mask = copy.deepcopy(model.state_dict())
+
     for epoch in range(1, args.epochs + 1):
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
@@ -111,11 +112,8 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
             results['highest_valid'] = valid_accuracy
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
-            pdb.set_trace()
-            best_epoch_weight_mask = pruning.get_final_mask_epoch(model, rewind_weight, 
-                                                                  adj_percent=args.pruning_percent_adj, 
-                                                                  wei_percent=args.pruning_percent_wei)
 
+            pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
             save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='valid_best')
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
@@ -127,14 +125,14 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
         .format(results['final_train'] * 100, results['highest_valid'] * 100, results['final_test'] * 100))
     print('-' * 100)
 
-    return best_epoch_weight_mask
+    return rewind_weight_mask
 
 
 if __name__ == "__main__":
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
-    rewind_weight = None
+    rewind_weight_mask = None
 
     for imp_num in range(20):
 
-        final_mask_dict, rewind_weight = main_get_mask(args, imp_num, rewind_weight)
+        rewind_weight_mask = main_get_mask(args, imp_num, rewind_weight_mask)

@@ -80,6 +80,7 @@ def add_mask(model):
 
 def subgradient_update_mask(model, args):
 
+    pdb.set_trace()
     if args.fixed == 'all_fixed':
         pass
     else:

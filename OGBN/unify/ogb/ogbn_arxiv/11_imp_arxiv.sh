@@ -16,4 +16,5 @@ python -u main_imp.py \
 --s1 ${S1} \
 --s2 ${S2} \
 --pruning_percent_wei ${WEI} \
---pruning_percent_adj ${ADJ}
+--pruning_percent_adj ${ADJ} \
+--epochs 10
