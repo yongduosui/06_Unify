@@ -11,6 +11,7 @@ class DeeperGCN(torch.nn.Module):
     def __init__(self, args):
         super(DeeperGCN, self).__init__()
 
+        self.edge_num = 805720
         self.num_layers = args.num_layers
         self.dropout = args.dropout
         self.block = args.block
@@ -91,6 +92,9 @@ class DeeperGCN(torch.nn.Module):
 
         self.node_pred_linear = torch.nn.Linear(hidden_channels, num_tasks)
 
+        self.edge_mask1_train = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=True)
+        self.edge_mask2_fixed = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=False)
+
     def forward(self, x, node_index, edge_index, edge_attr):
 
         node_features_1st = self.node_features[node_index]
@@ -107,7 +111,7 @@ class DeeperGCN(torch.nn.Module):
         edge_emb = self.edge_encoder(edge_attr)
 
         if self.block == 'res+':
-            h = self.gcns[0](h, edge_index, edge_emb)
+            h = self.gcns[0](h, self.edge_mask1_train, self.edge_mask2_fixed, edge_index, edge_emb)
 
             if self.checkpoint_grad:
                 for layer in range(1, self.num_layers):
