@@ -132,7 +132,7 @@ if __name__ == "__main__":
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
 
-    start_imp = 1
+    start_imp = 0
     rewind_weight_mask = None
     resume_train_ckpt = None
 
@@ -145,7 +145,7 @@ if __name__ == "__main__":
         main_fixed_mask(args, start_imp, adj_percent, wei_percent, resume_train_ckpt)
         start_imp += 1
 
-    for imp_num in range(start_imp, 21):
+    for imp_num in range(start_imp, 20):
         pdb.set_trace()
         adj_percent, wei_percent = percent_list[imp_num]
         main_fixed_mask(args, imp_num, adj_percent, wei_percent)
