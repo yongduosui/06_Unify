@@ -1,6 +1,6 @@
 GPU=$1
 CUDA_VISIBLE_DEVICES=${GPU} \
-python main.py \
+python -u main.py \
 --use_gpu \
 --conv_encode_edge \
 --use_one_hot_encoding \

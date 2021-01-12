@@ -99,8 +99,8 @@ class ArgsInit(object):
                             level=logging.INFO,
                             format=log_format,
                             datefmt='%m/%d %I:%M:%S %p')
-        fh = logging.FileHandler(os.path.join(self.args.model_save_path, 'log.txt'))
-        fh.setFormatter(logging.Formatter(log_format))
-        logging.getLogger().addHandler(fh)
+        # fh = logging.FileHandler(os.path.join(self.args.model_save_path, 'log.txt'))
+        # fh.setFormatter(logging.Formatter(log_format))
+        # logging.getLogger().addHandler(fh)
 
         return self.args
