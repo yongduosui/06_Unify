@@ -130,7 +130,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
 
 if __name__ == "__main__":
     args = ArgsInit().save_exp()
-    prunint.print_args(args, 120)
+    pruning.print_args(args, 120)
     rewind_weight = None
     for imp_num in range(20):
 
