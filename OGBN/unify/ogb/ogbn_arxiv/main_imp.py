@@ -60,7 +60,7 @@ def train_fixed(model, x, edge_index, y_true, train_idx, optimizer, args):
     return loss.item()
 
 
-def main_fixed_mask(args, imp_num, rewind_weight_mask):
+def main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt=None):
 
     device = torch.device("cuda:" + str(args.device))
     dataset = PygNodePropPredDataset(name=args.dataset)
@@ -94,7 +94,20 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
     results = {'highest_valid': 0, 'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch': 0}
     results['adj_spar'] = adj_spar
     results['wei_spar'] = wei_spar
-    for epoch in range(1, args.epochs + 1):
+
+    start_epoch = 1
+    if resume_train_ckpt:
+        
+        start_epoch = resume_train_ckpt['epoch']
+        ori_model_dict = model.state_dict()
+        over_lap = {k : v for k, v in resume_train_ckpt['model_state_dict'].items() if k in ori_model_dict.keys()}
+        ori_model_dict.update(over_lap)
+        model.load_state_dict(ori_model_dict)
+        print("(FIXED MASK) Resume at epoch:[{}] len:[{}/{}]!".format(resume_train_ckpt['epoch'], len(over_lap.keys()), len(ori_model_dict.keys())))
+        optimizer.load_state_dict(resume_train_ckpt['optimizer_state_dict'])
+        adj_spar, wei_spar = pruning.print_sparsity(model)
+
+    for epoch in range(start_epoch, args.epochs + 1):
     
         epoch_loss = train_fixed(model, x, edge_index, y_true, train_idx, optimizer, args)
         result = test(model, x, edge_index, y_true, split_idx, evaluator)
@@ -105,16 +118,25 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
-            pruning.save_all(model, None, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_fixed_ckpt'.format(imp_num))
+            pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_fixed_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
-              'IMP:[{}] (FIX Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
+              'IMP:[{}] (FIX Mask) Epoch:[{}/{}]\t LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
               .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100, 
                                                                results['final_test'] * 100,
                                                                results['epoch']))
-    return results
+    
+    print("=" * 120)
+    print("syd final: IMP:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+        .format(imp_num,    results['final_train'] * 100,
+                            results['highest_valid'] * 100,
+                            results['epoch'],
+                            results['final_test'] * 100,
+                            results['adj_spar'],
+                            results['wei_spar']))
+    print("=" * 120)
 
 
 def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None):
@@ -181,7 +203,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
             pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
-              'IMP:[{}] (GET Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
+              'IMP:[{}] (GET Mask) Epoch:[{}/{}]\t LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
               .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100,
@@ -209,18 +231,15 @@ if __name__ == "__main__":
     if args.resume_dir:
         resume_train_ckpt = torch.load(args.resume_dir)
         start_imp = resume_train_ckpt['imp_num']
-        
+        rewind_weight_mask = resume_train_ckpt['rewind_weight_mask']
+
+        if 'fixed_ckpt' in args.resume_dir:
+            main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt)
+
+
     for imp_num in range(start_imp, 21):
 
         rewind_weight_mask = main_get_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt)
-        results = main_fixed_mask(args, imp_num, rewind_weight_mask)
+        main_fixed_mask(args, imp_num, rewind_weight_mask)
 
-        print("=" * 120)
-        print("syd final: IMP:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(imp_num, results['final_train'] * 100,
-                             results['highest_valid'] * 100,
-                             results['epoch'],
-                             results['final_test'] * 100,
-                             results['adj_spar'],
-                             results['wei_spar']))
-        print("=" * 120)
+        

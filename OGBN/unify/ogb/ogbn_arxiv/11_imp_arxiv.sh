@@ -1,9 +1,9 @@
 GPU=$1
-EXP=debug_ckpt
 WEI=0.2
 ADJ=0.05
 S1=1e-4
 S2=1e-4
+SAVE=debug
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_imp.py \
 --use_gpu \
@@ -12,10 +12,10 @@ python -u main_imp.py \
 --block res+ \
 --gcn_aggr softmax_sg \
 --t 0.1 \
---save ${EXP} \
 --s1 ${S1} \
 --s2 ${S2} \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---epochs 10 \
---resume_dir debug_ckpt/model_ckpt/IMP1_train_ckpt.pth
+--epochs 5 \
+--model_save_path ${SAVE}
+# --resume_dir debug_ckpt/model_ckpt/IMP1_train_ckpt.pth

@@ -24,7 +24,7 @@ def save_all(model, rewind_weight, optimizer, imp_num, epoch, save_path, save_na
             'imp_num': imp_num,
             'epoch': epoch,
             'model_state_dict': model.state_dict(),
-            'rewind_weight': rewind_weight,
+            'rewind_weight_mask': rewind_weight,
             'optimizer_state_dict': optimizer.state_dict()
         }
 

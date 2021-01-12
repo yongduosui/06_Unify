@@ -73,7 +73,7 @@ class ArgsInit(object):
         # save model
         parser.add_argument('--model_save_path', type=str, default='model_ckpt',
                             help='the directory used to save models')
-        parser.add_argument('--save', type=str, default='EXP', help='experiment name')
+        parser.add_argument('--save', type=str, default='CKPTs', help='experiment name')
         # load pre-trained model
         parser.add_argument('--model_load_path', type=str, default='ogbn_arxiv_pretrained_model.pth',
                             help='the path of pre-trained model')
