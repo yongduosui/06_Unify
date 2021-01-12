@@ -73,6 +73,7 @@ def main_fixed_mask(args, imp_num, adj_percent, wei_percent, resume_train_ckpt=N
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
     pdb.set_trace()
+    
     pruning.random_pruning(model, adj_percent, wei_percent)
     adj_spar, wei_spar = pruning.print_sparsity(model)
     

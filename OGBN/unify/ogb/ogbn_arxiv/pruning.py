@@ -260,16 +260,6 @@ def random_pruning(model, adj_percent, wei_percent):
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = True 
 
 
-        
-    
-    
-
-
-
-    
-    
-
-
 def print_sparsity(model):
 
     adj_nonzero = model.edge_num
@@ -286,8 +276,7 @@ def print_sparsity(model):
     wei_spar = weight_nonzero * 100 / weight_total
 
     print("-" * 100)
-    print("Sparsity: Adj:[{:.2f}%] Wei:[{:.2f}%]"
-    .format(adj_spar, wei_spar))
+    print("Sparsity: Adj:[{:.2f}%] Wei:[{:.2f}%]".format(adj_spar, wei_spar))
     print("-" * 100)
 
     return adj_spar, wei_spar
