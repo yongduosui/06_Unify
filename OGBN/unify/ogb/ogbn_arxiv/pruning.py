@@ -240,7 +240,7 @@ def random_pruning(model, adj_percent, wei_percent):
     
     for i, j in adj_pruned_list:
         model.edge_mask1_train[i][j] = 0
-        model.edge_mask1_fixed[i][j] = 0
+        model.edge_mask2_fixed[i][j] = 0
     
     model.edge_mask1_train.requires_grad = True
     
