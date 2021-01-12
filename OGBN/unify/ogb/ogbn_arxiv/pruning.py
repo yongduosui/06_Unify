@@ -105,7 +105,6 @@ def get_soft_mask_distribution(model):
     
     return adj_mask_vector.detach().cpu(), weight_mask_vector.detach().cpu()
 
-    
 
 def plot_mask_distribution(model, epoch, acc_test, path):
 
