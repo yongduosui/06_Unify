@@ -17,5 +17,20 @@ https://github.com/Shen-Lab/SS-GCNs
 
 ### 1. IMP
 
+`cd OGBN`
+
+`bash deepgcn_env_install_my.sh`
+
+`cd OGBN/unify/ogb/ogbn_arxiv`
+
+`nohup bash sh/110_imp_arxiv.sh 0 > 011301_imp.log &`
+
+`nohup bash sh/111_imp_arxiv.sh 0 > 011302_imp.log &`
+
+`nohup bash sh/112_imp_arxiv.sh 0 > 011303_imp.log &`
+
+`nohup bash sh/113_imp_arxiv.sh 0 > 011304_imp.log &`
+
+
 
 ### 2. OMP
