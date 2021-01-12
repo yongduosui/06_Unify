@@ -75,16 +75,21 @@ def add_mask(model):
 
 def subgradient_update_mask(model, args):
 
-    model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
-    for i in range(28):
-        model.gcns[i].mlp[0].weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.gcns[i].mlp[0].weight_mask_train.data))
+    if args.fixed == 'all_fixed':
+        pass
+    else 
+        if args.fixed != 'only_adj':
+            model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
+        if args.fixed != 'only_wei':
+            for i in range(28):
+                model.gcns[i].mlp[0].weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.gcns[i].mlp[0].weight_mask_train.data))
 
 
 def get_soft_mask_distribution(model):
 
     adj_mask_vector = model.edge_mask1_train.flatten()
     nonzero = torch.abs(adj_mask_vector) > 0
-    adj_mask_vector = adj_mask_vector[nonzero] # 13264
+    adj_mask_vector = adj_mask_vector[nonzero]
 
     weight_mask_vector = torch.tensor([]).to(torch.device("cuda:0"))
     for i in range(28):
@@ -99,25 +104,24 @@ def get_soft_mask_distribution(model):
 
 def plot_mask_distribution(model, epoch, acc_test, path):
 
-    print("Plot Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
+    # print("Plot Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
     if not os.path.exists(path): os.makedirs(path)
-    adj_mask, weight_mask = get_mask_distribution(model)
+    adj_mask, weight_mask = get_soft_mask_distribution(model)
 
     plt.figure(figsize=(15, 5))
     plt.subplot(1,2,1)
-    plt.hist(adj_mask)
+    plt.hist(adj_mask.numpy())
     plt.title("adj mask")
     plt.xlabel('mask value')
     plt.ylabel('times')
 
     plt.subplot(1,2,2)
-    plt.hist(weight_mask)
+    plt.hist(weight_mask.numpy())
     plt.title("weight mask")
     plt.xlabel('mask value')
     plt.ylabel('times')
     plt.suptitle("Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
     plt.savefig(path + '/mask_epoch{}.png'.format(epoch))
-
 
 
 def get_each_mask(mask_weight_tensor, threshold):

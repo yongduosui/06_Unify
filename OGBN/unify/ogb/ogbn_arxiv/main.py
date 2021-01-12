@@ -44,9 +44,8 @@ def train(model, x, edge_index, y_true, train_idx, optimizer, args):
     pred = model(x, edge_index)[train_idx]
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
     loss.backward()
-    if not args.baseline:
-        pruning.subgradient_update_mask(model, args) # l1 norm
-
+    
+    pruning.subgradient_update_mask(model, args) # l1 norm
     optimizer.step()
     return loss.item()
 
@@ -86,15 +85,27 @@ def main():
 
     for name, param in model.named_parameters():
         if 'mask' in name:
-            if args.baseline:
+            if args.fixed == 'all_fixed':
                 param.requires_grad = False
+            elif args.fixed == 'only_adj':
+                if 'edge' in name:
+                    param.requires_grad = False
+            elif args.fixed == 'only_wei':
+                if 'edge' not in name:
+                    param.requires_grad = False
+            else:
+                assert args.fixed == 'no_fixed'
+
             print("NAME:[{}]\tSHAPE:[{}]\tGRAD:[{}]".format(name, param.shape, param.requires_grad))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-
     results = {'highest_valid': 0, 'final_train': 0, 'final_test': 0, 'highest_train': 0}
     start_time = time.time()
+    test_accuracy = 0.0
+
     for epoch in range(1, args.epochs + 1):
+        
+        pruning.plot_mask_distribution(model, epoch, test_accuracy, args.model_save_path)
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
         logging.info('Epoch {}, training loss {:.4f}'.format(epoch, epoch_loss))
