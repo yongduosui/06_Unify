@@ -81,19 +81,15 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
     args.in_channels = data.x.size(-1)
     args.num_tasks = dataset.num_classes
 
-    print("-" * 120)
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
     model.load_state_dict(rewind_weight_mask)
-    print("(FIX MASK) Load rewind weight and mask!")
     adj_spar, wei_spar = pruning.print_sparsity(model)
     
     for name, param in model.named_parameters():
         if 'mask' in name:
             param.requires_grad = False
 
-    print("Begin EVAL FIXED MASK:[{}]".format(imp_num))
-    print("-" * 120)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0, 'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch': 0}
     results['adj_spar'] = adj_spar
@@ -118,7 +114,6 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
                                                                test_accuracy * 100, 
                                                                results['final_test'] * 100,
                                                                results['epoch']))
-
     return results
 
 
@@ -148,13 +143,10 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     pruning.add_mask(model)
 
     if rewind_weight_mask:
-        print("(GEI MASK) Load rewind weight and mask!")
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
     
     pruning.add_trainable_mask_noise(model)
-    print("Begin IMP:[{}]".format(imp_num))
-    print("-" * 120)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch':0}
     rewind_weight_mask = copy.deepcopy(model.state_dict())
