@@ -1,5 +1,5 @@
 GPU=$1
-EXP=debug_all_fixed
+EXP=debug_on_fixed
 S1=1e-4
 S2=1e-4
 FIX=no_fixed
