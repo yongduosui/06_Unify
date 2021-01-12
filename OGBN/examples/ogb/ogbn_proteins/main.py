@@ -11,7 +11,7 @@ from ogb.nodeproppred import Evaluator
 from utils.ckpt_util import save_ckpt
 from utils.data_util import intersection, process_indexes
 import logging
-
+import pdb
 
 def train(data, dataset, model, optimizer, criterion, device):
 
@@ -142,7 +142,7 @@ def main():
         device = torch.device("cpu")
 
     logging.info('%s' % device)
-
+    pdb.set_trace()
     dataset = OGBNDataset(dataset_name=args.dataset)
     # extract initial node features
     nf_path = dataset.extract_node_features(args.aggr)
