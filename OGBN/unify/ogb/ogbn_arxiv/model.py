@@ -43,9 +43,9 @@ class DeeperGCN(torch.nn.Module):
             self.checkpoint_grad = True
             self.ckp_k = self.num_layers // 2
 
-        print('The number of layers {}'.format(self.num_layers),
-              'Aggregation method {}'.format(aggr),
-              'block: {}'.format(self.block))
+        # print('The number of layers {}'.format(self.num_layers),
+        #       'Aggregation method {}'.format(aggr),
+        #       'block: {}'.format(self.block))
 
         # if self.block == 'res+':
         #     print('LN/BN->ReLU->GraphConv->Res')
