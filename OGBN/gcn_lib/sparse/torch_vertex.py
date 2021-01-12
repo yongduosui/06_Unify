@@ -64,6 +64,7 @@ class GENConv(GenMessagePassing):
         self.edge_mask1_train = None 
 
     def forward(self, x,  edge_index, edge_attr=None):
+        pdb.set_trace()
         x = x
         
         if self.encode_edge and edge_attr is not None:
