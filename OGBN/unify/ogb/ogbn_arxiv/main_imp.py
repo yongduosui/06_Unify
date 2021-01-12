@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     if args.resume_dir:
         resume_train_ckpt = torch.load(args.resume_dir)
-        start_imp = resume_ckpt['imp_num']
+        start_imp = resume_train_ckpt['imp_num']
         
     for imp_num in range(start_imp, 21):
 
