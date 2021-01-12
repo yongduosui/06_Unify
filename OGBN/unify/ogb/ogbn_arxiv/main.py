@@ -105,7 +105,7 @@ def main():
 
     for epoch in range(1, args.epochs + 1):
         
-        pruning.plot_mask_distribution(model, epoch, test_accuracy, args.model_save_path)
+        pruning.plot_mask_distribution(model, epoch, test_accuracy, args.model_save_path + '/plot')
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
         logging.info('Epoch {}, training loss {:.4f}'.format(epoch, epoch_loss))
