@@ -243,17 +243,17 @@ def random_pruning(model, adj_percent, wei_percent):
     model.edge_mask1_train.requires_grad = True
     
     for i in range(28):
-        pdb.set_trace()
+        
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = False
         wei_total = model.gcns[i].mlp[0].weight_mask_train.numel()
         wei_pruned_num = int(wei_total * wei_percent)
         wei_nonzero = model.gcns[i].mlp[0].weight_mask_train.nonzero()
-        wei_pruned_index = random.sample([i for i in range(wei_total)], wei_pruned_num)
+        wei_pruned_index = random.sample([j for j in range(wei_total)], wei_pruned_num)
         wei_pruned_list = wei_nonzero[wei_pruned_index].tolist()
 
-        for i, j in wei_pruned_list:
-            model.gcns[i].mlp[0].weight_mask_train[i][j] = 0
-        pdb.set_trace()
+        for ii, (ai, wj) in enumerate(wei_pruned_list):
+            model.gcns[ii].mlp[0].weight_mask_train[ai][wj] = 0
+        
         model.gcns[i].mlp[0].weight_mask_fixed = model.gcns[i].mlp[0].weight_mask_train
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = True 
 
