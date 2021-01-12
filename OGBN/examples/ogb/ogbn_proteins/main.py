@@ -37,7 +37,7 @@ def train(data, dataset, model, optimizer, criterion, device):
         training_idx = [mapper[t_idx] for t_idx in inter_idx]
 
         optimizer.zero_grad()
-
+        pdb.set_trace()
         pred = model(x, sg_nodes_idx, sg_edges_, sg_edges_attr)
 
         target = train_y[inter_idx].to(device)
