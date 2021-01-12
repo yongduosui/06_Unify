@@ -92,7 +92,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     print("-" * 120)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0}
-    rewind_weight = copy.deepcopy(net_gcn.state_dict())
+    rewind_weight = copy.deepcopy(model.state_dict())
     for epoch in range(1, args.epochs + 1):
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
