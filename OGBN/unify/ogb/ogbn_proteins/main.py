@@ -136,10 +136,7 @@ def multi_evaluate(valid_data_list, dataset, model, evaluator, device):
 def main():
     args = ArgsInit().save_exp()
 
-    if args.use_gpu:
-        device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
-    else:
-        device = torch.device("cpu")
+    device = torch.device("cuda:" + str(args.device)) 
 
     logging.info('%s' % device)
 
@@ -171,12 +168,7 @@ def main():
 
     model = DeeperGCN(args).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
-
-    results = {'highest_valid': 0,
-               'final_train': 0,
-               'final_test': 0,
-               'highest_train': 0}
-
+    results = {'highest_valid': 0, 'final_train': 0, 'final_test': 0, 'highest_train': 0}
     start_time = time.time()
 
     for epoch in range(1, args.epochs + 1):
