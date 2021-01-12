@@ -5,6 +5,24 @@ from collections import OrderedDict
 import logging
 import numpy as np
 
+def save_ckpt_all(model, rewind_weight, optimizer, loss, imp_num, epoch, save_path, name_pre, name_post='best'):
+    
+    state = {
+            'imp_num': imp_num,
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'rewind_weight': rewind_weight,
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss
+        }
+
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+        print("Directory ", save_path, " is created.")
+
+    filename = '{}/{}_{}.pth'.format(save_path, name_pre, name_post)
+    torch.save(state, filename)
+
 
 def save_ckpt(model, optimizer, loss, epoch, save_path, name_pre, name_post='best'):
     model_cpu = {k: v.cpu() for k, v in model.state_dict().items()}

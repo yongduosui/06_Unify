@@ -18,6 +18,24 @@ import math
 # 		# print('temp:', temp.size())
 # 		return torch.sign(w) * nn.functional.relu(temp)
 
+def save_all(model, rewind_weight, optimizer, imp_num, epoch, save_path, save_name='default'):
+    
+    state = {
+            'imp_num': imp_num,
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'rewind_weight': rewind_weight,
+            'optimizer_state_dict': optimizer.state_dict()
+        }
+
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+        print("Directory ", save_path, " is created.")
+
+    filename = '{}/{}.pth'.format(save_path, save_name)
+    torch.save(state, filename)
+
+
 def print_args(args, str_num=80):
     for arg, val in args.__dict__.items():
         print(arg + '.' * (str_num - len(arg) - len(str(val))) + str(val))

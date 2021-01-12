@@ -105,7 +105,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask):
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
-            save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, 'IMP{}_fixed'.format(imp_num), name_post='valid_best')
+            pruning.save_all(model, None, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_fixed_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'IMP:[{}] (FIX Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
@@ -163,7 +163,8 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
             pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
-            save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, 'IMP{}_train'.format(imp_num), name_post='valid_best')
+            pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
+
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'IMP:[{}] (GET Mask) Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
@@ -186,15 +187,15 @@ if __name__ == "__main__":
 
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
-    rewind_weight_mask = None
 
+    rewind_weight_mask = None
     for imp_num in range(1, 21):
 
         rewind_weight_mask = main_get_mask(args, imp_num, rewind_weight_mask)
         results = main_fixed_mask(args, imp_num, rewind_weight_mask)
 
         print("=" * 120)
-        print("syd : IMP:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+        print("syd final: IMP:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
             .format(imp_num, results['final_train'] * 100,
                              results['highest_valid'] * 100,
                              results['epoch'],
