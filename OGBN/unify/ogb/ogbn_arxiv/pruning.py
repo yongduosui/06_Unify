@@ -77,7 +77,7 @@ def subgradient_update_mask(model, args):
 
     if args.fixed == 'all_fixed':
         pass
-    else 
+    else:
         if args.fixed != 'only_adj':
             model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
         if args.fixed != 'only_wei':
