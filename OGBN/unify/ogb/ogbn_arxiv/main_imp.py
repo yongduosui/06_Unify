@@ -111,7 +111,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
             results['highest_valid'] = valid_accuracy
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
-            
+            pdb.set_trace()
             best_epoch_mask = pruning.get_final_mask_epoch(model, adj_percent=args.pruning_percent_adj, 
                                                                   wei_percent=args.pruning_percent_wei)
 
