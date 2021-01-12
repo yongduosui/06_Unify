@@ -156,6 +156,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
         print("Resume at epoch:[{}] !".format(resume_train_ckpt['epoch']))
         start_epoch = resume_train_ckpt['epoch']
         rewind_weight_mask = resume_train_ckpt['rewind_weight']
+        pdb.set_trace()
         model.load_state_dict(resume_train_ckpt['model_state_dict'])
         optimizer.load_state_dict(resume_train_ckpt['optimizer_state_dict'])
         adj_spar, wei_spar = pruning.print_sparsity(model)
