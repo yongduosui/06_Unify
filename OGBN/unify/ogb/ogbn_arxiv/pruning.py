@@ -22,7 +22,7 @@ def print_args(args, str_num=80):
     for arg, val in args.__dict__.items():
         print(arg + '.' * (str_num - len(arg) - len(str(val))) + str(val))
     print()
-    
+
 def setup_seed(seed):
 
     torch.manual_seed(seed)
@@ -142,8 +142,8 @@ def get_final_mask_epoch(model, adj_percent, wei_percent):
     pdb.set_trace()
     adj_mask, wei_mask = get_soft_mask_distribution(model)
     #adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
-    adj_total = adj_mask.shape[0]
-    wei_total = wei_mask.shape[0]
+    adj_total = adj_mask.shape[0] # 2484941
+    wei_total = wei_mask.shape[0] # 458752
     ### sort
     adj_y, adj_i = torch.sort(adj_mask.abs())
     wei_y, wei_i = torch.sort(wei_mask.abs())
@@ -234,31 +234,23 @@ def print_sparsity(model):
     return adj_spar, wei_spar
 
 
-def add_trainable_mask_noise(model):
-    
-    model.adj_mask1_train.requires_grad = False
-    model.net_layer[0].weight_mask_train.requires_grad = False
-    model.net_layer[1].weight_mask_train.requires_grad = False
-    c = 1e-5
-    rand1 = (2 * torch.rand(model.adj_mask1_train.shape) - 1) * c
-    rand1 = rand1.to(model.adj_mask1_train.device) 
-    rand1 = rand1 * model.adj_mask1_train
-    model.adj_mask1_train.add_(rand1)
+def add_trainable_mask_noise(model, c=1e-5):
 
-    rand2 = (2 * torch.rand(model.net_layer[0].weight_mask_train.shape) - 1) * c
-    rand2 = rand2.to(model.net_layer[0].weight_mask_train.device)
-    rand2 = rand2 * model.net_layer[0].weight_mask_train
-    model.net_layer[0].weight_mask_train.add_(rand2)
+    model.edge_mask1_train.requires_grad = False
+    rand = (2 * torch.rand(model.edge_mask1_train.shape) - 1) * c
+    rand = rand.to(model.edge_mask1_train.device) 
+    rand = rand * model.edge_mask1_train
+    model.edge_mask1_train.add_(rand)
+    model.edge_mask1_train.requires_grad = True
 
-    rand3 = (2 * torch.rand(model.net_layer[1].weight_mask_train.shape) - 1) * c
-    rand3 = rand3.to(model.net_layer[1].weight_mask_train.device)
-    rand3 = rand3 * model.net_layer[1].weight_mask_train
-    model.net_layer[1].weight_mask_train.add_(rand3)
-
-    model.adj_mask1_train.requires_grad = True
-    model.net_layer[0].weight_mask_train.requires_grad = True
-    model.net_layer[1].weight_mask_train.requires_grad = True
-
+    for i in range(28):
+        model.gcns[i].mlp[0].weight_mask_train.requires_grad = False
+        rand = (2 * torch.rand(model.gcns[i].mlp[0].weight_mask_train.shape) - 1) * c
+        rand = rand.to(model.gcns[i].mlp[0].weight_mask_train.device) 
+        rand = rand * model.gcns[i].mlp[0].weight_mask_train
+        model.gcns[i].mlp[0].weight_mask_train.add_(rand)
+        model.gcns[i].mlp[0].weight_mask_train.requires_grad = True
+        
     
 def soft_mask_init(model, init_type, seed):
 

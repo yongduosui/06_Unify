@@ -79,7 +79,6 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     args.in_channels = data.x.size(-1)
     args.num_tasks = dataset.num_classes
 
-    print(args)
     print("-" * 120)
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
@@ -88,6 +87,8 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
     
+    pruning.add_trainable_mask_noise(model)
+
     print("Begin IMP:[{}]".format(imp_num))
     print("-" * 120)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -132,6 +133,7 @@ if __name__ == "__main__":
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
     rewind_weight = None
+
     for imp_num in range(20):
 
         final_mask_dict, rewind_weight = main_get_mask(args, imp_num, rewind_weight)
