@@ -47,16 +47,16 @@ class DeeperGCN(torch.nn.Module):
               'Aggregation method {}'.format(aggr),
               'block: {}'.format(self.block))
 
-        if self.block == 'res+':
-            print('LN/BN->ReLU->GraphConv->Res')
-        elif self.block == 'res':
-            print('GraphConv->LN/BN->ReLU->Res')
-        elif self.block == 'dense':
-            raise NotImplementedError('To be implemented')
-        elif self.block == "plain":
-            print('GraphConv->LN/BN->ReLU')
-        else:
-            raise Exception('Unknown block Type')
+        # if self.block == 'res+':
+        #     print('LN/BN->ReLU->GraphConv->Res')
+        # elif self.block == 'res':
+        #     print('GraphConv->LN/BN->ReLU->Res')
+        # elif self.block == 'dense':
+        #     raise NotImplementedError('To be implemented')
+        # elif self.block == "plain":
+        #     print('GraphConv->LN/BN->ReLU')
+        # else:
+        #     raise Exception('Unknown block Type')
 
         self.gcns = torch.nn.ModuleList()
         self.norms = torch.nn.ModuleList()
