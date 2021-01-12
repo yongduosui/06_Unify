@@ -86,7 +86,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     if rewind_weight_mask:
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
-    
+    pdb.set_trace()
     pruning.add_trainable_mask_noise(model)
 
     print("Begin IMP:[{}]".format(imp_num))
@@ -111,7 +111,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
             results['highest_valid'] = valid_accuracy
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
-            pdb.set_trace()
+            
             best_epoch_mask = pruning.get_final_mask_epoch(model, adj_percent=args.pruning_percent_adj, 
                                                                   wei_percent=args.pruning_percent_wei)
 
