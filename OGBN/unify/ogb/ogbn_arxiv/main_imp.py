@@ -84,7 +84,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None):
     pruning.add_mask(model)
 
     if rewind_weight_mask:
-        pdb.set_trace()
+        
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
     
