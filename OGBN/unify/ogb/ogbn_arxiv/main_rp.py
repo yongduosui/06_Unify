@@ -72,8 +72,6 @@ def main_fixed_mask(args, imp_num, adj_percent, wei_percent, resume_train_ckpt=N
 
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model)
-    pdb.set_trace()
-    
     pruning.random_pruning(model, adj_percent, wei_percent)
     adj_spar, wei_spar = pruning.print_sparsity(model)
     
@@ -139,7 +137,7 @@ if __name__ == "__main__":
     resume_train_ckpt = None
 
     percent_list = [(1 - (1 - args.pruning_percent_adj) ** (i + 1), 1 - (1 - args.pruning_percent_wei) ** (i + 1)) for i in range(20)]
-
+    
     if args.resume_dir:
         resume_train_ckpt = torch.load(args.resume_dir)
         start_imp = resume_train_ckpt['imp_num']
