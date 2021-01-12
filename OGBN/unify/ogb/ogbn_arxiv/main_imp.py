@@ -153,11 +153,15 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
 
     start_epoch = 1
     if resume_train_ckpt:
-        print("Resume at epoch:[{}] !".format(resume_train_ckpt['epoch']))
+        
         start_epoch = resume_train_ckpt['epoch']
         rewind_weight_mask = resume_train_ckpt['rewind_weight']
         pdb.set_trace()
-        model.load_state_dict(resume_train_ckpt['model_state_dict'])
+        ori_model_dict = model.state_dict()
+        over_lap = {k : v for k, v in resume_train_ckpt['model_state_dict'] if k in ori_model_dict.keys()}
+        ori_model_dict.update(over_lap)
+        model.load_state_dict(ori_model_dict)
+        print("Resume at epoch:[{}] len:[{}/{}]!".format(resume_train_ckpt['epoch'], len(over_lap.keys()), len(ori_model_dict.keys())))
         optimizer.load_state_dict(resume_train_ckpt['optimizer_state_dict'])
         adj_spar, wei_spar = pruning.print_sparsity(model)
     else:
