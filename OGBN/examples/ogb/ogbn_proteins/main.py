@@ -13,6 +13,8 @@ from utils.data_util import intersection, process_indexes
 import logging
 import pdb
 
+# edge_dict = {814122: 7, }
+
 def train(data, dataset, model, optimizer, criterion, device):
 
     loss_list = []
@@ -25,6 +27,8 @@ def train(data, dataset, model, optimizer, criterion, device):
 
     for idx in idx_clusters:
 
+        sss = [sg_edges[i].shape for i in range(10)]
+        pdb.set_trace()
         x = dataset.x[sg_nodes[idx]].float().to(device)
         sg_nodes_idx = torch.LongTensor(sg_nodes[idx]).to(device)
 
@@ -37,7 +41,7 @@ def train(data, dataset, model, optimizer, criterion, device):
         training_idx = [mapper[t_idx] for t_idx in inter_idx]
 
         optimizer.zero_grad()
-        pdb.set_trace()
+        
         pred = model(x, sg_nodes_idx, sg_edges_, sg_edges_attr)
 
         target = train_y[inter_idx].to(device)
@@ -142,7 +146,7 @@ def main():
         device = torch.device("cpu")
 
     logging.info('%s' % device)
-    pdb.set_trace()
+    
     dataset = OGBNDataset(dataset_name=args.dataset)
     # extract initial node features
     nf_path = dataset.extract_node_features(args.aggr)
