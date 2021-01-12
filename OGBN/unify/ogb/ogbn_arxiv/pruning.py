@@ -184,51 +184,90 @@ def get_final_mask_epoch(model, rewind_weight, adj_percent, wei_percent):
     return rewind_weight
 
 
-##### random pruning #######
+# ##### random pruning #######
+# def random_pruningS(model, adj_percent, wei_percent):
+
+#     model.adj_mask1_train.requires_grad = False
+#     model.net_layer[0].weight_mask_train.requires_grad = False
+#     model.net_layer[1].weight_mask_train.requires_grad = False
+
+#     adj_nonzero = model.adj_mask1_train.nonzero()
+#     wei1_nonzero = model.net_layer[0].weight_mask_train.nonzero()
+#     wei2_nonzero = model.net_layer[1].weight_mask_train.nonzero()
+
+#     adj_total = adj_nonzero.shape[0]
+#     wei1_total = wei1_nonzero.shape[0]
+#     wei2_total = wei2_nonzero.shape[0]
+
+#     adj_pruned_num = int(adj_total * adj_percent)
+#     wei1_pruned_num = int(wei1_total * wei_percent)
+#     wei2_pruned_num = int(wei2_total * wei_percent)
+
+#     adj_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
+#     wei1_index = random.sample([i for i in range(wei1_total)], wei1_pruned_num)
+#     wei2_index = random.sample([i for i in range(wei2_total)], wei2_pruned_num)
+
+#     adj_pruned = adj_nonzero[adj_index].tolist()
+#     wei1_pruned = wei1_nonzero[wei1_index].tolist()
+#     wei2_pruned = wei2_nonzero[wei2_index].tolist()
+
+#     for i, j in adj_pruned:
+#         model.adj_mask1_train[i][j] = 0
+    
+#     for i, j in wei1_pruned:
+#         model.net_layer[0].weight_mask_train[i][j] = 0
+    
+#     for i, j in wei2_pruned:
+#         model.net_layer[1].weight_mask_train[i][j] = 0
+    
+#     model.adj_mask2_fixed = model.adj_mask1_train
+#     model.net_layer[0].weight_mask_fixed = model.net_layer[0].weight_mask_train
+#     model.net_layer[1].weight_mask_fixed = model.net_layer[1].weight_mask_train
+
+#     model.adj_mask1_train.requires_grad = True
+#     model.net_layer[0].weight_mask_train.requires_grad = True
+#     model.net_layer[1].weight_mask_train.requires_grad = True
+
+
 def random_pruning(model, adj_percent, wei_percent):
 
-    model.adj_mask1_train.requires_grad = False
-    model.net_layer[0].weight_mask_train.requires_grad = False
-    model.net_layer[1].weight_mask_train.requires_grad = False
-
-    adj_nonzero = model.adj_mask1_train.nonzero()
-    wei1_nonzero = model.net_layer[0].weight_mask_train.nonzero()
-    wei2_nonzero = model.net_layer[1].weight_mask_train.nonzero()
-
-    adj_total = adj_nonzero.shape[0]
-    wei1_total = wei1_nonzero.shape[0]
-    wei2_total = wei2_nonzero.shape[0]
-
+    model.edge_mask1_train.requires_grad = False
+    adj_total = model.edge_mask1_train.numel()
     adj_pruned_num = int(adj_total * adj_percent)
-    wei1_pruned_num = int(wei1_total * wei_percent)
-    wei2_pruned_num = int(wei2_total * wei_percent)
+    adj_nonzero = model.edge_mask1_train.nonzero()
+    adj_pruned_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
+    adj_pruned_list = adj_nonzero[adj_pruned_index].tolist()
 
-    adj_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
-    wei1_index = random.sample([i for i in range(wei1_total)], wei1_pruned_num)
-    wei2_index = random.sample([i for i in range(wei2_total)], wei2_pruned_num)
-
-    adj_pruned = adj_nonzero[adj_index].tolist()
-    wei1_pruned = wei1_nonzero[wei1_index].tolist()
-    wei2_pruned = wei2_nonzero[wei2_index].tolist()
-
-    for i, j in adj_pruned:
-        model.adj_mask1_train[i][j] = 0
+    for i, j in adj_pruned_list:
+        model.edge_mask1_train[i][j] = 0
+    model.edge_mask1_train.requires_grad = True
     
-    for i, j in wei1_pruned:
-        model.net_layer[0].weight_mask_train[i][j] = 0
-    
-    for i, j in wei2_pruned:
-        model.net_layer[1].weight_mask_train[i][j] = 0
-    
-    model.adj_mask2_fixed = model.adj_mask1_train
-    model.net_layer[0].weight_mask_fixed = model.net_layer[0].weight_mask_train
-    model.net_layer[1].weight_mask_fixed = model.net_layer[1].weight_mask_train
+    for i in range(28):
 
-    model.adj_mask1_train.requires_grad = True
-    model.net_layer[0].weight_mask_train.requires_grad = True
-    model.net_layer[1].weight_mask_train.requires_grad = True
+        model.gcns[i].mlp[0].weight_mask_train.requires_grad = False
+        wei_total = model.gcns[i].mlp[0].weight_mask_train.numel()
+        wei_pruned_num = int(wei_total * wei_percent)
+        wei_nonzero = model.gcns[i].mlp[0].weight_mask_train.nonzero()
+        wei_pruned_index = random.sample([i for i in range(wei_total)], wei_pruned_num)
+        wei_pruned_list = wei_nonzero[wei_pruned_index].tolist()
+
+        for i, j in wei_pruned_list:
+            model.gcns[i].mlp[0].weight_mask_train[i][j] = 0
+
+        model.gcns[i].mlp[0].weight_mask_fixed = model.gcns[i].mlp[0].weight_mask_train
+        model.gcns[i].mlp[0].weight_mask_train.requires_grad = True 
+
+
+        
+    
+    
+
+
 
     
+    
+
+
 def print_sparsity(model):
 
     adj_nonzero = model.edge_num

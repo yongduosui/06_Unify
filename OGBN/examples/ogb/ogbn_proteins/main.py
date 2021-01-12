@@ -13,7 +13,8 @@ from utils.data_util import intersection, process_indexes
 import logging
 import pdb
 
-# edge_dict = {814122: 7, }
+# 79122504
+# edge_dict = [788914, 817082, 770768, 779848, 784256, 783468, 800640, 803350, 776168, 800568]
 
 def train(data, dataset, model, optimizer, criterion, device):
 
@@ -27,8 +28,8 @@ def train(data, dataset, model, optimizer, criterion, device):
 
     for idx in idx_clusters:
 
-        sss = [sg_edges[i].shape for i in range(10)]
-        pdb.set_trace()
+        # sss = [sg_edges[i].shape for i in range(10)]
+        # pdb.set_trace()
         x = dataset.x[sg_nodes[idx]].float().to(device)
         sg_nodes_idx = torch.LongTensor(sg_nodes[idx]).to(device)
 
