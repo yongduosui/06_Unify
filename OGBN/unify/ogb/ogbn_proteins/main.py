@@ -139,7 +139,7 @@ def main():
     device = torch.device("cuda:" + str(args.device)) 
 
     logging.info('%s' % device)
-
+    pdb.set_trace()
     dataset = OGBNDataset(dataset_name=args.dataset)
     # extract initial node features
     nf_path = dataset.extract_node_features(args.aggr)
