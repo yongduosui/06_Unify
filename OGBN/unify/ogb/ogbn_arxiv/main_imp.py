@@ -166,8 +166,8 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
     if rewind_weight_mask:
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
-    
     pruning.add_trainable_mask_noise(model)
+    
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch':0}
     

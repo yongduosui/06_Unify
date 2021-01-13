@@ -13,6 +13,7 @@ https://github.com/Shen-Lab/SS-GCNs
 | Node-level | citeseer| 3327 |  4732   | 3703 | 6 | 70.94±0.77 | 236.95 |
 | Node-level | pubmed  |19717 | 108365  | 500  | 3 | 79.16±0.19 | 152.15 |
 
+
 ### 2.2 Unify Pruning
 
 ### 1. IMP
