@@ -31,7 +31,7 @@ class DeeperGCN(torch.nn.Module):
         norm = args.norm
         mlp_layers = args.mlp_layers
 
-        self.scale_msg = args.scale_msg
+        # self.scale_msg = args.scale_msg
 
         if self.num_layers > 7:
             self.checkpoint_grad = True
@@ -147,14 +147,14 @@ class DeeperGCN(torch.nn.Module):
             else:
                 logging.info('Epoch {}, s {}'.format(epoch, ss))
 
-        if self.scale_msg:
-            ms = []
-            for gcn in self.gcns:
-                ms.append(gcn.msg_scale.item())
-            if final:
-                print('Final message scale {}'.format(ms))
-            else:
-                logging.info('Epoch {}, message scale {}'.format(epoch, ms))
+        # if self.scale_msg:
+        #     ms = []
+        #     for gcn in self.gcns:
+        #         ms.append(gcn.msg_scale.item())
+        #     if final:
+        #         print('Final message scale {}'.format(ms))
+        #     else:
+        #         logging.info('Epoch {}, message scale {}'.format(epoch, ms))
 
 
 class LinkPredictor(torch.nn.Module):
