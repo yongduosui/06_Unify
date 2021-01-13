@@ -4,8 +4,8 @@ ADJ=0.05
 seed0=41
 EPOCH=500
 dataset=OGBL-COLLAB
-S1=1e-4
-S2=1e-4
+S1=1e-5
+S2=1e-5
 SAVE=RP_setting1
 
 python -u main_COLLAB_rp.py \
