@@ -1,9 +1,9 @@
 GPU=$1
 WEI=0.2
 ADJ=0.05
-S1=1e-5
-S2=1e-5
-SAVE=IMP02
+S1=1e-3
+S2=5e-3
+SAVE=IMP_setting2
 
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_imp.py \

@@ -25,13 +25,21 @@ https://github.com/Shen-Lab/SS-GCNs
 
 `cd OGBN/unify/ogb/ogbn_arxiv`
 
-`nohup bash sh/110_imp_arxiv.sh 0 > 011301_imp.log &`
+`nohup bash sh/110_imp_arxiv.sh 0 > 011401_imp.log &`
 
-`nohup bash sh/111_imp_arxiv.sh 0 > 011302_imp.log &`
+`nohup bash sh/111_imp_arxiv.sh 0 > 011402_imp.log &`
 
-`nohup bash sh/112_imp_arxiv.sh 0 > 011303_imp.log &`
+`nohup bash sh/112_imp_arxiv.sh 0 > 011403_imp.log &`
 
-`nohup bash sh/113_imp_arxiv.sh 0 > 011304_imp.log &`
+`nohup bash sh/113_imp_arxiv.sh 0 > 011404_imp.log &`
+
+`nohup bash sh/114_imp_arxiv.sh 0 > 011405_imp.log &`
+
+`nohup bash sh/115_imp_arxiv.sh 0 > 011406_imp.log &`
+
+`nohup bash sh/116_imp_arxiv.sh 0 > 011407_imp.log &`
+
+`nohup bash sh/117_imp_arxiv.sh 0 > 011408_imp.log &`
 
 
 
