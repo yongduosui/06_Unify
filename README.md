@@ -12,6 +12,7 @@ https://github.com/Shen-Lab/SS-GCNs
 | Node-level | cora    | 2708 |  13264  | 1433 | 7 | 81.03±0.64 | 236.10 |
 | Node-level | citeseer| 3327 |  4732   | 3703 | 6 | 70.94±0.77 | 236.95 |
 | Node-level | pubmed  |19717 | 108365  | 500  | 3 | 79.16±0.19 | 152.15 |
+| Node-level | arxiv   | -    | -   | -   | -  | 79.16±0.19 | 152.15 |
 
 
 ### 2.2 Unify Pruning
