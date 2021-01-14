@@ -63,35 +63,10 @@ class GENConv(GenMessagePassing):
         self.edge_mask1_train = None
         self.edge_mask1_train = None 
 
-    def forward(self, x,  edge_index, edge_attr=None):
+    # def forward(self, x,  edge_index, edge_attr=None):
         
-        x = x
-        
-        if self.encode_edge and edge_attr is not None:
-            edge_emb = self.edge_encoder(edge_attr)
-        else:
-            edge_emb = edge_attr
-
-        
-        m = self.propagate(edge_index, x=x, edge_attr=edge_emb)
-
-        if self.msg_norm is not None:
-            m = self.msg_norm(x, m)
-
-        h = x + m
-        out = self.mlp(h)
-
-        return out
-
-    # def forward(self, x, edge_mask1_train, edge_mask2_fixed, edge_index, edge_attr=None):
     #     x = x
-    #     if self.edge_mask1_train == None:
-    #         self.edge_mask1_train = edge_mask1_train
-    #         self.edge_mask2_fixed = edge_mask2_fixed
-    #     else:
-    #         self.edge_mask1_train.data = edge_mask1_train
-    #         self.edge_mask2_fixed.data = edge_mask2_fixed
-
+        
     #     if self.encode_edge and edge_attr is not None:
     #         edge_emb = self.edge_encoder(edge_attr)
     #     else:
@@ -107,6 +82,31 @@ class GENConv(GenMessagePassing):
     #     out = self.mlp(h)
 
     #     return out
+
+    def forward(self, x, edge_mask1_train, edge_mask2_fixed, edge_index, edge_attr=None):
+        x = x
+        if self.edge_mask1_train == None:
+            self.edge_mask1_train = edge_mask1_train
+            self.edge_mask2_fixed = edge_mask2_fixed
+        else:
+            self.edge_mask1_train.data = edge_mask1_train
+            self.edge_mask2_fixed.data = edge_mask2_fixed
+
+        if self.encode_edge and edge_attr is not None:
+            edge_emb = self.edge_encoder(edge_attr)
+        else:
+            edge_emb = edge_attr
+
+        
+        m = self.propagate(edge_index, x=x, edge_attr=edge_emb)
+
+        if self.msg_norm is not None:
+            m = self.msg_norm(x, m)
+
+        h = x + m
+        out = self.mlp(h)
+
+        return out
 
     def message(self, x_j, edge_attr=None):
 
