@@ -18,6 +18,7 @@ python -u main_rp.py \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
 --epochs 500 \
---model_save_path ${SAVE}
+--model_save_path ${SAVE} \
+--seed 666
 
 # --resume_dir CKPTs/debug/IMP2_fixed_ckpt.pth
