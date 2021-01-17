@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
-
+    pruning.setup_seed(args.seed)
     start_imp = 0
     rewind_weight_mask = None
     resume_train_ckpt = None
