@@ -4,7 +4,7 @@ INIT=all_one
 ADJ=0.05
 WEI=0.2
 S1=1e-6
-S2=5e-5
+S2=1e-6
 EPOCH=500
 echo syd ------------------------------------------------------
 echo syd s1: $s1 s2: $s2 adj: ${ADJ} wei: ${WEI} init: ${INIT}
