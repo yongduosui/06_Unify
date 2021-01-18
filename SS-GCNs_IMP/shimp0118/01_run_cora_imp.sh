@@ -23,8 +23,6 @@ python -u main_pruning_imp.py \
 --rewind_soft_mask
 echo syd ------------------------------------------------------
 
-
-GPU=$1
 DIM=512
 INIT=all_one
 ADJ=0.05
@@ -49,8 +47,6 @@ python -u main_pruning_imp.py \
 --rewind_soft_mask
 echo syd ------------------------------------------------------
 
-
-GPU=$1
 DIM=512
 INIT=all_one
 ADJ=0.05
