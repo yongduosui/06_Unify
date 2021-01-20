@@ -61,7 +61,7 @@ class GENConv(GenMessagePassing):
                 self.edge_encoder = torch.nn.Linear(edge_feat_dim, in_dim)
 
         self.edge_mask1_train = None
-        self.edge_mask1_train = None 
+        self.edge_mask2_fixed = None 
 
     # def forward(self, x,  edge_index, edge_attr=None):
         
@@ -134,9 +134,9 @@ class GENConv(GenMessagePassing):
                 with torch.no_grad():
                     out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
 
-            # inputs = inputs * self.edge_mask1_train * self.edge_mask2_fixed
-            
-            out = scatter(inputs*out, index, dim=self.node_dim,
+            ## NOTE: pruning adj
+            inputs = inputs * self.edge_mask1_train * self.edge_mask2_fixed
+            out = scatter(inputs * out, index, dim=self.node_dim,
                           dim_size=dim_size, reduce='sum')
 
             if self.aggr == 'softmax_sum':
