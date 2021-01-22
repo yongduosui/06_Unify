@@ -219,6 +219,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
 if __name__ == "__main__":
 
     args = ArgsInit().save_exp()
+    
     pruning.print_args(args, 120)
 
     start_imp = 1
