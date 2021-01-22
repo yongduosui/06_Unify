@@ -19,27 +19,22 @@ https://github.com/Shen-Lab/SS-GCNs
 
 ### 1. IMP
 
-`cd OGBN`
+`cd OGBN_proteins`
 
 `bash deepgcn_env_install_my.sh`
 
-`cd OGBN/unify/ogb/ogbn_arxiv`
+`cd OGBN_proteins/unify/ogb/ogbn_proteins`
 
-`nohup bash sh/110_imp_arxiv.sh 0 > 011401_imp.log &`
+`nohup bash sh/01_imp_proteins.sh 0 > 012301_imp_proteins.log &`
 
-`nohup bash sh/111_imp_arxiv.sh 0 > 011402_imp.log &`
+`nohup bash sh/02_imp_proteins.sh 0 > 012302_imp_proteins.log &`
 
-`nohup bash sh/112_imp_arxiv.sh 0 > 011403_imp.log &`
+`nohup bash sh/03_imp_proteins.sh 0 > 012303_imp_proteins.log &`
 
-`nohup bash sh/113_imp_arxiv.sh 0 > 011404_imp.log &`
+`nohup bash sh/04_imp_proteins.sh 0 > 012304_imp_proteins.log &`
 
-`nohup bash sh/114_imp_arxiv.sh 0 > 011405_imp.log &`
+`nohup bash sh/05_imp_proteins.sh 0 > 012305_imp_proteins.log &`
 
-`nohup bash sh/115_imp_arxiv.sh 0 > 011406_imp.log &`
-
-`nohup bash sh/116_imp_arxiv.sh 0 > 011407_imp.log &`
-
-`nohup bash sh/117_imp_arxiv.sh 0 > 011408_imp.log &`
 
 
 
