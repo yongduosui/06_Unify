@@ -211,8 +211,8 @@ if __name__ == "__main__":
     pruning.print_args(args, 80)
     pruning.setup_seed(666)
     print("syd: IMP:[{}] Pruning adj[{:.6f}], wei[{:.6f}]".format(imp_num, args.pruning_percent_adj, args.pruning_percent_wei))
-    resume_train_ckpt = None
     
+    resume_train_ckpt = None
     if args.resume_dir:
         resume_train_ckpt = torch.load(args.resume_dir)
         imp_num = resume_train_ckpt['imp_num']
