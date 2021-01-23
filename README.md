@@ -17,7 +17,8 @@ https://github.com/Shen-Lab/SS-GCNs
 
 ### 2.2 Unify Pruning
 
-### 1. IMP
+
+### 1. Proteins
 
 `cd OGBN_proteins`
 
@@ -26,7 +27,7 @@ https://github.com/Shen-Lab/SS-GCNs
 `cd OGBN_proteins/unify/ogb/ogbn_proteins`
 
 
-
+`----------------------------running--------------------------------------------`
 
 `nohup bash sh/01_imp_proteins.sh 0 > 012301_imp_proteins_resume.log &`
 
@@ -42,20 +43,49 @@ https://github.com/Shen-Lab/SS-GCNs
 
 `nohup bash sh/08_imp_proteins.sh 0 > 012308_imp_proteins.log &`
 
-`nohup bash sh/09_imp_proteins.sh 0 > 012309_imp_proteins.log &`
 
-`nohup bash sh/10_imp_proteins.sh 0 > 012310_imp_proteins.log &`
+`----------------------------TODO--------------------------------------------`
 
-`nohup bash sh/11_imp_proteins.sh 0 > 012311_imp_proteins.log &`
+`nohup bash sh/01_imp_proteins.sh 9 0 > 012309_imp_proteins.log &`
 
-`nohup bash sh/12_imp_proteins.sh 0 > 012312_imp_proteins.log &`
+`nohup bash sh/01_imp_proteins.sh 10 0 > 012310_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 11 0 > 012311_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 12 0 > 012312_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 13 0 > 012313_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 14 0 > 012314_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 15 0 > 012315_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 16 0 > 012316_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 17 0 > 012317_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 18 0 > 012318_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 19 0 > 012319_imp_proteins.log &`
+
+`nohup bash sh/01_imp_proteins.sh 20 0 > 012320_imp_proteins.log &`
+
+
+
+### 2. Collab
+
+`----------------------------TODO--------------------------------------------`
+
+`nohup bash sh/00_collab_baseline.sh 0 > 012400_collab_baseline.log &`
+
+`nohup bash sh/01_collab_imp.sh 0 > 012401_collab_imp_setting1.log &`
+
+`nohup bash sh/02_collab_imp.sh 0 > 012402_collab_imp_setting2.log &`
+
+`nohup bash sh/03_collab_imp.sh 0 > 012403_collab_imp_setting3.log &`
+
+`nohup bash sh/04_collab_imp.sh 0 > 012404_collab_imp_setting4.log &`
 
 
 
 
-
-
-
-
-
-### 2. OMP

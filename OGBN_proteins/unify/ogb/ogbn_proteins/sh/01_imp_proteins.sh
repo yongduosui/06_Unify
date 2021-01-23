@@ -1,12 +1,10 @@
-GPU=$1
+IMPNUM=$1
+GPU=$2
 EPOCH=100
 ITER=10
-WEI=0.2
-ADJ=0.05
 S1=0.1
 S2=1e-3
 SAVE=IMP
-IMPNUM=1
 
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_imp.py \
@@ -17,8 +15,6 @@ python -u main_imp.py \
 --num_layers 28 \
 --s1 ${S1} \
 --s2 ${S2} \
---pruning_percent_wei ${WEI} \
---pruning_percent_adj ${ADJ} \
 --epochs ${EPOCH} \
 --iteration ${ITER} \
 --model_save_path ${SAVE} \

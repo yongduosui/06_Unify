@@ -204,19 +204,21 @@ def main_get_mask(args, imp_num, resume_train_ckpt=None):
 if __name__ == "__main__":
 
     args = ArgsInit().save_exp()
+    imp_num = args.imp_num
+    percent_list = [(1 - (1 - 0.05) ** (i + 1), 1 - (1 - 0.2) ** (i + 1)) for i in range(20)]
     
+    args.pruning_percent_adj, args.pruning_percent_wei = percent_list[imp_num - 1]
     pruning.print_args(args, 80)
     pruning.setup_seed(666)
-    imp_num = args.imp_num
-
+    print("syd: IMP:[{}] Pruning adj[{:.6f}], wei[{:.6f}]".format(imp_num, args.pruning_percent_adj, args.pruning_percent_wei))
     resume_train_ckpt = None
-
+    
     if args.resume_dir:
         resume_train_ckpt = torch.load(args.resume_dir)
         imp_num = resume_train_ckpt['imp_num']
         if 'fixed_ckpt' in args.resume_dir:
             main_fixed_mask(args, imp_num, final_state_dict=None, resume_train_ckpt=resume_train_ckpt)
-            exit
+            exit()
 
     final_state_dict = main_get_mask(args, imp_num, resume_train_ckpt)
     print("INFO: Begin Retrain!")
