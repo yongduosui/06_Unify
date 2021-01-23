@@ -17,12 +17,10 @@ https://github.com/Shen-Lab/SS-GCNs
 
 ### 2.2 Unify Pruning
 
+`bash deepgcn_env_install_my.sh`
 
 ### 1. Proteins
 
-`cd OGBN_proteins`
-
-`bash deepgcn_env_install_my.sh`
 
 `cd OGBN_proteins/unify/ogb/ogbn_proteins`
 
@@ -74,6 +72,8 @@ https://github.com/Shen-Lab/SS-GCNs
 
 ### 2. Collab
 
+`cd OGBN_collab/examples/ogb/ogbl_collab`
+
 `----------------------------TODO--------------------------------------------`
 
 `nohup bash sh/00_collab_baseline.sh 0 > 012400_collab_baseline.log &`
@@ -85,7 +85,4 @@ https://github.com/Shen-Lab/SS-GCNs
 `nohup bash sh/03_collab_imp.sh 0 > 012403_collab_imp_setting3.log &`
 
 `nohup bash sh/04_collab_imp.sh 0 > 012404_collab_imp_setting4.log &`
-
-
-
 
