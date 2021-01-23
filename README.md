@@ -25,15 +25,29 @@ https://github.com/Shen-Lab/SS-GCNs
 
 `cd OGBN_proteins/unify/ogb/ogbn_proteins`
 
-`nohup bash sh/01_imp_proteins.sh 0 > 012301_imp_proteins.log &`
 
-`nohup bash sh/02_imp_proteins.sh 0 > 012302_imp_proteins.log &`
 
-`nohup bash sh/03_imp_proteins.sh 0 > 012303_imp_proteins.log &`
 
-`nohup bash sh/04_imp_proteins.sh 0 > 012304_imp_proteins.log &`
+`nohup bash sh/01_imp_proteins.sh 0 > 012301_imp_proteins_resume.log &`
 
-`nohup bash sh/05_imp_proteins.sh 0 > 012305_imp_proteins.log &`
+`nohup bash sh/02_imp_proteins.sh 0 > 012302_imp_proteins_resume.log &`
+
+`nohup bash sh/03_imp_proteins.sh 0 > 012303_imp_proteins_resume.log &`
+
+`nohup bash sh/04_imp_proteins.sh 0 > 012304_imp_proteins_resume.log &`
+
+`nohup bash sh/06_imp_proteins.sh 0 > 012306_imp_proteins.log &`
+
+`nohup bash sh/07_imp_proteins.sh 0 > 012307_imp_proteins.log &`
+
+`nohup bash sh/08_imp_proteins.sh 0 > 012308_imp_proteins.log &`
+
+
+
+
+
+
+
 
 
 

@@ -22,4 +22,5 @@ python -u main_imp.py \
 --epochs ${EPOCH} \
 --iteration ${ITER} \
 --model_save_path ${SAVE} \
---imp_num ${IMPNUM}
+--imp_num ${IMPNUM} \
+--resume_dir CKPT/IMP/IMP3_train_ckpt.pth

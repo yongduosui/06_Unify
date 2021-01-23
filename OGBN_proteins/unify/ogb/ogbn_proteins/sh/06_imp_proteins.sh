@@ -1,12 +1,12 @@
 GPU=$1
 EPOCH=100
 ITER=10
-WEI=0.36
-ADJ=0.0975
+WEI=0.7379
+ADJ=0.2649
 S1=0.1
 S2=1e-3
 SAVE=IMP
-IMPNUM=2
+IMPNUM=6
 
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_imp.py \
@@ -22,5 +22,4 @@ python -u main_imp.py \
 --epochs ${EPOCH} \
 --iteration ${ITER} \
 --model_save_path ${SAVE} \
---imp_num ${IMPNUM} \
---resume_dir CKPT/IMP/IMP2_train_ckpt.pth
+--imp_num ${IMPNUM}
