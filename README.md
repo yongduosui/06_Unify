@@ -42,7 +42,13 @@ https://github.com/Shen-Lab/SS-GCNs
 
 `nohup bash sh/08_imp_proteins.sh 0 > 012308_imp_proteins.log &`
 
+`nohup bash sh/09_imp_proteins.sh 0 > 012309_imp_proteins.log &`
 
+`nohup bash sh/10_imp_proteins.sh 0 > 012310_imp_proteins.log &`
+
+`nohup bash sh/11_imp_proteins.sh 0 > 012311_imp_proteins.log &`
+
+`nohup bash sh/12_imp_proteins.sh 0 > 012312_imp_proteins.log &`
 
 
 
