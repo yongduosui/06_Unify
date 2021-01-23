@@ -3,6 +3,8 @@
 
 https://github.com/Shen-Lab/SS-GCNs
 
+https://github.com/lightaime/deep_gcns_torch
+
 ## 2. Experiments
 
 ### 2.1 Baseline
