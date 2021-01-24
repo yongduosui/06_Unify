@@ -42,7 +42,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask, rewind_predict_weight, re
             param.requires_grad = False
 
     optimizer = torch.optim.Adam(list(model.parameters()) + list(predictor.parameters()), lr=args.lr)
-    results = {}
+    results = {'epoch': 0}
     keys = ['highest_valid', 'final_train', 'final_test', 'highest_train']
     hits = ['Hits@10', 'Hits@50', 'Hits@100']
     
