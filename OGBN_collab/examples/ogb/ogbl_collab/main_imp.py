@@ -140,7 +140,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, rewind_predict_weight=
     pruning.add_trainable_mask_noise(model, args, c=1e-4)
     optimizer = torch.optim.Adam(list(model.parameters()) + list(predictor.parameters()), lr=args.lr)
 
-    results = {}
+    results = {'epoch':0}
     keys = ['highest_valid', 'final_train', 'final_test', 'highest_train']
     hits = ['Hits@10', 'Hits@50', 'Hits@100']
 

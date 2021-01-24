@@ -68,6 +68,13 @@ def main_get_mask(args, imp_num):
             results['final_train'][k] = train_result
             results['final_test'][k] = test_result
             results['epoch'] = epoch
+            pruning.save_all(model, predictor, 
+                                    None, 
+                                    optimizer, 
+                                    imp_num, 
+                                    epoch, 
+                                    args.model_save_path, 
+                                    'Baseline{}_train_ckpt'.format(imp_num))
             
         epoch_time = (time.time() - t0) / 60
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
