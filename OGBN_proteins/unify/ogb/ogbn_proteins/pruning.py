@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import pdb
 import torch.nn.init as init
 import math
+from tqdm import tqdm
 
 def retrain_operation(dataset, model, all_ckpt):
 
@@ -229,26 +230,30 @@ def get_final_mask_epoch(model, rewind_weight, wei_percent):
     return rewind_weight
 
 
-def random_pruning(model, adj_percent, wei_percent):
+def random_pruning(dataset, model, args):
+    
+    #### random pruning adj
+    edge_total = dataset.adj.nnz
+    edge_pruned_num = int(edge_total * args.pruning_percent_adj)
+    adj_nonzero = dataset.adj.nonzero()
+    edge_pruned_index = random.sample([i for i in range(edge_total)], edge_pruned_num)
+    
+    print("pruning edge ......")
+    for index in tqdm(edge_pruned_index):
+        x, y = adj_nonzero[0][index], adj_nonzero[1][index]
+        dataset.adj[x, y] = 0
+    dataset.adj.eliminate_zeros()
 
-    model.edge_mask1_train.requires_grad = False
-    adj_total = model.edge_mask1_train.numel()
-    adj_pruned_num = int(adj_total * adj_percent)
-    adj_nonzero = model.edge_mask1_train.nonzero()
-    adj_pruned_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
-    adj_pruned_list = adj_nonzero[adj_pruned_index].tolist()
-    
-    for i, j in adj_pruned_list:
-        model.edge_mask1_train[i][j] = 0
-        model.edge_mask2_fixed[i][j] = 0
-    
-    model.edge_mask1_train.requires_grad = True
-    
-    for i in range(28):
+    pdb.set_trace()
+    #### random pruning weight
+    for i in range(args.num_layers):
         
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = False
+        model.gcns[i].mlp[3].weight_mask_train.requires_grad = False
+
+        #####  mlp 1 #####
         wei_total = model.gcns[i].mlp[0].weight_mask_train.numel()
-        wei_pruned_num = int(wei_total * wei_percent)
+        wei_pruned_num = int(wei_total * args.pruning_percent_wei)
         wei_nonzero = model.gcns[i].mlp[0].weight_mask_train.nonzero()
         wei_pruned_index = random.sample([j for j in range(wei_total)], wei_pruned_num)
         wei_pruned_list = wei_nonzero[wei_pruned_index].tolist()
@@ -257,7 +262,21 @@ def random_pruning(model, adj_percent, wei_percent):
             model.gcns[i].mlp[0].weight_mask_train[ai][wj] = 0
             model.gcns[i].mlp[0].weight_mask_fixed[ai][wj] = 0
 
+        #####  mlp 3 #####
+        wei_total = model.gcns[i].mlp[3].weight_mask_train.numel()
+        wei_pruned_num = int(wei_total * args.pruning_percent_wei)
+        wei_nonzero = model.gcns[i].mlp[3].weight_mask_train.nonzero()
+        wei_pruned_index = random.sample([j for j in range(wei_total)], wei_pruned_num)
+        wei_pruned_list = wei_nonzero[wei_pruned_index].tolist()
+
+        for ii, (ai, wj) in enumerate(wei_pruned_list):
+            model.gcns[i].mlp[3].weight_mask_train[ai][wj] = 0
+            model.gcns[i].mlp[3].weight_mask_fixed[ai][wj] = 0
+
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = True 
+        model.gcns[i].mlp[3].weight_mask_train.requires_grad = True
+
+
 
 
 def print_sparsity(dataset, model):

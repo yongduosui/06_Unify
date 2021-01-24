@@ -13,6 +13,7 @@ import random
 import pdb
 import torch
 import torch.nn as nn
+import pdb
 
 class OGBNDataset(object):
 
@@ -24,7 +25,8 @@ class OGBNDataset(object):
             edge_attr=[79122504, 8]
             edge_index=[2, 79122504]
             x=[132534, 8]   # node features
-            y=[132534, 112] # label
+            y=[132534, 11
+            2] # label
         :param dataset_name:
         """
         
@@ -39,6 +41,7 @@ class OGBNDataset(object):
         self.num_tasks = self.dataset.num_tasks
         self.total_no_of_edges = self.whole_graph.edge_attr.shape[0]
         self.total_no_of_nodes = self.whole_graph.y.shape[0]
+        
         self.species = self.whole_graph.node_species
         self.y = self.whole_graph.y
 
@@ -53,6 +56,7 @@ class OGBNDataset(object):
         # obtain adjacent matrix
         self.adj = self.construct_adj()
 
+        
     def generate_one_hot_encoding(self):
 
         le = preprocessing.LabelEncoder()

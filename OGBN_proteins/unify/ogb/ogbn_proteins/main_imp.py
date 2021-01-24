@@ -85,7 +85,9 @@ def main_fixed_mask(args, imp_num, final_state_dict=None, resume_train_ckpt=None
             results['final_train'] = train_result
             results['final_test'] = test_result
             results['epoch'] = epoch
-            final_state_dict = pruning.save_all(dataset, model, None, 
+            final_state_dict = pruning.save_all(dataset, 
+                                                model, 
+                                                None, 
                                                 optimizer, 
                                                 imp_num, 
                                                 epoch, 
@@ -173,12 +175,14 @@ def main_get_mask(args, imp_num, resume_train_ckpt=None):
             results['final_train'] = train_result
             results['final_test'] = test_result
             results['epoch'] = epoch
-            final_state_dict = pruning.save_all(dataset, model, rewind_weight_mask, 
-                                           optimizer, 
-                                           imp_num, 
-                                           epoch, 
-                                           args.model_save_path, 
-                                           'IMP{}_train_ckpt'.format(imp_num))
+            final_state_dict = pruning.save_all(dataset, 
+                                                model, 
+                                                rewind_weight_mask, 
+                                                optimizer, 
+                                                imp_num, 
+                                                epoch, 
+                                                args.model_save_path, 
+                                                'IMP{}_train_ckpt'.format(imp_num))
         epoch_time = (time.time() - t0) / 60
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'IMP:[{}] (GET Mask) Epoch[{}/{}] LOSS[{:.4f}] Train[{:.2f}] Valid[{:.2f}] Test[{:.2f}] | Update Test[{:.2f}] at epoch[{}] | Adj[{:.3f}%] Wei[{:.3f}%] Time:[{:.2f}min]'
@@ -223,4 +227,3 @@ if __name__ == "__main__":
     final_state_dict = main_get_mask(args, imp_num, resume_train_ckpt)
     print("INFO: Begin Retrain!")
     main_fixed_mask(args, imp_num, final_state_dict=final_state_dict, resume_train_ckpt=None)
-
