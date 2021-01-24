@@ -8,15 +8,8 @@ import matplotlib.pyplot as plt
 import pdb
 import torch.nn.init as init
 import math
-# def soft_threshold(w, th):
-# 	'''
-# 	pytorch soft-sign function
-# 	'''
-# 	with torch.no_grad():
-# 		temp = torch.abs(w) - th
-# 		# print('th:', th)
-# 		# print('temp:', temp.size())
-# 		return torch.sign(w) * nn.functional.relu(temp)
+from tqdm import tqdm
+
 
 def save_all(model, predictor, rewind_weight, optimizer, imp_num, epoch, save_path, save_name='default'):
     
@@ -159,26 +152,26 @@ def get_final_mask_epoch(model, rewind_weight, args):
     return rewind_weight
 
 
-def random_pruning(model, adj_percent, wei_percent):
+def random_pruning(model, args):
 
     model.edge_mask1_train.requires_grad = False
     adj_total = model.edge_mask1_train.numel()
-    adj_pruned_num = int(adj_total * adj_percent)
+    adj_pruned_num = int(adj_total * args.pruning_percent_adj)
     adj_nonzero = model.edge_mask1_train.nonzero()
     adj_pruned_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
     adj_pruned_list = adj_nonzero[adj_pruned_index].tolist()
     
-    for i, j in adj_pruned_list:
+    print("pruning adj ......")
+    for i, j in tqdm(adj_pruned_list):
         model.edge_mask1_train[i][j] = 0
         model.edge_mask2_fixed[i][j] = 0
-    
     model.edge_mask1_train.requires_grad = True
     
-    for i in range(28):
+    for i in range(args.num_layers):
         
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = False
         wei_total = model.gcns[i].mlp[0].weight_mask_train.numel()
-        wei_pruned_num = int(wei_total * wei_percent)
+        wei_pruned_num = int(wei_total * args.pruning_percent_wei)
         wei_nonzero = model.gcns[i].mlp[0].weight_mask_train.nonzero()
         wei_pruned_index = random.sample([j for j in range(wei_total)], wei_pruned_num)
         wei_pruned_list = wei_nonzero[wei_pruned_index].tolist()
