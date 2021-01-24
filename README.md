@@ -43,9 +43,6 @@ https://github.com/lightaime/deep_gcns_torch
 
 `nohup bash sh/08_imp_proteins.sh 0 > 012308_imp_proteins.log &`
 
-
-`----------------------------TODO--------------------------------------------`
-
 `nohup bash sh/01_imp_proteins.sh 9 0 > 012309_imp_proteins.log &`
 
 `nohup bash sh/01_imp_proteins.sh 10 0 > 012310_imp_proteins.log &`
@@ -70,13 +67,54 @@ https://github.com/lightaime/deep_gcns_torch
 
 `nohup bash sh/01_imp_proteins.sh 20 0 > 012320_imp_proteins.log &`
 
+`----------------------------TODO RP--------------------------------------------`
+
+`nohup bash sh/02_rp_proteins.sh 1 0 > 012401_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 2 0 > 012402_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 3 0 > 012403_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 4 0 > 012404_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 5 0 > 012405_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 6 0 > 012406_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 7 0 > 012407_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 8 0 > 012408_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 9 0 > 012409_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 10 0 > 012410_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 11 0 > 012411_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 12 0 > 012412_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 13 0 > 012413_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 14 0 > 012414_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 15 0 > 012415_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 16 0 > 012416_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 17 0 > 012417_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 18 0 > 012418_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 19 0 > 012419_rp_proteins.log &`
+
+`nohup bash sh/02_rp_proteins.sh 20 0 > 012420_rp_proteins.log &`
 
 
 ### 2. Collab
 
 `cd OGBN_collab/examples/ogb/ogbl_collab`
 
-`----------------------------TODO--------------------------------------------`
+`----------------------------running--------------------------------------------`
 
 `nohup bash sh/00_collab_baseline.sh 0 > 012400_collab_baseline.log &`
 
@@ -88,3 +126,44 @@ https://github.com/lightaime/deep_gcns_torch
 
 `nohup bash sh/04_collab_imp.sh 0 > 012404_collab_imp_setting4.log &`
 
+`----------------------------TODO RP--------------------------------------------`
+
+`nohup bash sh/99_collab_rp.sh 1 0 > 012401_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 2 0 > 012402_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 3 0 > 012403_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 4 0 > 012404_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 5 0 > 012405_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 6 0 > 012406_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 7 0 > 012407_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 8 0 > 012408_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 9 0 > 012409_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 10 0 > 012410_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 11 0 > 012411_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 12 0 > 012412_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 13 0 > 012413_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 14 0 > 012414_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 15 0 > 012415_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 16 0 > 012416_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 17 0 > 012417_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 18 0 > 012418_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 19 0 > 012419_collab_rp.log &`
+
+`nohup bash sh/99_collab_rp.sh 20 0 > 012420_collab_rp.log &`
