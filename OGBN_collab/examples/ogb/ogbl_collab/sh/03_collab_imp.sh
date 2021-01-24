@@ -2,8 +2,8 @@ GPU=$1
 WEI=0.2
 ADJ=0.05
 S1=1e-6
-S2=1e-3
-SAVE=IMP_setting1
+S2=1e-6
+SAVE=IMP_setting3
 LAYER=28
 
 CUDA_VISIBLE_DEVICES=${GPU} \
