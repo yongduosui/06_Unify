@@ -244,7 +244,7 @@ def random_pruning(dataset, model, args):
         dataset.adj[x, y] = 0
     dataset.adj.eliminate_zeros()
 
-    pdb.set_trace()
+    
     #### random pruning weight
     for i in range(args.num_layers):
         
