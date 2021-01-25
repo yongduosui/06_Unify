@@ -21,6 +21,12 @@ https://github.com/lightaime/deep_gcns_torch
 
 `bash deepgcn_env_install_my.sh`
 
+### 0. DDI
+
+`CUDA_VISIBLE_DEVICES=0 python -u main_gingat_imp.py --net gat --s1 1e-6 --s2 1e-3 --fix_epoch 200 --mask_epoch 200`
+
+`CUDA_VISIBLE_DEVICES=0 python -u main_gingat_imp.py --net gat --s1 1e-3 --s2 1e-3 --fix_epoch 200 --mask_epoch 200`
+
 ### 1. Proteins
 
 
