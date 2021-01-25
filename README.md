@@ -23,6 +23,23 @@ https://github.com/lightaime/deep_gcns_torch
 
 ### 0. DDI
 
+`pip install torch==1.6.0 torchvision==0.7.0`
+
+`pip install ogb`
+
+`pip install torch-geometric==1.6.0`
+
+`CUDA=cu102`
+
+`pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html`
+
+`pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html`
+
+`pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html`
+
+`pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html`
+
+
 `CUDA_VISIBLE_DEVICES=0 python -u main_gingat_imp.py --net gat --s1 1e-6 --s2 1e-3 --fix_epoch 200 --mask_epoch 200`
 
 `CUDA_VISIBLE_DEVICES=0 python -u main_gingat_imp.py --net gat --s1 1e-3 --s2 1e-3 --fix_epoch 200 --mask_epoch 200`
