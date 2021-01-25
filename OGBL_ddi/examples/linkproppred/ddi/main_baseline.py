@@ -12,7 +12,6 @@ from models import GCN, LinkPredictor
 import train
 
 def main():
-
     parser = argparse.ArgumentParser(description='OGBL-DDI (GNN)')
     parser.add_argument('--device', type=int, default=0)
     parser.add_argument('--log_steps', type=int, default=1)
