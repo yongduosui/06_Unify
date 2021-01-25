@@ -101,8 +101,8 @@ def main_fixed_mask(args, imp_num, final_state_dict=None, resume_train_ckpt=None
                                                                test_result * 100,
                                                                results['final_test'] * 100,
                                                                results['epoch'],
-                                                               results['adj_spar'],
-                                                               results['wei_spar'],
+                                                               results['adj_spar'] * 100,
+                                                               results['wei_spar'] * 100,
                                                                epoch_time))
     print("=" * 120)
     print("syd final: IMP:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
