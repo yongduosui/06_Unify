@@ -26,72 +26,8 @@ https://github.com/lightaime/deep_gcns_torch
 
 `cd OGBN_proteins/unify/ogb/ogbn_proteins`
 
-
-`----------------------------running--------------------------------------------`
-
-`nohup bash sh/01_imp_proteins.sh 0 > 012301_imp_proteins_resume.log &`
-
-`nohup bash sh/02_imp_proteins.sh 0 > 012302_imp_proteins_resume.log &`
-
-`nohup bash sh/03_imp_proteins.sh 0 > 012303_imp_proteins_resume.log &`
-
-`nohup bash sh/04_imp_proteins.sh 0 > 012304_imp_proteins_resume.log &`
-
-`nohup bash sh/06_imp_proteins.sh 0 > 012306_imp_proteins.log &`
-
-`nohup bash sh/07_imp_proteins.sh 0 > 012307_imp_proteins.log &`
-
-`nohup bash sh/08_imp_proteins.sh 0 > 012308_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 9 0 > 012309_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 10 0 > 012310_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 11 0 > 012311_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 12 0 > 012312_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 13 0 > 012313_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 14 0 > 012314_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 15 0 > 012315_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 16 0 > 012316_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 17 0 > 012317_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 18 0 > 012318_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 19 0 > 012319_imp_proteins.log &`
-
-`nohup bash sh/01_imp_proteins.sh 20 0 > 012320_imp_proteins.log &`
-
 `----------------------------TODO RP--------------------------------------------`
 
-`nohup bash sh/02_rp_proteins.sh 1 0 > 012401_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 2 0 > 012402_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 3 0 > 012403_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 4 0 > 012404_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 5 0 > 012405_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 6 0 > 012406_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 7 0 > 012407_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 8 0 > 012408_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 9 0 > 012409_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 10 0 > 012410_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 11 0 > 012411_rp_proteins.log &`
-
-`nohup bash sh/02_rp_proteins.sh 12 0 > 012412_rp_proteins.log &`
 
 `nohup bash sh/02_rp_proteins.sh 13 0 > 012413_rp_proteins.log &`
 
