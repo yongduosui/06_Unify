@@ -39,7 +39,7 @@ def main_fixed_mask(args, imp_num, resume_train_ckpt=None):
     for name, param in model.named_parameters():
         if 'mask' in name:
             param.requires_grad = False
-    pdb.set_trace()
+    
     optimizer = torch.optim.Adam(list(model.parameters()) + list(predictor.parameters()), lr=args.lr)
     results = {}
     keys = ['highest_valid', 'final_train', 'final_test', 'highest_train']

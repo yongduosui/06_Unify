@@ -110,8 +110,8 @@ def main_fixed_mask(args, imp_num, final_state_dict=None, resume_train_ckpt=None
                             results['highest_valid'] * 100,
                             results['epoch'],
                             results['final_test'] * 100,
-                            results['adj_spar'],
-                            results['wei_spar']))
+                            results['adj_spar'] * 100,
+                            results['wei_spar'] * 100))
     print("=" * 120)
 
 def main_get_mask(args, imp_num, resume_train_ckpt=None):
