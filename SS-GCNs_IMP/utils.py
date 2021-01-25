@@ -4,7 +4,7 @@ import networkx as nx
 import scipy.sparse as sp
 from scipy.sparse.linalg.eigen.arpack import eigsh
 import sys
-
+import pdb
 import torch
 # import metis
 
@@ -75,9 +75,10 @@ def load_data(dataset_str):
     features = torch.tensor(features, dtype=torch.float32)
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(graph))
     # preprocess adj
-    adj = preprocess_adj(adj)
-    adj = sparse_mx_to_torch_sparse_tensor(adj)
-
+    adj = sparse_mx_to_torch_sparse_tensor(adj).to_dense()
+    # adj = torch_normalize_adj(adj)
+    # adj2 = preprocess_adj(adj)
+    # adj2 = sparse_mx_to_torch_sparse_tensor(adj2).to_dense()
     labels = np.vstack((ally, ty))
     labels[test_idx_reorder, :] = labels[test_idx_range, :]
     _, l_num = labels.shape
@@ -118,6 +119,15 @@ def preprocess_features(features):
     features = r_mat_inv.dot(features)
     #return sparse_to_tuple(features)
     return features.todense()
+
+
+def torch_normalize_adj(adj):
+    adj = adj + torch.eye(adj.shape[0]).cuda()
+    rowsum = adj.sum(1)
+    d_inv_sqrt = torch.pow(rowsum, -0.5).flatten()
+    d_inv_sqrt[torch.isinf(d_inv_sqrt)] = 0.0
+    d_mat_inv_sqrt = torch.diag(d_inv_sqrt).cuda()
+    return adj.mm(d_mat_inv_sqrt).t().mm(d_mat_inv_sqrt)
 
 
 def normalize_adj(adj):
