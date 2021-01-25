@@ -29,6 +29,8 @@ https://github.com/lightaime/deep_gcns_torch
 
 `bash syd_install.sh`
 
+`pip install dgl-cu101==0.4.2`
+
 `cd examples/linkproppred/ddi`
 
 `bash 00_gat_debug.sh 0`
