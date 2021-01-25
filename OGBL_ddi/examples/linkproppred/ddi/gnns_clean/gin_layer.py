@@ -2,15 +2,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import dgl.function as fn
-import pdb
+
 """
     GIN: Graph Isomorphism Networks
     HOW POWERFUL ARE GRAPH NEURAL NETWORKS? (Keyulu Xu, Weihua Hu, Jure Leskovec and Stefanie Jegelka, ICLR 2019)
     https://arxiv.org/pdf/1810.00826.pdf
 """
-msg_mask = fn.src_mul_edge('h', 'mask', 'm')
-# msg_mask = fn.u_mul_e('h', 'mask', 'm')
-msg_orig = fn.copy_u('h', 'm')
 
 class GINLayer(nn.Module):
     """
@@ -72,21 +69,17 @@ class GINLayer(nn.Module):
         self.bn_node_h = nn.BatchNorm1d(out_dim)
 
     def forward(self, g, h, snorm_n):
-        
         h_in = h # for residual connection
         
         g = g.local_var()
         g.ndata['h'] = h
-        # g.update_all(msg_orig, self._reducer('m', 'neigh'))
-        ### pruning edges by cutting message passing process
-        g.update_all(msg_mask, self._reducer('m', 'neigh'))
-
+        g.update_all(fn.copy_u('h', 'm'), self._reducer('m', 'neigh'))
         h = (1 + self.eps) * h + g.ndata['neigh']
         if self.apply_func is not None:
             h = self.apply_func(h)
 
         if self.graph_norm:
-            h = h * snorm_n # normalize activation w.r.t. graph size
+            h = h* snorm_n # normalize activation w.r.t. graph size
         
         if self.batch_norm:
             h = self.bn_node_h(h) # batch normalization  

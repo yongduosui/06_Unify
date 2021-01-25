@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import pdb
+
 """
     GAT: Graph Attention Network
     Graph Attention Networks (Veličković et al., ICLR 2018)
@@ -27,27 +27,19 @@ class GATHeadLayer(nn.Module):
         return {'e': F.leaky_relu(a)}
 
     def message_func(self, edges):
-        
-        ### edges.src['z']: edge src node feature
-        ### edges.data['e']: edge feature
-        return {'z': edges.src['z'], 'e': edges.data['e']} # this dict all save in message box
+        return {'z': edges.src['z'], 'e': edges.data['e']}
 
     def reduce_func(self, nodes):
-       
         alpha = F.softmax(nodes.mailbox['e'], dim=1)
         alpha = F.dropout(alpha, self.dropout, training=self.training)
         h = torch.sum(alpha * nodes.mailbox['z'], dim=1)
         return {'h': h}
 
-    def forward(self, g, h, snorm_n, train_mask, fixed_mask):
-
+    def forward(self, g, h, snorm_n):
         z = self.fc(h)
         g.ndata['z'] = z
-        g.apply_edges(self.edge_attention) # The function to generate new edge features
-        ### pruning edges
-        g.edata['e'] = g.edata['e'] * train_mask * fixed_mask
+        g.apply_edges(self.edge_attention)
         g.update_all(self.message_func, self.reduce_func)
-
         h = g.ndata['h']
         if self.graph_norm:
             h = h * snorm_n
@@ -74,13 +66,13 @@ class GATLayer(nn.Module):
             self.residual = False
         
         self.heads = nn.ModuleList()
-        for i in range(num_heads): # 8
+        for i in range(num_heads):
             self.heads.append(GATHeadLayer(in_dim, out_dim, dropout, graph_norm, batch_norm, num_heads))
         self.merge = 'cat' 
 
-    def forward(self, g, h, snorm_n, train_mask, fixed_mask):
+    def forward(self, g, h, snorm_n):
         h_in = h # for residual connection
-        head_outs = [attn_head(g, h, snorm_n, train_mask, fixed_mask) for attn_head in self.heads]
+        head_outs = [attn_head(g, h, snorm_n) for attn_head in self.heads]
         
         if self.merge == 'cat':
             h = torch.cat(head_outs, dim=1)

@@ -9,13 +9,12 @@ import dgl
     Graph Attention Networks (Veličković et al., ICLR 2018)
     https://arxiv.org/abs/1710.10903
 """
-from gnns.gat_layer import GATLayer
-from gnns.mlp_readout_layer import MLPReadout
-import pdb
+from gnns_clean.gat_layer import GATLayer
+from gnns_clean.mlp_readout_layer import MLPReadout
 
 class GATNet(nn.Module):
 
-    def __init__(self, net_params, graph):
+    def __init__(self, net_params):
         super().__init__()
 
         in_dim_node = net_params[0] # node_dim (feat is an integer)
@@ -25,7 +24,7 @@ class GATNet(nn.Module):
         num_heads = 8
         dropout = 0.6
         n_layers = 1
-        self.edge_num = graph.number_of_edges() + graph.number_of_nodes()
+
         self.graph_norm = False
         self.batch_norm = False
         self.residual = False
@@ -36,14 +35,11 @@ class GATNet(nn.Module):
                                               dropout, self.graph_norm, self.batch_norm, self.residual) for _ in range(n_layers)])
         self.layers.append(GATLayer(hidden_dim * num_heads, out_dim, 1, 0, self.graph_norm, self.batch_norm, self.residual))
 
-        self.adj_mask1_train = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=True)
-        self.adj_mask2_fixed = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=False)
-
     def forward(self, g, h, snorm_n, snorm_e):
-        
+
         # GAT
         for conv in self.layers:
-            h = conv(g, h, snorm_n, self.adj_mask1_train, self.adj_mask2_fixed)
+            h = conv(g, h, snorm_n)
             
         return h
     

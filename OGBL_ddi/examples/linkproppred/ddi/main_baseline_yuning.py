@@ -63,7 +63,7 @@ def main():
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
     for epoch in range(1, 1 + args.epochs):
         
-        loss = train.train_yuning(model, predictor, emb.weight, adj_t, split_edge, optimizer, args.batch_size)
+        loss = train.train_yuning(model, predictor, emb.weight, adj_t, split_edge, optimizer, args)
         results = train.test(model, predictor, emb.weight, adj_t, split_edge, evaluator, args.batch_size, yuning=True)
         train_hits, valid_hits, test_hits = results[key]
 

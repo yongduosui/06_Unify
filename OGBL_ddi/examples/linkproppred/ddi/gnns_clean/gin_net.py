@@ -11,20 +11,17 @@ from dgl.nn.pytorch.glob import SumPooling, AvgPooling, MaxPooling
     https://arxiv.org/pdf/1810.00826.pdf
 """
 
-from gnns.gin_layer import GINLayer, ApplyNodeFunc, MLP
-import pdb
-
+from gnns_clean.gin_layer import GINLayer, ApplyNodeFunc, MLP
 
 class GINNet(nn.Module):
     
-    def __init__(self, net_params, graph):
+    def __init__(self, net_params):
         super().__init__()
         in_dim = net_params[0]
         hidden_dim = net_params[1]
         n_classes = net_params[2]
         dropout = 0.5
         self.n_layers = 2
-        self.edge_num = graph.all_edges()[0].numel()
         n_mlp_layers = 1               # GIN
         learn_eps = True              # GIN
         neighbor_aggr_type = 'mean' # GIN
@@ -50,12 +47,11 @@ class GINNet(nn.Module):
         # which maps the output of different layers into a prediction score
 
         self.linears_prediction = nn.Linear(hidden_dim, n_classes, bias=False)
-        self.adj_mask1_train = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=True)
-        self.adj_mask2_fixed = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=False)
+        
         
     def forward(self, g, h, snorm_n, snorm_e):
         
-        g.edata['mask'] = self.adj_mask1_train * self.adj_mask2_fixed
+        # list of hidden representation at each layer (including input)
         hidden_rep = []
 
         for i in range(self.n_layers):
