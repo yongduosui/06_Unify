@@ -2,7 +2,93 @@ import torch
 from torch.utils.data import DataLoader
 from torch_geometric.utils import negative_sampling
 import pruning
+import pruning_gin
+import pruning_gat
 import pdb
+
+def train_mask(model, predictor, x, adj_t, g, split_edge, optimizer, args):
+
+    row, col, _ = adj_t.coo()
+    edge_index = torch.stack([col, row], dim=0)
+
+    model.train()
+    predictor.train()
+    pos_train_edge = split_edge['train']['edge'].to(x.device)
+    total_loss = total_examples = 0
+
+    for perm in DataLoader(range(pos_train_edge.size(0)), args.batch_size, shuffle=True):
+
+        optimizer.zero_grad()  
+        # h = model(x, adj_t)
+        h = model(g, x, 0, 0)
+        edge = pos_train_edge[perm].t()
+        pos_out = predictor(h[edge[0]], h[edge[1]])
+        pos_loss = -torch.log(pos_out + 1e-15).mean()
+        edge = negative_sampling(edge_index, num_nodes=x.size(0),
+                                             num_neg_samples=perm.size(0), 
+                                             method='dense')
+
+        neg_out = predictor(h[edge[0]], h[edge[1]])
+        neg_loss = -torch.log(1 - neg_out + 1e-15).mean()
+
+        loss = pos_loss + neg_loss
+        loss.backward()
+
+        if args.net == 'gin':
+            pruning_gin.subgradient_update_mask(model, args) # l1 norm
+        else:
+            pruning_gat.subgradient_update_mask(model, args) # l1 norm
+         
+        torch.nn.utils.clip_grad_norm_(x, 1.0)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        torch.nn.utils.clip_grad_norm_(predictor.parameters(), 1.0)
+
+        optimizer.step()
+
+        num_examples = pos_out.size(0)
+        total_loss += loss.item() * num_examples
+        total_examples += num_examples
+
+    return total_loss / total_examples
+
+
+def train_fixed(model, predictor, x, adj_t, g, split_edge, optimizer, args):
+
+    row, col, _ = adj_t.coo()
+    edge_index = torch.stack([col, row], dim=0)
+
+    model.train()
+    predictor.train()
+    pos_train_edge = split_edge['train']['edge'].to(x.device)
+    total_loss = total_examples = 0
+
+    for perm in DataLoader(range(pos_train_edge.size(0)), args.batch_size, shuffle=True):
+
+        optimizer.zero_grad()  
+        # h = model(x, adj_t)
+        h = model(g, x, 0, 0)
+        edge = pos_train_edge[perm].t()
+        pos_out = predictor(h[edge[0]], h[edge[1]])
+        pos_loss = -torch.log(pos_out + 1e-15).mean()
+        edge = negative_sampling(edge_index, num_nodes=x.size(0),
+                                             num_neg_samples=perm.size(0), 
+                                             method='dense')
+        neg_out = predictor(h[edge[0]], h[edge[1]])
+        neg_loss = -torch.log(1 - neg_out + 1e-15).mean()
+
+        loss = pos_loss + neg_loss
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(x, 1.0)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        torch.nn.utils.clip_grad_norm_(predictor.parameters(), 1.0)
+        
+        optimizer.step()
+        num_examples = pos_out.size(0)
+        total_loss += loss.item() * num_examples
+        total_examples += num_examples
+
+    return total_loss / total_examples
+
 
 def train_yuning(model, predictor, x, adj_t, g, split_edge, optimizer, args):
 
