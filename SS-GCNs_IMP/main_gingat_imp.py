@@ -80,7 +80,9 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
                 best_val_acc['epoch'] = epoch
 
         print("IMP[{}] (Fix Mask) Epoch:[{}] LOSS:[{:.4f}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
-               .format(imp_num, epoch, loss,
+               .format(imp_num, epoch, 
+                                args['fix_epoch'],
+                                loss,
                                 acc_val * 100, 
                                 acc_test * 100, 
                                 best_val_acc['val_acc'] * 100, 
@@ -153,6 +155,7 @@ def run_get_mask(args, imp_num, rewind_weight_mask=None):
             pruning_gin.subgradient_update_mask(net_gcn, args) # l1 norm
         else:
             pruning_gat.subgradient_update_mask(net_gcn, args) # l1 norm
+            
         optimizer.step()
         with torch.no_grad():
             net_gcn.eval()
@@ -169,8 +172,9 @@ def run_get_mask(args, imp_num, rewind_weight_mask=None):
                 else:
                     rewind_weight, adj_spar, wei_spar = pruning_gat.get_final_mask_epoch(net_gcn, rewind_weight, args)
                  
-        print("IMP[{}] (Get Mask) Epoch:[{}] LOSS:[{:.4f}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
+        print("IMP[{}] (Get Mask) Epoch:[{}/{}] LOSS:[{:.4f}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
                .format(imp_num, epoch, 
+                                args['mask_epoch'],
                                 loss,
                                 acc_val * 100, 
                                 acc_test * 100, 
