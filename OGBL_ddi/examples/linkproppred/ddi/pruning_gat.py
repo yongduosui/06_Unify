@@ -73,11 +73,11 @@ def add_mask(model):
  
 def subgradient_update_mask(model, args):
 
-    model.adj_mask1_train.grad.data.add_(args['s1'] * torch.sign(model.adj_mask1_train.data))
+    model.adj_mask1_train.grad.data.add_(args.s1 * torch.sign(model.adj_mask1_train.data))
     for layer in range(2):
         for head in range(1):
-            model.layers[layer].heads[head].fc.weight_mask_train.grad.data.add_(args['s2'] * torch.sign(model.layers[layer].heads[head].fc.weight_mask_train.data))
-            model.layers[layer].heads[head].attn_fc.weight_mask_train.grad.data.add_(args['s2'] * torch.sign(model.layers[layer].heads[head].attn_fc.weight_mask_train.data))
+            model.layers[layer].heads[head].fc.weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.layers[layer].heads[head].fc.weight_mask_train.data))
+            model.layers[layer].heads[head].attn_fc.weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.layers[layer].heads[head].attn_fc.weight_mask_train.data))
             if layer == 1: break
 
 
@@ -120,8 +120,8 @@ def get_each_mask_admm(mask_weight_tensor, threshold):
 ##### pruning remain mask percent #######
 def get_final_mask_epoch(model, rewind_weight, args):
     
-    adj_percent=args['pruning_percent_adj']
-    wei_percent=args['pruning_percent_wei']
+    adj_percent=args.pruning_percent_adj
+    wei_percent=args.pruning_percent_wei
 
     adj_mask, wei_mask = get_mask_distribution(model)
 
