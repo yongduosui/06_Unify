@@ -8,7 +8,7 @@ echo syd ------------------------------------------------------
 echo syd adj: ${ADJ} wei: ${WEI}
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_gingat_rp.py \
---dataset citeseer \
+--dataset pubmed \
 --net ${NET} \
 --embedding-dim 500 ${DIM} 3 \
 --lr 0.01 \
