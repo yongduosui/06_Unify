@@ -61,7 +61,7 @@ def add_mask(model):
     # model.layers[0].heads[0].fc
     # model.layers[0].heads[0].attn_fc
     for layer in range(2):
-        for head in range(8):
+        for head in range(1):
             mask1_train = nn.Parameter(torch.ones_like(model.layers[layer].heads[head].fc.weight))
             mask1_fixed = nn.Parameter(torch.ones_like(model.layers[layer].heads[head].fc.weight), requires_grad=False)
             mask2_train = nn.Parameter(torch.ones_like(model.layers[layer].heads[head].attn_fc.weight))
@@ -75,7 +75,7 @@ def subgradient_update_mask(model, args):
 
     model.adj_mask1_train.grad.data.add_(args['s1'] * torch.sign(model.adj_mask1_train.data))
     for layer in range(2):
-        for head in range(8):
+        for head in range(1):
             model.layers[layer].heads[head].fc.weight_mask_train.grad.data.add_(args['s2'] * torch.sign(model.layers[layer].heads[head].fc.weight_mask_train.data))
             model.layers[layer].heads[head].attn_fc.weight_mask_train.grad.data.add_(args['s2'] * torch.sign(model.layers[layer].heads[head].attn_fc.weight_mask_train.data))
             if layer == 1: break
@@ -85,11 +85,11 @@ def get_mask_distribution(model):
 
     adj_mask_tensor = model.adj_mask1_train.flatten()
     nonzero = torch.abs(adj_mask_tensor) > 0
-    adj_mask_tensor = adj_mask_tensor[nonzero] # 13264 - 2708
+    adj_mask_tensor = adj_mask_tensor[nonzero] # 13264 - 2701
 
     weight_mask_vector = torch.tensor([]).to(torch.device("cuda:0"))
     for layer in range(2):
-        for head in range(8):
+        for head in range(1):
             weight_mask1 = model.layers[layer].heads[head].fc.weight_mask_train.flatten()
             nonzero = torch.abs(weight_mask1) > 0
             weight_mask1 = weight_mask1[nonzero]
@@ -151,7 +151,7 @@ def get_final_mask_epoch(model, rewind_weight, args):
     wei_nonzero = 0
 
     for layer in range(2):
-        for head in range(8):
+        for head in range(1):
 
             key_train1 = 'layers.{}.heads.{}.fc.weight_mask_train'.format(layer, head)
             key_fixed1 = 'layers.{}.heads.{}.fc.weight_mask_fixed'.format(layer, head)
@@ -231,7 +231,7 @@ def print_sparsity(model):
     weight_total = 0
     weight_nonzero = 0
     for layer in range(2):
-        for head in range(8):
+        for head in range(1):
             weight_total += model.layers[layer].heads[head].fc.weight_mask_fixed.numel()
             weight_total += model.layers[layer].heads[head].attn_fc.weight_mask_fixed.numel()
             weight_nonzero += model.layers[layer].heads[head].fc.weight_mask_fixed.sum().item()
@@ -260,7 +260,7 @@ def add_trainable_mask_noise(model, c=1e-5):
     tensor_add_noise(model.adj_mask1_train, c)
     model.adj_mask1_train.requires_grad = True
     for layer in range(2):
-        for head in range(8):
+        for head in range(1):
             model.layers[layer].heads[head].fc.weight_mask_train.requires_grad = False
             model.layers[layer].heads[head].attn_fc.weight_mask_train.requires_grad = False
             tensor_add_noise(model.layers[layer].heads[head].fc.weight_mask_train, c)

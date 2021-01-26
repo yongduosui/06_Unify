@@ -21,7 +21,7 @@ class GATNet(nn.Module):
         hidden_dim = net_params[1]
         out_dim = net_params[2]
         n_classes = net_params[2]
-        num_heads = 2
+        num_heads = 1
         dropout = 0.6
         n_layers = 1
 
