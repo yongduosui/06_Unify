@@ -122,8 +122,8 @@ def get_each_mask_admm(mask_weight_tensor, threshold):
 ##### pruning remain mask percent #######
 def get_final_mask_epoch(model, rewind_weight, args):
     
-    adj_percent=args.pruning_percent_adj
-    wei_percent=args.pruning_percent_wei
+    adj_percent = args.pruning_percent_adj
+    wei_percent = args.pruning_percent_wei
 
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
     #adj_mask.add_((2 * torch.rand(adj_mask.shape) - 1) * 1e-5)
@@ -197,8 +197,6 @@ def oneshot_weight_magnitude_pruning(model, wei_percent):
     weight2_mask = get_each_mask(model.ginlayers[1].apply_func.mlp.linear.state_dict()['weight_mask_train'], wei_thre)
 
     return mask_dict
-
-
 
 ##### random pruning #######
 def random_pruning(model, adj_percent, wei_percent):

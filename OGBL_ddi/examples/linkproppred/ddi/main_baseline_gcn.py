@@ -60,8 +60,8 @@ def main():
         list(predictor.parameters()), lr=args.lr)
 
     key = 'Hits@20'
-    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
-    for epoch in range(1, 1 + args.epochs):
+    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0, 'best_test': 0}
+    for epoch in range(1, args.epochs + 1):
         
         loss = train.train_yuning(model, predictor, emb.weight, adj_t, split_edge, optimizer, args)
         results = train.test(model, predictor, emb.weight, adj_t, split_edge, evaluator, args.batch_size, yuning=True)
@@ -72,7 +72,10 @@ def main():
             best_val_acc['val_acc'] = valid_hits
             best_val_acc['epoch'] = epoch
 
-        print("(Baseline) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
+        if test_hits > best_val_acc['best_test']:
+            best_val_acc['best_test'] = test_hits
+
+        print("(Baseline) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}] | Best Test:[{:.2f}]"
                  .format(epoch, args.epochs,
                                 loss,
                                 train_hits * 100, 
@@ -80,7 +83,8 @@ def main():
                                 test_hits * 100,
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
-                                best_val_acc['epoch']))
+                                best_val_acc['epoch'],
+                                best_val_acc['best_test'] * 100))
 
 
 if __name__ == "__main__":

@@ -31,15 +31,18 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
     pruning.add_mask(model)
 
     emb = torch.nn.Embedding(data.num_nodes, args.hidden_channels).to(device)
-    predictor = LinkPredictor(args.hidden_channels, args.hidden_channels, 1,
-                              args.num_layers, args.dropout).to(device)
+    predictor = LinkPredictor(args.hidden_channels, 
+                              args.hidden_channels, 1,
+                              args.num_layers, 
+                              args.dropout).to(device)
 
     evaluator = Evaluator(name='ogbl-ddi')
     torch.nn.init.xavier_uniform_(emb.weight)
     predictor.reset_parameters()
 
     optimizer = torch.optim.Adam(
-        list(model.parameters()) + list(emb.parameters()) +
+        list(model.parameters()) + 
+        list(emb.parameters()) +
         list(predictor.parameters()), lr=args.lr)
 
     # rewind all weight and masks
@@ -52,11 +55,20 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
             param.requires_grad = False
 
     key = 'Hits@20'
-    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
+    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0, 'best_test': 0}
     for epoch in range(1, args.fix_epoch + 1):
         
-        loss = train.train_fixed(model, predictor, emb.weight, adj_t, split_edge, optimizer, args)
-        results = train.test(model, predictor, emb.weight, adj_t, split_edge, evaluator, args.batch_size, yuning=True)
+        loss = train.train_fixed(model, predictor, 
+                                        emb.weight, 
+                                        adj_t, 
+                                        split_edge, 
+                                        optimizer, args)
+        results = train.test(model, predictor, 
+                                    emb.weight, 
+                                    adj_t, 
+                                    split_edge, 
+                                    evaluator, args.batch_size, yuning=True)
+
         train_hits, valid_hits, test_hits = results[key]
 
         if valid_hits > best_val_acc['val_acc']:
@@ -64,24 +76,32 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
             best_val_acc['val_acc'] = valid_hits
             best_val_acc['epoch'] = epoch
 
-        print("IMP:[{}] (Fix Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
-               .format(imp_num, epoch, args.fix_epoch,
+        if test_hits > best_val_acc['best_test']:
+            best_val_acc['best_test'] = test_hits
+
+        print("IMP:[{}] (Fix Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] ({:.2f}) at Epoch:[{}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
+               .format(imp_num, epoch, 
+                                args.fix_epoch,
                                 loss,
                                 train_hits * 100, 
                                 valid_hits * 100, 
                                 test_hits * 100,
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
-                                best_val_acc['epoch']))
+                                best_val_acc['best_test'] * 100,
+                                best_val_acc['epoch'],
+                                adj_spar, 
+                                wei_spar))
 
     print("=" * 120)
-    print("syd final: IMP:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+    print("syd final: IMP:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Best:[{:.2f}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
         .format(imp_num, 
                 best_val_acc['val_acc'] * 100, 
                 best_val_acc['epoch'], 
-                best_val_acc['test_acc'] * 100, 
-                adj_spar * 100, 
-                wei_spar * 100))
+                best_val_acc['test_acc'] * 100,
+                best_val_acc['best_test'] * 100, 
+                adj_spar, 
+                wei_spar))
     print("=" * 120)
 
 
@@ -104,23 +124,26 @@ def run_get_mask(args, imp_num, rewind_weight_mask=None):
     pruning.add_mask(model)
     
     emb = torch.nn.Embedding(data.num_nodes, args.hidden_channels).to(device)
-    predictor = LinkPredictor(args.hidden_channels, args.hidden_channels, 1,
-                              args.num_layers, args.dropout).to(device)
+    predictor = LinkPredictor(args.hidden_channels, 
+                              args.hidden_channels, 1,
+                              args.num_layers, 
+                              args.dropout).to(device)
 
     evaluator = Evaluator(name='ogbl-ddi')
     torch.nn.init.xavier_uniform_(emb.weight)
     predictor.reset_parameters()
-    optimizer = torch.optim.Adam(
-        list(model.parameters()) + list(emb.parameters()) +
-        list(predictor.parameters()), lr=args.lr)
-
 
     if rewind_weight_mask is not None:
-        model.load_state_dict(rewind_weight_mask)
-        predictor.load_state_dict(rewind_predictor)
+        model.load_state_dict(rewind_weight_mask['model'])
+        predictor.load_state_dict(rewind_weight_mask['predictor'])
     
     pruning.add_trainable_mask_noise(model)
     adj_spar, wei_spar = pruning.print_sparsity(model)
+
+    optimizer = torch.optim.Adam(
+        list(model.parameters()) + 
+        list(emb.parameters()) +
+        list(predictor.parameters()), lr=args.lr)
 
     key = 'Hits@20'
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
@@ -131,18 +154,25 @@ def run_get_mask(args, imp_num, rewind_weight_mask=None):
 
     for epoch in range(1, args.mask_epoch + 1):
         
-        loss = train.train_mask(model, predictor, emb.weight, adj_t, split_edge, optimizer, args)
-        results = train.test(model, predictor, emb.weight, adj_t, split_edge, evaluator, args.batch_size, yuning=True)
+        loss = train.train_mask(model, predictor, 
+                                       emb.weight, 
+                                       adj_t, 
+                                       split_edge, 
+                                       optimizer, args)
+        results = train.test(model, predictor, 
+                                    emb.weight, 
+                                    adj_t, 
+                                    split_edge, 
+                                    evaluator, args.batch_size, yuning=True)
         train_hits, valid_hits, test_hits = results[key]
 
         if valid_hits > best_val_acc['val_acc']:
             best_val_acc['test_acc'] = test_hits
             best_val_acc['val_acc'] = valid_hits
             best_val_acc['epoch'] = epoch
-            best_epoch_mask = pruning.get_final_mask_epoch(model, adj_percent=args.pruning_percent_adj, 
-                                                                  wei_percent=args.pruning_percent_wei)
-                
-        print("IMP:[{}] (Get Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
+            rewind_weight['model'], adj_spar, wei_spar = pruning.get_final_mask_epoch(model, rewind_weight['model'], args) 
+
+        print("IMP:[{}] (Get Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
                .format(imp_num, epoch, 
                                 args.mask_epoch,
                                 loss,
@@ -151,9 +181,10 @@ def run_get_mask(args, imp_num, rewind_weight_mask=None):
                                 test_hits * 100,
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
-                                best_val_acc['epoch']))
-
-    return best_epoch_mask, rewind_weight
+                                best_val_acc['epoch'],
+                                adj_spar, 
+                                wei_spar))
+    return rewind_weight
 
 
 if __name__ == "__main__":
@@ -188,15 +219,5 @@ if __name__ == "__main__":
     rewind_weight = None
     for imp_num in range(1, 21):
 
-        final_mask_dict, rewind_weight = run_get_mask(args, imp_num, rewind_weight)
-        
-        rewind_weight['model']['adj_mask1_train'] = final_mask_dict['adj_mask']
-        rewind_weight['model']['adj_mask2_fixed'] = final_mask_dict['adj_mask']
-        rewind_weight['model']['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
-        rewind_weight['model']['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
-        rewind_weight['model']['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
-        rewind_weight['model']['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
-
+        rewind_weight = run_get_mask(args, imp_num, rewind_weight)
         run_fix_mask(args, imp_num, rewind_weight)
-
-        

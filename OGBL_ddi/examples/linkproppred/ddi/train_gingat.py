@@ -103,6 +103,7 @@ def train_yuning(model, predictor, x, adj_t, g, split_edge, optimizer, args):
     for perm in DataLoader(range(pos_train_edge.size(0)), args.batch_size, shuffle=True):
         
         optimizer.zero_grad()  
+        
         h = model(g, x, 0, 0)
 
         edge = pos_train_edge[perm].t()

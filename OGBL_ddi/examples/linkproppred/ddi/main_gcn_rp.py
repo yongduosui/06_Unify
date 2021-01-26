@@ -12,8 +12,10 @@ from models import GCN, GCN_yuning, GCN_IMP, LinkPredictor
 import train
 import copy
 import pruning
+import warnings
+warnings.filterwarnings('ignore')
 
-def run_fix_mask(args, imp_num, rewind_weight_mask):
+def run_fix_mask(args, imp_num, adj_percent, wei_percent):
 
     pruning.setup_seed(args.seed)
     device = f'cuda:{args.device}'
@@ -31,20 +33,21 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
     pruning.add_mask(model)
 
     emb = torch.nn.Embedding(data.num_nodes, args.hidden_channels).to(device)
-    predictor = LinkPredictor(args.hidden_channels, args.hidden_channels, 1,
-                              args.num_layers, args.dropout).to(device)
+    predictor = LinkPredictor(args.hidden_channels, 
+                              args.hidden_channels, 1,
+                              args.num_layers, 
+                              args.dropout).to(device)
 
     evaluator = Evaluator(name='ogbl-ddi')
     torch.nn.init.xavier_uniform_(emb.weight)
     predictor.reset_parameters()
 
     optimizer = torch.optim.Adam(
-        list(model.parameters()) + list(emb.parameters()) +
+        list(model.parameters()) + 
+        list(emb.parameters()) +
         list(predictor.parameters()), lr=args.lr)
 
-    # rewind all weight and masks
-    model.load_state_dict(rewind_weight_mask['model'])
-    predictor.load_state_dict(rewind_weight_mask['predictor'])
+    pruning.random_pruning(model, adj_percent, wei_percent)
     adj_spar, wei_spar = pruning.print_sparsity(model)
 
     for name, param in model.named_parameters():
@@ -52,11 +55,20 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
             param.requires_grad = False
 
     key = 'Hits@20'
-    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
+    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0, 'best_test': 0}
     for epoch in range(1, args.fix_epoch + 1):
         
-        loss = train.train_fixed(model, predictor, emb.weight, adj_t, split_edge, optimizer, args)
-        results = train.test(model, predictor, emb.weight, adj_t, split_edge, evaluator, args.batch_size, yuning=True)
+        loss = train.train_fixed(model, predictor, 
+                                        emb.weight, 
+                                        adj_t, 
+                                        split_edge, 
+                                        optimizer, args)
+        results = train.test(model, predictor, 
+                                    emb.weight, 
+                                    adj_t, 
+                                    split_edge, 
+                                    evaluator, args.batch_size, yuning=True)
+
         train_hits, valid_hits, test_hits = results[key]
 
         if valid_hits > best_val_acc['val_acc']:
@@ -64,24 +76,30 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
             best_val_acc['val_acc'] = valid_hits
             best_val_acc['epoch'] = epoch
 
-        print("IMP:[{}] (Fix Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
-               .format(imp_num, epoch, args.fix_epoch,
+        if test_hits > best_val_acc['best_test']:
+            best_val_acc['best_test'] = test_hits
+
+        print("RP:[{}] (Fix Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] ({:.2f}) at Epoch:[{}]"
+               .format(imp_num, epoch, 
+                                args.fix_epoch,
                                 loss,
                                 train_hits * 100, 
                                 valid_hits * 100, 
                                 test_hits * 100,
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
+                                best_val_acc['best_test'] * 100,
                                 best_val_acc['epoch']))
 
     print("=" * 120)
-    print("syd final: IMP:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+    print("syd final: RP:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Best:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
         .format(imp_num, 
                 best_val_acc['val_acc'] * 100, 
                 best_val_acc['epoch'], 
                 best_val_acc['test_acc'] * 100, 
-                adj_spar * 100, 
-                wei_spar * 100))
+                best_val_acc['best_test'] * 100,
+                adj_spar, 
+                wei_spar))
     print("=" * 120)
 
 
@@ -114,18 +132,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     pruning.print_args(args)
 
-    rewind_weight = None
-    for imp_num in range(1, 21):
-
-        final_mask_dict, rewind_weight = run_get_mask(args, imp_num, rewind_weight)
-        
-        rewind_weight['model']['adj_mask1_train'] = final_mask_dict['adj_mask']
-        rewind_weight['model']['adj_mask2_fixed'] = final_mask_dict['adj_mask']
-        rewind_weight['model']['net_layer.0.weight_mask_train'] = final_mask_dict['weight1_mask']
-        rewind_weight['model']['net_layer.0.weight_mask_fixed'] = final_mask_dict['weight1_mask']
-        rewind_weight['model']['net_layer.1.weight_mask_train'] = final_mask_dict['weight2_mask']
-        rewind_weight['model']['net_layer.1.weight_mask_fixed'] = final_mask_dict['weight2_mask']
-
-        run_fix_mask(args, imp_num, rewind_weight)
-
-        
+    percent_list = [(1 - (1 - args.pruning_percent_adj) ** (i + 1), 1 - (1 - args.pruning_percent_wei) ** (i + 1)) for i in range(20)]
+    
+    for imp_num, (adj_percent, wei_percent) in enumerate(percent_list):
+        run_fix_mask(args, imp_num + 1, adj_percent, wei_percent)

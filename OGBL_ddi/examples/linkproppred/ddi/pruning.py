@@ -171,9 +171,11 @@ def get_each_mask_admm(mask_weight_tensor, threshold):
     return mask
 
 ##### pruning remain mask percent #######
-def get_final_mask_epoch(model, adj_percent, wei_percent):
+def get_final_mask_epoch(model, rewind_weight, args):
     
-    
+    adj_percent = args.pruning_percent_adj
+    wei_percent = args.pruning_percent_wei
+
     adj_mask, wei_mask = get_mask_distribution(model, if_numpy=False)
 
     adj_total = adj_mask.shape[0]
@@ -188,14 +190,23 @@ def get_final_mask_epoch(model, adj_percent, wei_percent):
     wei_thre_index = int(wei_total * wei_percent)
     wei_thre = wei_y[wei_thre_index]
 
-    mask_dict = {}
     ori_adj_mask = model.adj_mask1_train.detach().cpu()
 
-    mask_dict['adj_mask'] = get_each_mask(ori_adj_mask, adj_thre)
-    mask_dict['weight1_mask'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_train'], wei_thre)
-    mask_dict['weight2_mask'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_train'], wei_thre)
+    rewind_weight['adj_mask1_train'] = get_each_mask(ori_adj_mask, adj_thre)
+    rewind_weight['adj_mask2_fixed'] = rewind_weight['adj_mask1_train']
 
-    return mask_dict
+    rewind_weight['net_layer.0.weight_mask_train'] = get_each_mask(model.net_layer[0].state_dict()['weight_mask_train'], wei_thre)
+    rewind_weight['net_layer.0.weight_mask_fixed'] = rewind_weight['net_layer.0.weight_mask_train']
+
+    rewind_weight['net_layer.1.weight_mask_train'] = get_each_mask(model.net_layer[1].state_dict()['weight_mask_train'], wei_thre)
+    rewind_weight['net_layer.1.weight_mask_fixed'] = rewind_weight['net_layer.1.weight_mask_train']
+
+    adj_spar = rewind_weight['adj_mask2_fixed'].sum() * 100 / model.adj_nonzero
+    wei_nonzero = rewind_weight['net_layer.0.weight_mask_fixed'].sum() + rewind_weight['net_layer.1.weight_mask_fixed'].sum()
+    wei_all = rewind_weight['net_layer.0.weight_mask_fixed'].numel() + rewind_weight['net_layer.1.weight_mask_fixed'].numel()
+    wei_spar = wei_nonzero * 100 / wei_all
+
+    return rewind_weight, adj_spar, wei_spar
 
 
 ######### ADMM get weight mask ##########

@@ -103,7 +103,7 @@ def train_yuning(model, predictor, x, adj_t, split_edge, optimizer, args):
         optimizer.zero_grad()  
 
         h = model(x, adj_t)
-        pdb.set_trace()
+        
         edge = pos_train_edge[perm].t()
 
         pos_out = predictor(h[edge[0]], h[edge[1]])

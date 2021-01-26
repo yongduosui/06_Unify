@@ -79,7 +79,7 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
             param.requires_grad = False
 
     key = 'Hits@20'
-    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
+    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0, 'best_test': 0}
     for epoch in range(1, args.fix_epoch + 1):
         
         loss = train_gingat.train_fixed(model, predictor, 
@@ -102,7 +102,10 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
             best_val_acc['val_acc'] = valid_hits
             best_val_acc['epoch'] = epoch
 
-        print("IMP:[{}] (Fix Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
+        if test_hits > best_val_acc['best_test']:
+            best_val_acc['best_test'] = test_hits
+
+        print("IMP:[{}] (Fix Mask) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] ({:.2f}) at Epoch:[{}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
                .format(imp_num, epoch, 
                                 args.fix_epoch,
                                 loss,
@@ -111,16 +114,18 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
                                 test_hits * 100,
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
+                                best_val_acc['best_test'] * 100,
                                 best_val_acc['epoch'], 
                                 adj_spar, 
                                 wei_spar))
 
     print("=" * 120)
-    print("syd final: IMP:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+    print("syd final: IMP:[{}] Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Best:[{:.2f}] | Adj:[{:.2f}%] Wei:[{:.2f}%]"
         .format(imp_num, 
                 best_val_acc['val_acc'] * 100, 
                 best_val_acc['epoch'], 
                 best_val_acc['test_acc'] * 100, 
+                best_val_acc['best_test'] * 100,
                 adj_spar, 
                 wei_spar))
     print("=" * 120)

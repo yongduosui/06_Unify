@@ -47,6 +47,7 @@ def main(args):
     elif args.net == 'gat':
         model = GATNet([256, 256, 256]).to(device)
         g.add_edges(list(range(node_num)), list(range(node_num)))
+        
     else: 
         assert False
         
@@ -66,7 +67,7 @@ def main(args):
         list(predictor.parameters()), lr=args.lr)
 
     key = 'Hits@20'
-    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
+    best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0, 'best_test': 0}
     for epoch in range(1, args.epochs + 1):
         
         loss = train_gingat.train_yuning(model, predictor, 
@@ -85,7 +86,10 @@ def main(args):
             best_val_acc['val_acc'] = valid_hits
             best_val_acc['epoch'] = epoch
 
-        print("[{}] (Baseline) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
+        if test_hits > best_val_acc['best_test']:
+            best_val_acc['best_test'] = test_hits
+
+        print("[{}] (Baseline) Epoch:[{}/{}] Loss:[{:.2f}] Train:[{:.2f}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}] | Best Test:[{:.2f}]"
               .format(args.net, epoch, 
                                 args.epochs,
                                 loss,
@@ -94,7 +98,8 @@ def main(args):
                                 test_hits * 100,
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
-                                best_val_acc['epoch']))
+                                best_val_acc['epoch'],
+                                best_val_acc['best_test'] * 100))
 
 
 if __name__ == "__main__":
