@@ -41,6 +41,14 @@ https://github.com/lightaime/deep_gcns_torch
 
 `nohup bash sh1026/02_gat_imp.sh 0 > 012602_gat_imp.log &`
 
+`nohup bash sh1026/03_gat_imps1s2.sh 1e-3 1e-4 0 > 012603_gat_imp.log &`
+
+`nohup bash sh1026/03_gat_imps1s2.sh 1e-3 1e-5 0 > 012604_gat_imp.log &`
+
+`nohup bash sh1026/03_gat_imps1s2.sh 1e-3 1e-6 0 > 012605_gat_imp.log &`
+
+`nohup bash sh1026/03_gat_imps1s2.sh 1e-4 1e-5 0 > 012606_gat_imp.log &`
+
 
 
 ### 1. Proteins
