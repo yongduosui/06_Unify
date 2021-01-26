@@ -1,6 +1,6 @@
 GPU=$1
 DIM=512
-NET=gin
+NET=gat
 ADJ=0.05
 WEI=0.2
 FIXEPOCH=200

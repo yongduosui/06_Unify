@@ -1,21 +1,19 @@
 GPU=$1
 DIM=512
+NET=gin
 ADJ=0.05
 WEI=0.2
-S1=1e-5
-S2=5e-4
-EPOCH=500
+FIXEPOCH=200
 echo syd ------------------------------------------------------
-echo syd s1: $s1 s2: $s2 adj: ${ADJ} wei: ${WEI}
+echo syd adj: ${ADJ} wei: ${WEI}
 CUDA_VISIBLE_DEVICES=${GPU} \
-python -u main_pruning_random.py \
+python -u main_gingat_rp.py \
 --dataset citeseer \
---embedding-dim 3703 ${DIM} 6 \
+--net ${NET} \
+--embedding-dim 500 ${DIM} 3 \
 --lr 0.01 \
 --weight-decay 5e-4 \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---total_epoch ${EPOCH} \
---s1 $S1 \
---s2 $S2
+--fix_epoch ${FIXEPOCH}
 echo syd ------------------------------------------------------

@@ -182,46 +182,53 @@ def get_final_mask_epoch(model, rewind_weight, args):
 def random_pruning(model, adj_percent, wei_percent):
 
     model.adj_mask1_train.requires_grad = False
-    model.ginlayers[0].apply_func.mlp.linear.weight_mask_train.requires_grad = False
-    model.ginlayers[1].apply_func.mlp.linear.weight_mask_train.requires_grad = False
-
     adj_nonzero = model.adj_mask1_train.nonzero()
-    wei1_nonzero = model.ginlayers[0].apply_func.mlp.linear.weight_mask_train.nonzero()
-    wei2_nonzero = model.ginlayers[1].apply_func.mlp.linear.weight_mask_train.nonzero()
-
     adj_total = adj_nonzero.shape[0]
-    wei1_total = wei1_nonzero.shape[0]
-    wei2_total = wei2_nonzero.shape[0]
-
     adj_pruned_num = int(adj_total * adj_percent)
-    wei1_pruned_num = int(wei1_total * wei_percent)
-    wei2_pruned_num = int(wei2_total * wei_percent)
-
     adj_index = random.sample([i for i in range(adj_total)], adj_pruned_num)
-    wei1_index = random.sample([i for i in range(wei1_total)], wei1_pruned_num)
-    wei2_index = random.sample([i for i in range(wei2_total)], wei2_pruned_num)
 
     adj_pruned = adj_nonzero[adj_index].tolist()
-    wei1_pruned = wei1_nonzero[wei1_index].tolist()
-    wei2_pruned = wei2_nonzero[wei2_index].tolist()
-
     for i, j in adj_pruned:
         model.adj_mask1_train[i][j] = 0
         model.adj_mask2_fixed[i][j] = 0
-    
-    for i, j in wei1_pruned:
-        model.ginlayers[0].apply_func.mlp.linear.weight_mask_train[i][j] = 0
-        model.ginlayers[0].apply_func.mlp.linear.weight_mask_fixed[i][j] = 0
-    
-    for i, j in wei2_pruned:
-        model.ginlayers[1].apply_func.mlp.linear.weight_mask_train[i][j] = 0
-        model.ginlayers[1].apply_func.mlp.linear.weight_mask_fixed[i][j] = 0
-    
     model.adj_mask1_train.requires_grad = True
-    model.ginlayers[0].apply_func.mlp.linear.weight_mask_train.requires_grad = True
-    model.ginlayers[1].apply_func.mlp.linear.weight_mask_train.requires_grad = True
 
+
+    for layer in range(2):
+        for head in range(8):
+
+            model.layers[layer].heads[head].fc.weight_mask_train.requires_grad = False
+            model.layers[layer].heads[head].attn_fc.weight_mask_train.requires_grad = False
+
+            wei1_nonzero = model.layers[layer].heads[head].fc.weight_mask_train.nonzero()
+            wei2_nonzero = model.layers[layer].heads[head].attn_fc.weight_mask_train.nonzero()
+
+            wei1_total = wei1_nonzero.shape[0]
+            wei2_total = wei2_nonzero.shape[0]
+
+            wei1_pruned_num = int(wei1_total * wei_percent)
+            wei2_pruned_num = int(wei2_total * wei_percent)
+
+            wei1_index = random.sample([i for i in range(wei1_total)], wei1_pruned_num)
+            wei2_index = random.sample([i for i in range(wei2_total)], wei2_pruned_num)
+
+            wei1_pruned = wei1_nonzero[wei1_index].tolist()
+            wei2_pruned = wei2_nonzero[wei2_index].tolist()
+
+            for i, j in wei1_pruned:
+                model.layers[layer].heads[head].fc.weight_mask_train[i][j] = 0
+                model.layers[layer].heads[head].fc.weight_mask_fixed[i][j] = 0
     
+            for i, j in wei2_pruned:
+                model.layers[layer].heads[head].attn_fc.weight_mask_train[i][j] = 0
+                model.layers[layer].heads[head].attn_fc.weight_mask_fixed[i][j] = 0
+
+            model.layers[layer].heads[head].fc.weight_mask_train.requires_grad = True
+            model.layers[layer].heads[head].attn_fc.weight_mask_train.requires_grad = True
+            if layer == 1: break
+
+
+
 def print_sparsity(model):
 
     adj_nonzero = model.edge_num
