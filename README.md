@@ -35,6 +35,8 @@ https://github.com/lightaime/deep_gcns_torch
 
 `bash sh1026/00_gat_debug.sh 0`
 
+`nohup bash 01_gat_baseline.sh 0 > 012600_gat_baseline.log &`
+
 `nohup bash sh1026/01_gat_imp.sh 0 > 012601_gat_imp.log &`
 
 `nohup bash sh1026/02_gat_imp.sh 0 > 012602_gat_imp.log &`
