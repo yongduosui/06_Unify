@@ -123,3 +123,12 @@ https://github.com/lightaime/deep_gcns_torch
 `nohup bash 01_collab_imp.sh 19 0 > 012719_collab_imp_setting1.log &`
 
 `nohup bash 01_collab_imp.sh 20 0 > 012720_collab_imp_setting1.log &`
+
+
+### 3. ADMM
+
+`pip install tensorflow-gpu==1.13.1`
+
+`cd sgcn`
+
+`bash admm_pubmed.sh 1 0`
