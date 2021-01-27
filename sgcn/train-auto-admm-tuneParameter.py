@@ -57,7 +57,8 @@ adj, features, y_train, y_val, y_test, train_mask, val_mask, test_mask = load_da
 # Some preprocessing
 features = preprocess_features(features)
 if FLAGS.model == 'gcn':
-    support = np.array(preprocess_adj(adj), dtype=float)
+    # support = np.array(preprocess_adj(adj), dtype=float)
+    support = preprocess_adj(adj)
     #print("number of edges * 2 + diag", np.count_nonzero(adj.toarray()))
     num_supports = 1
     model_func = GCN

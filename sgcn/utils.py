@@ -147,7 +147,7 @@ def preprocess_adj(adj):
     #print("number non zero original adj", np.count_nonzero(adj.toarray()))
     """Preprocessing of adjacency matrix for simple GCN model and conversion to tuple representation."""
     adj_normalized = adj + sp.eye(adj.shape[0])
-    # return np.array(adj_normalized)
+    return np.array(adj_normalized)
     # return adj_normalized.toarray()
 
 
