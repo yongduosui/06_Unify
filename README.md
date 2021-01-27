@@ -78,7 +78,7 @@ https://github.com/lightaime/deep_gcns_torch
 
 ### 2. Collab
 
-`cd OGBN_collab_new/examples/ogb/ogbl_collab`
+`cd OGBL_collab_new/examples/ogb/ogbl_collab`
 
 `----------------------------TODO-------------------------------------------`
 
