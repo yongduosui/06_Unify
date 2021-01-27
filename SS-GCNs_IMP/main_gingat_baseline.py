@@ -11,8 +11,8 @@ from utils import load_data, load_adj_raw
 from sklearn.metrics import f1_score
 
 import dgl
-from gnns.gin_net import GINNet
-from gnns.gat_net import GATNet
+from gnns_clean.gin_net import GINNet
+from gnns_clean.gat_net import GATNet
 import pruning
 
 
@@ -33,7 +33,6 @@ def run(args):
     labels = labels.cuda()
 
     loss_func = nn.CrossEntropyLoss()
-    early_stopping = 10
 
     if args['net'] == 'gin':
         net_gcn = GINNet(args['embedding_dim'])
@@ -80,7 +79,7 @@ def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
     parser.add_argument('--dataset', type=str, default='')
     parser.add_argument('--embedding-dim', nargs='+', type=int, default=[3703,16,6])
-    parser.add_argument('--lr', type=float, default=0.01)
+    parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--weight-decay', type=float, default=5e-4)
     parser.add_argument('--net', type=str, default='')
     parser.add_argument('--seed', type=int, default=666)
@@ -94,5 +93,7 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    run(args)
+    for i in range(50):
+        args['seed'] = 50 + i
+        run(args)
     

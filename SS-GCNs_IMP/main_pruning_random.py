@@ -70,7 +70,8 @@ def run_fix_mask(args, seed, adj_percent, wei_percent):
                 best_val_acc['epoch'] = epoch
  
         print("(Fix Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
-                 .format(epoch, acc_val * 100, acc_test * 100, 
+                 .format(epoch, acc_val * 100, 
+                                acc_test * 100, 
                                 best_val_acc['val_acc'] * 100, 
                                 best_val_acc['test_acc'] * 100, 
                                 best_val_acc['epoch']))
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(20)]
 
-    for p, (adj_percent, wei_percent) in enumerate(percent_list[15:]):
+    for p, (adj_percent, wei_percent) in enumerate(percent_list):
         
         best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, adj_percent, wei_percent)
         print("=" * 120)

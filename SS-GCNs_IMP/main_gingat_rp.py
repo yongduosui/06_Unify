@@ -128,4 +128,3 @@ if __name__ == "__main__":
     for imp_num, (adj_percent, wei_percent) in enumerate(percent_list):
         run_fix_mask(args, imp_num + 1, adj_percent, wei_percent)
         
-    
