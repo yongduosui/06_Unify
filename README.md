@@ -80,46 +80,46 @@ https://github.com/lightaime/deep_gcns_torch
 
 `cd OGBN_collab_new/examples/ogb/ogbl_collab`
 
-`----------------------------running--------------------------------------------`
+`----------------------------TODO-------------------------------------------`
 
 
 
-`nohup bash sh/01_collab_imp.sh 1 0 > 012701_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 1 0 > 012701_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 2 0 > 012702_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 2 0 > 012702_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 3 0 > 012703_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 3 0 > 012703_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 4 0 > 012704_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 4 0 > 012704_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 5 0 > 012705_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 5 0 > 012705_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 6 0 > 012706_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 6 0 > 012706_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 7 0 > 012707_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 7 0 > 012707_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 8 0 > 012708_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 8 0 > 012708_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 9 0 > 012709_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 9 0 > 012709_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 10 0 > 012710_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 10 0 > 012710_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 11 0 > 012711_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 11 0 > 012711_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 12 0 > 012712_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 12 0 > 012712_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 13 0 > 012713_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 13 0 > 012713_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 14 0 > 012714_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 14 0 > 012714_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 15 0 > 012715_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 15 0 > 012715_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 16 0 > 012716_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 16 0 > 012716_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 17 0 > 012717_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 17 0 > 012717_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 18 0 > 012718_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 18 0 > 012718_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 19 0 > 012719_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 19 0 > 012719_collab_imp_setting1.log &`
 
-`nohup bash sh/01_collab_imp.sh 20 0 > 012720_collab_imp_setting1.log &`
+`nohup bash 01_collab_imp.sh 20 0 > 012720_collab_imp_setting1.log &`

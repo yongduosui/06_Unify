@@ -1,7 +1,5 @@
 IMP=$1
 GPU=$2
-WEI=0.2
-ADJ=0.05
 S1=1e-6
 S2=1e-5
 SAVE=IMP_New_setting1
@@ -15,8 +13,6 @@ python -u main_imp.py \
 --block res+ \
 --s1 ${S1} \
 --s2 ${S2} \
---pruning_percent_wei ${WEI} \
---pruning_percent_adj ${ADJ} \
 --mask_epochs 500 \
 --fix_epochs 500 \
 --model_save_path ${SAVE} \
