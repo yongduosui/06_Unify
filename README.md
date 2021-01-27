@@ -132,3 +132,5 @@ https://github.com/lightaime/deep_gcns_torch
 `cd sgcn`
 
 `bash admm_pubmed.sh 1 0`
+
+`nohup bash admm_pubmed.sh 1 0 > 012801_admm_pub01.log &`
