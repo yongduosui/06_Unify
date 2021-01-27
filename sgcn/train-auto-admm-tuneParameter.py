@@ -39,7 +39,7 @@ prune_list = [5,     9.75,  14.26, 18.55, 22.62,
               55.99, 58.19, 60.28, 62.26, 64.15]
 
 learning_rate = float(FLAGS.learning_rate)
-prune_ratio = prune_list[FLAGS.count - 1]
+prune_ratio = prune_list[int(FLAGS.count) - 1]
 # prune_ratio = float(FLAGS.prune_ratio)
 ADMM_times = int(FLAGS.ADMM)
 Total_epochs = int(FLAGS.epochs)
