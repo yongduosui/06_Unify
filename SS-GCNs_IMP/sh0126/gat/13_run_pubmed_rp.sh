@@ -15,5 +15,6 @@ python -u main_gingat_rp.py \
 --weight-decay 5e-4 \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---fix_epoch ${FIXEPOCH}
+--fix_epoch ${FIXEPOCH} \
+--seed 53
 echo syd ------------------------------------------------------
