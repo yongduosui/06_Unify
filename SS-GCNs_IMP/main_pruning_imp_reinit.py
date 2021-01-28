@@ -32,7 +32,9 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
-    net_gcn.load_state_dict(rewind_weight_mask)
+    
+    pruning.load_only_mask(net_gcn, rewind_weight_mask)
+    # net_gcn.load_state_dict(rewind_weight_mask)
     adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     
     for name, param in net_gcn.named_parameters():
@@ -43,7 +45,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
-    for epoch in range(200):
+    for epoch in range(20):
 
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -60,7 +62,8 @@ def run_fix_mask(args, seed, rewind_weight_mask):
                 best_val_acc['epoch'] = epoch
  
         print("(Fix Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
-                 .format(epoch, acc_val * 100, acc_test * 100, 
+                 .format(epoch, acc_val * 100, 
+                                acc_test * 100, 
                                 best_val_acc['val_acc'] * 100, 
                                 best_val_acc['test_acc'] * 100, 
                                 best_val_acc['epoch']))
@@ -72,11 +75,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
-    # adj = coo_matrix(adj)
-    # adj_dict = {}
-    # adj_dict['adj'] = adj
-    # torch.save(adj_dict, "./adjs/pubmed/original.pt")
-    # pdb.set_trace()
+
     node_num = features.size()[0]
     class_num = labels.numpy().max() + 1
 
@@ -98,13 +97,12 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
         ori_state_dict.update(encoder_weight)
         net_gcn.net_layer[0].load_state_dict(ori_state_dict)
 
-    if rewind_weight_mask:
-        net_gcn.load_state_dict(rewind_weight_mask)
-        if not args['rewind_soft_mask'] or args['init_soft_mask_type'] == 'all_one':
-            pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)
-        adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
-    else:
-        pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)
+    if rewind_weight_mask is not None:
+        pruning.load_only_mask(net_gcn, rewind_weight_mask)
+        # net_gcn.load_state_dict(rewind_weight_mask)
+
+    pruning.add_trainable_mask_noise(net_gcn, c=1e-3)
+    adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
 
     optimizer = torch.optim.Adam(net_gcn.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
@@ -131,7 +129,8 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
                                                                         wei_percent=args['pruning_percent_wei'])
 
             print("(Get Mask) Epoch:[{}] Val:[{:.2f}] Test:[{:.2f}] | Best Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
-                 .format(epoch, acc_val * 100, acc_test * 100, 
+                 .format(epoch, acc_val * 100, 
+                                acc_test * 100, 
                                 best_val_acc['val_acc'] * 100,  
                                 best_val_acc['test_acc'] * 100,
                                 best_val_acc['epoch']))
@@ -169,8 +168,9 @@ if __name__ == "__main__":
     seed = seed_dict[args['dataset']]
     rewind_weight = None
     for p in range(20):
-        
+        seed += 1000
         final_mask_dict, rewind_weight = run_get_mask(args, seed, p, rewind_weight)
+        seed += 1000
         # rewind_weight['adj_mask1_train'].mul_(final_mask_dict['adj_mask'].to(rewind_weight['adj_mask1_train'].device))
         rewind_weight['adj_mask1_train'] = final_mask_dict['adj_mask']
         rewind_weight['adj_mask2_fixed'] = final_mask_dict['adj_mask']

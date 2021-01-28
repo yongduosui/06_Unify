@@ -337,13 +337,20 @@ def print_weight_sparsity(model):
     return wei_spar
 
 
+def load_only_mask(model, all_ckpt):
 
-def add_trainable_mask_noise(model):
+    model_state_dict = model.state_dict()
+    masks_state_dict = {k : v for k, v in all_ckpt.items() if 'mask' in k}
+    model_state_dict.update(masks_state_dict)
+    model.load_state_dict(model_state_dict)
+
+
+def add_trainable_mask_noise(model, c):
     
     model.adj_mask1_train.requires_grad = False
     model.net_layer[0].weight_mask_train.requires_grad = False
     model.net_layer[1].weight_mask_train.requires_grad = False
-    c = 1e-5
+
     rand1 = (2 * torch.rand(model.adj_mask1_train.shape) - 1) * c
     rand1 = rand1.to(model.adj_mask1_train.device) 
     rand1 = rand1 * model.adj_mask1_train
@@ -368,7 +375,7 @@ def soft_mask_init(model, init_type, seed):
 
     setup_seed(seed)
     if init_type == 'all_one':
-        add_trainable_mask_noise(model)
+        add_trainable_mask_noise(model, c=1e-5)
     elif init_type == 'kaiming':
         
         init.kaiming_uniform_(model.adj_mask1_train, a=math.sqrt(5))

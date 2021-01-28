@@ -90,6 +90,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
     net_gcn = net_gcn.cuda()
 
     if args['weight_dir']:
+        
         print("load : {}".format(args['weight_dir']))
         encoder_weight = {}
         cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
@@ -100,8 +101,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
 
     if rewind_weight_mask:
         net_gcn.load_state_dict(rewind_weight_mask)
-        if not args['rewind_soft_mask'] or args['init_soft_mask_type'] == 'all_one':
-            pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)
+        pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)
         adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     else:
         pruning.soft_mask_init(net_gcn, args['init_soft_mask_type'], seed)

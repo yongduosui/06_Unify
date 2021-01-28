@@ -43,7 +43,6 @@ def run_fix_mask(args, imp_num, adj_percent, wei_percent):
         pruning_gin.add_mask(net_gcn)
         pruning_gin.random_pruning(net_gcn, adj_percent, wei_percent)
         adj_spar, wei_spar = pruning_gin.print_sparsity(net_gcn)
-        
 
     elif args['net'] == 'gat':
         net_gcn = GATNet(args['embedding_dim'], g)
