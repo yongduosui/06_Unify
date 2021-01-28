@@ -44,7 +44,7 @@ class GATHeadLayer(nn.Module):
         z = self.fc(h)
         g.ndata['z'] = z
         g.apply_edges(self.edge_attention) # The function to generate new edge features
-        ### pruning edges
+        ### pruning edges 
         g.edata['e'] = g.edata['e'] * train_mask * fixed_mask
         g.update_all(self.message_func, self.reduce_func)
 

@@ -141,7 +141,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
 
 def parser_loader():
     parser = argparse.ArgumentParser(description='Self-Supervised GCN')
-    ###### Unify pruning settings #######
+    ###### Unify pruning settings #########
     parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--total_epoch', type=int, default=300)

@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=$1 python -u main_gingat_baseline.py --d pubmed --epochs 200 --net gat

@@ -33,7 +33,7 @@ def run(args):
     labels = labels.cuda()
 
     loss_func = nn.CrossEntropyLoss()
-
+    
     if args['net'] == 'gin':
         net_gcn = GINNet(args['embedding_dim'])
     else:
