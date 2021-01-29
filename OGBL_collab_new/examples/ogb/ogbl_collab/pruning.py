@@ -11,7 +11,30 @@ import math
 from tqdm import tqdm
 
 
+def resume_change(resume_ckpt, model, args):
 
+    model_state_dict = resume_ckpt['model_state_dict']
+    rewind_weight_mask = resume_ckpt['rewind_weight_mask']
+
+    rewind_weight_mask['edge_mask1_train'] = model_state_dict['edge_mask2_fixed']
+    rewind_weight_mask['edge_mask2_fixed'] = model_state_dict['edge_mask2_fixed']
+    
+    adj_remain = rewind_weight_mask['edge_mask2_fixed'].sum()
+    adj_total = rewind_weight_mask['edge_mask2_fixed'].numel()
+    wei_remain = 0
+    wei_total = 0
+    for i in range(args.num_layers):
+        key_train = 'gcns.{}.mlp.0.weight_mask_train'.format(i)
+        key_fixed = 'gcns.{}.mlp.0.weight_mask_fixed'.format(i)
+        rewind_weight_mask[key_train] = model_state_dict[key_fixed]
+        rewind_weight_mask[key_fixed] = rewind_weight_mask[key_train]
+        wei_total += rewind_weight_mask[key_fixed].numel()
+        wei_remain += rewind_weight_mask[key_fixed].sum()
+
+    adj_spar = adj_remain * 100 / adj_total
+    wei_spar = wei_remain * 100 / wei_total
+    print("resume :adj{:.2f} \t wei{:.2f}".format(adj_spar, wei_spar))
+    return rewind_weight_mask, adj_spar, wei_spar
 
 def change(rewind_weight, model, args):
 
