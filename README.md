@@ -82,13 +82,13 @@ https://github.com/lightaime/deep_gcns_torch
 
 `---------------------------Resume-------------------------------------------`
 
-`nohup bash 02_collab_imp_resume.sh 1 0 CKPTS/IMP_setting1/IMP1_train_ckpt.pth > 012901_collab_imp_setting1_resume.log & `
+`nohup bash 02_collab_imp_resume.sh 1 0 CKPTS/IMP_New_setting1/IMP1_train_ckpt.pth > 012901_collab_imp_setting1_resume.log & `
 
-`nohup bash 02_collab_imp_resume.sh 2 0 CKPTS/IMP_setting1/IMP2_train_ckpt.pth > 012902_collab_imp_setting1_resume.log & `
+`nohup bash 02_collab_imp_resume.sh 2 0 CKPTS/IMP_New_setting1/IMP2_train_ckpt.pth > 012902_collab_imp_setting1_resume.log & `
 
-`nohup bash 02_collab_imp_resume.sh 3 0 CKPTS/IMP_setting1/IMP3_train_ckpt.pth > 012903_collab_imp_setting1_resume.log & `
+`nohup bash 02_collab_imp_resume.sh 3 0 CKPTS/IMP_New_setting1/IMP3_train_ckpt.pth > 012903_collab_imp_setting1_resume.log & `
 
-`nohup bash 02_collab_imp_resume.sh 4 0 CKPTS/IMP_setting1/IMP4_train_ckpt.pth > 012904_collab_imp_setting1_resume.log & `
+`nohup bash 02_collab_imp_resume.sh 4 0 CKPTS/IMP_New_setting1/IMP4_train_ckpt.pth > 012904_collab_imp_setting1_resume.log & `
 
 `----------------------------RUNNING-------------------------------------------`
 
