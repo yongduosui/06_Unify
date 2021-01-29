@@ -7,7 +7,7 @@ S1=1e-2
 S2=1e-2
 EPOCH=200
 echo syd ------------------------------------------------------
-echo syd s1: $s1 s2: $s2 adj: ${ADJ} wei: ${WEI} init: ${INIT}
+echo syd s1: $s1 S1: $S2 adj: ${ADJ} wei: ${WEI} init: ${INIT}
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning_imp_pretrain.py \
 --dataset citeseer \
