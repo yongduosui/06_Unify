@@ -1,5 +1,5 @@
 DATASET=citeseer
-FIX_EPOCH=5
+FIX_EPOCH=200
 CUDA_VISIBLE_DEVICES=$1 \
 python -u main_gcn_rp.py \
 --dataset ${DATASET} \
