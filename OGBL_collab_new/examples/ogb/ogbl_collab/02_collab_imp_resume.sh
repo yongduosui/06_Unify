@@ -19,7 +19,7 @@ python -u main_imp_resume.py \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
 --mask_epochs 500 \
---fix_epochs 10 \
+--fix_epochs 500 \
 --model_save_path ${SAVE} \
 --imp_num ${IMP} \
 --resume_dir ${RESUME}
