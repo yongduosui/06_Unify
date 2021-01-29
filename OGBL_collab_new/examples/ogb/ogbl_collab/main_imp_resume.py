@@ -33,7 +33,6 @@ def main_fixed_mask(args, imp_num, resume_train_ckpt=None):
     model = DeeperGCN(args).to(device)
     pruning.add_mask(model, args)
     predictor = LinkPredictor(args).to(device)
-    pdb.set_trace()
     
     rewind_weight_mask, adj_spar, wei_spar = pruning.resume_change(resume_train_ckpt, model, args)
     model.load_state_dict(rewind_weight_mask)
