@@ -47,7 +47,8 @@ def main_fixed_mask(args, imp_num, resume_train_ckpt=None):
             param.requires_grad = False
 
     optimizer = torch.optim.Adam(list(model.parameters()) + list(predictor.parameters()), lr=args.lr)
-    results = {}
+    #results = {}
+    results = {'epoch': 0 }
     keys = ['highest_valid', 'final_train', 'final_test', 'highest_train']
     hits = ['Hits@10', 'Hits@50', 'Hits@100']
     
