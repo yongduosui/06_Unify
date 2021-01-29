@@ -51,7 +51,7 @@ def run_fix_mask(args, imp_num, adj_percent, wei_percent, dataset_dict):
         if 'mask' in name:
             param.requires_grad = False
             #print("NAME:{}\tSHAPE:{}\tGRAD:{}".format(name, param.shape, param.requires_grad))
-
+    
     optimiser = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=l2_coef)
     model.cuda()
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
@@ -82,6 +82,7 @@ def run_fix_mask(args, imp_num, adj_percent, wei_percent, dataset_dict):
                                              adj_sparse, 
                                              val_edges, 
                                              val_edges_false)
+
             acc_test, _ = pruning.test(model, features, 
                                               adj, 
                                               sparse, 

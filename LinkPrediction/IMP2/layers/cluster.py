@@ -11,7 +11,7 @@ import sklearn.cluster
 
 def cluster(data, k, temp, num_iter, init, cluster_temp):
     
-    eps = 1e-3
+    eps = 1e-4
     cuda0 = torch.cuda.is_available()#False
     if cuda0:
         mu = init.cuda()
