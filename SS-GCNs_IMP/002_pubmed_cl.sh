@@ -6,7 +6,7 @@ WEI=0.2
 S1=1e-5
 S2=1e-4
 echo syd ------------------------------------------------------
-echo syd s1: $s1 S1: $S2 adj: ${ADJ} wei: ${WEI} init: ${INIT}
+echo syd s1: $S1 S1: $S2 adj: ${ADJ} wei: ${WEI} init: ${INIT}
 CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning_imp_pretrain.py \
 --dataset pubmed \
