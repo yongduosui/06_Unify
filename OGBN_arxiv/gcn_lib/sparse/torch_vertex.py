@@ -127,6 +127,9 @@ class GENConv(GenMessagePassing):
             return super(GENConv, self).aggregate(inputs, index, ptr, dim_size)
 
         elif self.aggr in ['softmax_sg', 'softmax', 'softmax_sum']:
+            
+            ## NOTE: pruning adj
+            inputs = inputs * self.edge_mask1_train * self.edge_mask2_fixed
 
             if self.learn_t:
                 out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
@@ -134,8 +137,6 @@ class GENConv(GenMessagePassing):
                 with torch.no_grad():
                     out = scatter_softmax(inputs*self.t, index, dim=self.node_dim)
 
-            ## NOTE: pruning adj
-            inputs = inputs * self.edge_mask1_train * self.edge_mask2_fixed
             out = scatter(inputs * out, index, dim=self.node_dim,
                           dim_size=dim_size, reduce='sum')
 

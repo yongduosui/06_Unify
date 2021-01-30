@@ -62,7 +62,7 @@ def main():
     dataset = PygNodePropPredDataset(name=args.dataset)
     data = dataset[0]
     split_idx = dataset.get_idx_split()
-
+    pdb.set_trace()
     evaluator = Evaluator(args.dataset)
 
     x = data.x.to(device)
@@ -141,3 +141,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+# (Pdb) p split_idx['train'].shape
+# torch.Size([90941])
+# (Pdb) p split_idx['valid'].shape
+# torch.Size([29799])
+# (Pdb) p split_idx['test'].shape
+# torch.Size([48603])

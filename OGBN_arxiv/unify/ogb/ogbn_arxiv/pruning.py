@@ -8,15 +8,7 @@ import matplotlib.pyplot as plt
 import pdb
 import torch.nn.init as init
 import math
-# def soft_threshold(w, th):
-# 	'''
-# 	pytorch soft-sign function
-# 	'''
-# 	with torch.no_grad():
-# 		temp = torch.abs(w) - th
-# 		# print('th:', th)
-# 		# print('temp:', temp.size())
-# 		return torch.sign(w) * nn.functional.relu(temp)
+
 
 def save_all(model, rewind_weight, optimizer, imp_num, epoch, save_path, save_name='default'):
     
@@ -98,14 +90,9 @@ def add_mask(model):
 
 def subgradient_update_mask(model, args):
 
-    if args.fixed == 'all_fixed':
-        pass
-    else:
-        if args.fixed != 'only_adj':
-            model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
-        if args.fixed != 'only_wei':
-            for i in range(28):
-                model.gcns[i].mlp[0].weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.gcns[i].mlp[0].weight_mask_train.data))
+    model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
+    for i in range(28):
+        model.gcns[i].mlp[0].weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.gcns[i].mlp[0].weight_mask_train.data))
 
 
 def get_soft_mask_distribution(model):
@@ -122,28 +109,6 @@ def get_soft_mask_distribution(model):
         weight_mask_vector = torch.cat((weight_mask_vector, weight_mask))
     
     return adj_mask_vector.detach().cpu(), weight_mask_vector.detach().cpu()
-
-
-def plot_mask_distribution(model, epoch, acc_test, path):
-
-    # print("Plot Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
-    if not os.path.exists(path): os.makedirs(path)
-    adj_mask, weight_mask = get_soft_mask_distribution(model)
-
-    plt.figure(figsize=(15, 5))
-    plt.subplot(1,2,1)
-    plt.hist(adj_mask.numpy())
-    plt.title("adj mask")
-    plt.xlabel('mask value')
-    plt.ylabel('times')
-
-    plt.subplot(1,2,2)
-    plt.hist(weight_mask.numpy())
-    plt.title("weight mask")
-    plt.xlabel('mask value')
-    plt.ylabel('times')
-    plt.suptitle("Epoch:[{}] Test Acc[{:.2f}]".format(epoch, acc_test * 100))
-    plt.savefig(path + '/mask_epoch{}.png'.format(epoch))
 
 
 def get_each_mask(mask_weight_tensor, threshold):

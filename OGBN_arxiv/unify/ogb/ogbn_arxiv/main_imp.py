@@ -197,7 +197,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
-            pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
+            rewind_weight_mask = pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
             pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
