@@ -164,8 +164,8 @@ if __name__ == "__main__":
     dataset_dict['test_edges'] = test_edges
     dataset_dict['test_edges_false'] = test_edges_false
 
+    run_fix_mask(args, 0, 0, 0, dataset_dict)
     percent_list = [(1 - (1 - args.pruning_percent_adj) ** (i + 1), 1 - (1 - args.pruning_percent_wei) ** (i + 1)) for i in range(20)]
-
     for imp_num, (adj_percent, wei_percent) in enumerate(percent_list):
         run_fix_mask(args, imp_num + 1, adj_percent, wei_percent, dataset_dict)
 
