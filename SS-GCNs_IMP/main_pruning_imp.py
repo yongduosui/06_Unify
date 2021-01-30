@@ -19,6 +19,7 @@ warnings.filterwarnings('ignore')
 def run_fix_mask(args, seed, rewind_weight_mask):
 
     pruning.setup_seed(seed)
+
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
     
     node_num = features.size()[0]
@@ -72,6 +73,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
+    pdb.set_trace()
     # adj = coo_matrix(adj)
     # adj_dict = {}
     # adj_dict['adj'] = adj

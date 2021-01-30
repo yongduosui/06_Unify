@@ -43,7 +43,7 @@ def run_fix_mask(args, seed, rewind_weight_mask):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc': 0}
 
-    for epoch in range(200):
+    for epoch in range(args['fix_epoch']):
 
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -111,7 +111,7 @@ def run_get_mask(args, seed, imp_num, rewind_weight_mask=None):
     acc_test = 0.0
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
     rewind_weight = copy.deepcopy(net_gcn.state_dict())
-    for epoch in range(args['total_epoch']):
+    for epoch in range(args['mask_epoch']):
         
         optimizer.zero_grad()
         output = net_gcn(features, adj)
@@ -144,7 +144,8 @@ def parser_loader():
     ###### Unify pruning settings #######
     parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
-    parser.add_argument('--total_epoch', type=int, default=300)
+    parser.add_argument('--mask_epoch', type=int, default=100)
+    parser.add_argument('--fix_epoch', type=int, default=200)
     parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
     parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
     parser.add_argument('--weight_dir', type=str, default='')

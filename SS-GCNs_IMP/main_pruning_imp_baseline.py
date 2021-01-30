@@ -16,7 +16,8 @@ from scipy.sparse import coo_matrix
 import warnings
 warnings.filterwarnings('ignore')
 
-def run_fix_mask(args, seed, adj_percent, wei_percent):
+
+def run_fix_mask(args, seed):
 
     pruning.setup_seed(seed)
     adj, features, labels, idx_train, idx_val, idx_test = load_data(args['dataset'])
@@ -32,19 +33,15 @@ def run_fix_mask(args, seed, adj_percent, wei_percent):
     net_gcn = net.net_gcn(embedding_dim=args['embedding_dim'], adj=adj)
     pruning.add_mask(net_gcn)
     net_gcn = net_gcn.cuda()
+    
+    print("load : {}".format(args['weight_dir']))
+    encoder_weight = {}
+    cl_ckpt = torch.load(args['weight_dir'], map_location='cuda')
+    encoder_weight['weight_orig_weight'] = cl_ckpt['gcn.fc.weight']
+    ori_state_dict = net_gcn.net_layer[0].state_dict()
+    ori_state_dict.update(encoder_weight)
+    net_gcn.net_layer[0].load_state_dict(ori_state_dict)
 
-    
-    pruning.random_pruning(net_gcn, adj_percent, wei_percent)
-    
-    pruned_adj = net_gcn.adj_mask2_fixed.detach().cpu()
-    pruned_adj = coo_matrix(pruned_adj)
-    rp_dict = {}
-    rp_dict['rp'] = pruned_adj
-    save_dir = 'adjs/pubmed/pubmed_rp13.pt'
-    torch.save(rp_dict, save_dir)
-    pdb.set_trace()
-    adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
-    
     for name, param in net_gcn.named_parameters():
         if 'mask' in name:
             param.requires_grad = False
@@ -76,7 +73,7 @@ def run_fix_mask(args, seed, adj_percent, wei_percent):
                                 best_val_acc['test_acc'] * 100, 
                                 best_val_acc['epoch']))
 
-    return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch'], adj_spar, wei_spar
+    return best_val_acc['val_acc'], best_val_acc['test_acc'], best_val_acc['epoch']
 
 
 def parser_loader():
@@ -102,18 +99,11 @@ if __name__ == "__main__":
     parser = parser_loader()
     args = vars(parser.parse_args())
     print(args)
-    # seed_time = 30
-    # rand_seed_list = np.random.randint(100, 500, seed_time)
-    # for seed in rand_seed_list:
+    
     seed_dict = {'cora': 3846, 'citeseer': 2839, 'pubmed': 3333}
     seed = seed_dict[args['dataset']]
-
-    percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(20)]
-
-    for p, (adj_percent, wei_percent) in enumerate(percent_list[12:]):
-        
-        best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, adj_percent, wei_percent)
-        print("=" * 120)
-        print("syd : Sparsity:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(p + 1,  best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
-        print("=" * 120)
+    best_acc_val, final_acc_test, final_epoch_list = run_fix_mask(args, seed)
+    print("=" * 120)
+    print("syd : Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
+        .format(best_acc_val * 100, final_epoch_list, final_acc_test * 100,))
+    print("=" * 120)
