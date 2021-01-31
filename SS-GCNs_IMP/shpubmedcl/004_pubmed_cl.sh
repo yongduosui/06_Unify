@@ -3,7 +3,7 @@ DIM=512
 INIT=all_one
 ADJ=0.05
 WEI=0.2
-S1=1e-6
+S1=1e-7
 S2=1e-6
 echo syd ------------------------------------------------------
 echo syd s1: $s1 S1: $S2 adj: ${ADJ} wei: ${WEI} init: ${INIT}

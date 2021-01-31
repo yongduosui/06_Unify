@@ -11,7 +11,7 @@ CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_pruning_imp_pretrain.py \
 --dataset pubmed \
 --embedding-dim 500 ${DIM} 3 \
---lr 0.01 \
+--lr 0.05 \
 --weight-decay 5e-4 \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
