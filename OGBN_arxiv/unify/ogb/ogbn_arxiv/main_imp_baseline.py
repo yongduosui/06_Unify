@@ -50,7 +50,7 @@ def train_fixed(model, x, edge_index, y_true, train_idx, optimizer, args):
 
 
 def main_fixed_mask(args):
-
+    imp_num = 0
     device = torch.device("cuda:" + str(args.device))
     dataset = PygNodePropPredDataset(name=args.dataset)
     data = dataset[0]
