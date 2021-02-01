@@ -82,7 +82,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt=None):
     args.num_tasks = dataset.num_classes
 
     model = DeeperGCN(args).to(device)
-    pruning.add_mask(model)
+    pruning.add_mask(model, args.num_layers)
     model.load_state_dict(rewind_weight_mask)
     adj_spar, wei_spar = pruning.print_sparsity(model)
     
