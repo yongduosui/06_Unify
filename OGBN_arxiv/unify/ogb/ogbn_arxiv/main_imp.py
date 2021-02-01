@@ -107,7 +107,7 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt=None):
         optimizer.load_state_dict(resume_train_ckpt['optimizer_state_dict'])
         adj_spar, wei_spar = pruning.print_sparsity(model)
 
-    for epoch in range(start_epoch, args.epochs + 1):
+    for epoch in range(start_epoch, args.fix_epochs + 1):
     
         epoch_loss = train_fixed(model, x, edge_index, y_true, train_idx, optimizer, args)
         result = test(model, x, edge_index, y_true, split_idx, evaluator)
@@ -118,11 +118,11 @@ def main_fixed_mask(args, imp_num, rewind_weight_mask, resume_train_ckpt=None):
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
-            pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_fixed_ckpt'.format(imp_num))
+            #pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_fixed_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'IMP:[{}] (FIX Mask) Epoch:[{}/{}]\t LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
-              .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
+              .format(imp_num, epoch, args.fix_epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100, 
                                                                results['final_test'] * 100,
@@ -166,7 +166,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
     if rewind_weight_mask:
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
-    pruning.add_trainable_mask_noise(model)
+    pruning.add_trainable_mask_noise(model, c=1e-4)
     
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch':0}
@@ -186,7 +186,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
     else:
         rewind_weight_mask = copy.deepcopy(model.state_dict())
 
-    for epoch in range(start_epoch, args.epochs + 1):
+    for epoch in range(start_epoch, args.mask_epochs + 1):
 
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
         result = test(model, x, edge_index, y_true, split_idx, evaluator)
@@ -198,11 +198,11 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
             rewind_weight_mask = pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
-            pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
+            #pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'IMP:[{}] (GET Mask) Epoch:[{}/{}]\t LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
-              .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
+              .format(imp_num, epoch, args.mask_epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100,
                                                                results['final_test'] * 100,

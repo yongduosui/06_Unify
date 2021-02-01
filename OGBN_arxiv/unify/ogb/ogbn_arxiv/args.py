@@ -20,7 +20,10 @@ class ArgsInit(object):
         parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
         parser.add_argument('--resume_dir', type=str, default='')
         parser.add_argument('--seed', type=int, default=10, help='which seed to use if any (default: 0)')
-
+        parser.add_argument('--mask_epochs', type=int, default=200,
+                            help='number of epochs to train (default: 500)')
+        parser.add_argument('--fix_epochs', type=int, default=500,
+                            help='number of epochs to train (default: 500)')                            
         parser.add_argument('--fixed', default='', type=str, help='{all_fixed, only_adj, only_wei, no_fixed}')
 
         # parser.add_argument('--baseline', action='store_true')
