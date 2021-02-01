@@ -80,9 +80,9 @@ class AddTrainableMask(ABC):
         return method
 
 
-def add_mask(model):
+def add_mask(model, num_layers):
 
-    for i in range(28):
+    for i in range(num_layers):
         mask_train = nn.Parameter(torch.ones_like(model.gcns[i].mlp[0].weight))
         mask_fixed = nn.Parameter(torch.ones_like(model.gcns[i].mlp[0].weight), requires_grad=False)
         AddTrainableMask.apply(model.gcns[i].mlp[0], 'weight', mask_train, mask_fixed)
@@ -91,7 +91,7 @@ def add_mask(model):
 def subgradient_update_mask(model, args):
 
     model.edge_mask1_train.grad.data.add_(args.s1 * torch.sign(model.edge_mask1_train.data))
-    for i in range(28):
+    for i in range(args.num_layers):
         model.gcns[i].mlp[0].weight_mask_train.grad.data.add_(args.s2 * torch.sign(model.gcns[i].mlp[0].weight_mask_train.data))
 
 
@@ -225,7 +225,7 @@ def random_pruning(model, adj_percent, wei_percent):
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = True 
 
 
-def print_sparsity(model):
+def print_sparsity(model, num_layers=28):
 
     adj_nonzero = model.edge_num
     adj_mask_nonzero = model.edge_mask2_fixed.sum().item()
@@ -234,7 +234,7 @@ def print_sparsity(model):
     weight_total = 0
     weight_nonzero = 0
 
-    for i in range(28):
+    for i in range(num_layers):
         weight_total += model.gcns[i].mlp[0].weight_mask_fixed.numel()
         weight_nonzero += model.gcns[i].mlp[0].weight_mask_fixed.sum().item()
     
