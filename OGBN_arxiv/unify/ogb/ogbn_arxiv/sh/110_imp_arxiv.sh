@@ -17,7 +17,8 @@ python -u main_imp.py \
 --s2 ${S2} \
 --pruning_percent_wei ${WEI} \
 --pruning_percent_adj ${ADJ} \
---epochs 500 \
+--mask_epochs 500 \
+--fix_epochs 200 \
 --model_save_path ${SAVE}
 
 # --resume_dir CKPTs/debug/IMP2_fixed_ckpt.pth
