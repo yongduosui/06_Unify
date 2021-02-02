@@ -76,7 +76,6 @@ class AddTrainableMask(ABC):
 
         setattr(module, name, method.apply_mask(module))
         module.register_forward_pre_hook(method)
-
         return method
 
 
@@ -119,7 +118,7 @@ def get_each_mask(mask_weight_tensor, threshold):
     return mask
 
 ##### pruning remain mask percent #######
-def get_final_mask_epoch(model, rewind_weight, adj_percent, wei_percent):
+def get_final_mask_epoch(model, rewind_weight, args):
 
     adj_percent = args.pruning_percent_adj
     wei_percent = args.pruning_percent_wei
@@ -143,17 +142,27 @@ def get_final_mask_epoch(model, rewind_weight, adj_percent, wei_percent):
     rewind_weight['edge_mask1_train'] = get_each_mask(ori_edge_mask, adj_thre)
     rewind_weight['edge_mask2_fixed'] = rewind_weight['edge_mask1_train']
 
+    adj_spar = rewind_weight['edge_mask2_fixed'].sum() * 100 / model.edge_num
+    wei_all = 0
+    wei_nonzero = 0
+
     for i in range(num_layers):
         key_train = 'gcns.{}.mlp.0.weight_mask_train'.format(i)
         key_fixed = 'gcns.{}.mlp.0.weight_mask_fixed'.format(i)
         rewind_weight[key_train] = get_each_mask(model.gcns[i].mlp[0].state_dict()['weight_mask_train'], wei_thre)
         rewind_weight[key_fixed] = rewind_weight[key_train]
+        wei_nonzero += rewind_weight[key_fixed].sum()
+        wei_all += rewind_weight[key_fixed].numel()
+    wei_spar = wei_nonzero * 100 / wei_all
+    return rewind_weight, adj_spar, wei_spar
 
-    return rewind_weight
 
+def random_pruning(model, args, adj_percent, wei_percent):
 
-def random_pruning(model, adj_percent, wei_percent):
+    if adj_percent == 0 and wei_percent == 0:
+        return
 
+    num_layers = args.num_layers
     model.edge_mask1_train.requires_grad = False
     adj_total = model.edge_mask1_train.numel()
     adj_pruned_num = int(adj_total * adj_percent)
@@ -167,7 +176,7 @@ def random_pruning(model, adj_percent, wei_percent):
     
     model.edge_mask1_train.requires_grad = True
     
-    for i in range(28):
+    for i in range(num_layers):
         
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = False
         wei_total = model.gcns[i].mlp[0].weight_mask_train.numel()
@@ -183,8 +192,9 @@ def random_pruning(model, adj_percent, wei_percent):
         model.gcns[i].mlp[0].weight_mask_train.requires_grad = True 
 
 
-def print_sparsity(model, num_layers=28):
+def print_sparsity(model, args):
 
+    num_layers = args.num_layers
     adj_nonzero = model.edge_num
     adj_mask_nonzero = model.edge_mask2_fixed.sum().item()
     adj_spar = adj_mask_nonzero * 100 / adj_nonzero

@@ -11,6 +11,7 @@ import logging
 import pruning
 import time
 import pdb
+from thop import profile
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -41,11 +42,16 @@ def train(model, x, edge_index, y_true, train_idx, optimizer, args):
 
     model.train()
     optimizer.zero_grad()
-    pred = model(x, edge_index)[train_idx]
+    
+    # pred = model(x, edge_index)[train_idx]
+    pdb.set_trace()
+    macs, params = profile(model, inputs=(x, edge_index))
+    print("macs:[{:.2f}M]\tparams[{:.2f}M]".format(macs/1e6, params/1e6))
+    pdb.set_trace()
+
     loss = F.nll_loss(pred, y_true.squeeze(1)[train_idx])
     loss.backward()
-    
-    pruning.subgradient_update_mask(model, args) # l1 norm
+
     optimizer.step()
     return loss.item()
 
@@ -62,7 +68,7 @@ def main():
     dataset = PygNodePropPredDataset(name=args.dataset)
     data = dataset[0]
     split_idx = dataset.get_idx_split()
-    pdb.set_trace()
+    
     evaluator = Evaluator(args.dataset)
 
     x = data.x.to(device)
@@ -81,23 +87,7 @@ def main():
     args.num_tasks = dataset.num_classes
 
     model = DeeperGCN(args).to(device)
-    pruning.add_mask(model)
-
-    for name, param in model.named_parameters():
-        if 'mask' in name:
-            if args.fixed == 'all_fixed':
-                param.requires_grad = False
-            elif args.fixed == 'only_adj':
-                if 'edge' in name:
-                    param.requires_grad = False
-            elif args.fixed == 'only_wei':
-                if 'edge' not in name:
-                    param.requires_grad = False
-            else:
-                assert args.fixed == 'no_fixed'
-
-            print("NAME:[{}]\tSHAPE:[{}]\tGRAD:[{}]".format(name, param.shape, param.requires_grad))
-
+    
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0, 'final_train': 0, 'final_test': 0, 'highest_train': 0}
     start_time = time.time()
@@ -105,8 +95,6 @@ def main():
 
     for epoch in range(1, args.epochs + 1):
         
-        pruning.plot_mask_distribution(model, epoch, test_accuracy, args.model_save_path + '/plot')
-
         epoch_loss = train(model, x, edge_index, y_true, train_idx, optimizer, args)
         logging.info('Epoch {}, training loss {:.4f}'.format(epoch, epoch_loss))
         model.print_params(epoch=epoch)
@@ -123,13 +111,13 @@ def main():
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
 
-            save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='valid_best')
+            #save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='valid_best')
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
               'Epoch:[{}/{}]\t Results LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}]'
               .format(epoch, args.epochs, epoch_loss, train_accuracy * 100, valid_accuracy * 100, test_accuracy * 100, results['final_test'] * 100))
 
-    save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='last_epoch')
+    #save_ckpt(model, optimizer, round(epoch_loss, 4), epoch, args.model_save_path, sub_dir, name_post='last_epoch')
 
     end_time = time.time()
     total_time = end_time - start_time

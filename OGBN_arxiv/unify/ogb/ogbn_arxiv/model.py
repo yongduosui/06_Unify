@@ -8,16 +8,15 @@ from torch.utils.checkpoint import checkpoint
 import logging
 import pdb
 
+
 class DeeperGCN(torch.nn.Module):
     def __init__(self, args):
         super(DeeperGCN, self).__init__()
 
         self.edge_num = 2484941
-        # self.edge_num = 1166234
         self.num_layers = args.num_layers
         self.dropout = args.dropout
         self.block = args.block
-
         self.checkpoint_grad = False
 
         in_channels = args.in_channels
@@ -43,6 +42,7 @@ class DeeperGCN(torch.nn.Module):
             self.checkpoint_grad = True
             self.ckp_k = self.num_layers // 2
 
+
         self.gcns = torch.nn.ModuleList()
         self.norms = torch.nn.ModuleList()
 
@@ -52,11 +52,11 @@ class DeeperGCN(torch.nn.Module):
         self.edge_mask1_train = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=True)
         self.edge_mask2_fixed = nn.Parameter(torch.ones(self.edge_num, 1), requires_grad=False)
         
-
         for layer in range(self.num_layers):
 
             if conv == 'gen':
-                gcn = GENConv(hidden_channels, hidden_channels,
+                gcn = GENConv(hidden_channels, 
+                              hidden_channels,
                               aggr=aggr,
                               t=t, learn_t=self.learn_t,
                               p=p, learn_p=self.learn_p,
@@ -71,12 +71,12 @@ class DeeperGCN(torch.nn.Module):
 
     def forward(self,  x, edge_index):
         
+        
         h = self.node_features_encoder(x)
         if self.block == 'res+':
 
             h = self.gcns[0](h, self.edge_mask1_train, self.edge_mask2_fixed, edge_index)
             if self.checkpoint_grad:
-
                 for layer in range(1, self.num_layers):
                     h1 = self.norms[layer - 1](h)
                     h2 = F.relu(h1)

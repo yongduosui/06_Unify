@@ -2,10 +2,10 @@ GPU=$1
 SAVE=Baseline
 
 CUDA_VISIBLE_DEVICES=${GPU} \
-python -u main_imp_baseline.py \
+python -u main.py \
 --use_gpu \
 --self_loop \
---num_layers 3 \
+--num_layers 28 \
 --block res+ \
 --gcn_aggr softmax_sg \
 --learn_t \

@@ -50,7 +50,7 @@ def train_fixed(model, x, edge_index, y_true, train_idx, optimizer, args):
 
 
 def main_fixed_mask(args):
-    imp_num = 0
+
     device = torch.device("cuda:" + str(args.device))
     dataset = PygNodePropPredDataset(name=args.dataset)
     data = dataset[0]
@@ -94,15 +94,15 @@ def main_fixed_mask(args):
             results['epoch'] = epoch
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
-              'RP:[{}] (FIX Mask) Epoch:[{}/{}]\t LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
-              .format(imp_num, epoch, args.epochs, epoch_loss, train_accuracy * 100,
+              'Baseline (FIX Mask) Epoch:[{}/{}]\t LOSS:[{:.4f}] Train :[{:.2f}] Valid:[{:.2f}] Test:[{:.2f}] | Update Test:[{:.2f}] at epoch:[{}]'
+              .format(epoch, args.epochs, epoch_loss, train_accuracy * 100,
                                                                valid_accuracy * 100,
                                                                test_accuracy * 100, 
                                                                results['final_test'] * 100,
                                                                results['epoch']))
     print("=" * 120)
-    print("syd final: Baseline:[{}], Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
-        .format(imp_num,    results['final_train'] * 100,
+    print("syd final: Baseline, Train:[{:.2f}]  Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}]"
+        .format(            results['final_train'] * 100,
                             results['highest_valid'] * 100,
                             results['epoch'],
                             results['final_test'] * 100))

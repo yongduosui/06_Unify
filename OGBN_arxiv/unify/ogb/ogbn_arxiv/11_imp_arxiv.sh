@@ -9,8 +9,7 @@ CUDA_VISIBLE_DEVICES=${GPU} \
 python -u main_imp.py \
 --use_gpu \
 --self_loop \
---learn_t \
---num_layers 28 \
+--num_layers 3 \
 --block res+ \
 --gcn_aggr softmax_sg \
 --t 0.1 \

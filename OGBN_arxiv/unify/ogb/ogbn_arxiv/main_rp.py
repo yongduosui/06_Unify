@@ -71,9 +71,9 @@ def main_fixed_mask(args, imp_num, adj_percent, wei_percent, resume_train_ckpt=N
     args.num_tasks = dataset.num_classes
 
     model = DeeperGCN(args).to(device)
-    pruning.add_mask(model)
-    pruning.random_pruning(model, adj_percent, wei_percent)
-    adj_spar, wei_spar = pruning.print_sparsity(model)
+    pruning.add_mask(model, args.num_layers)
+    pruning.random_pruning(model, args, adj_percent, wei_percent)
+    adj_spar, wei_spar = pruning.print_sparsity(model, args)
     
     for name, param in model.named_parameters():
         if 'mask' in name:
@@ -94,7 +94,7 @@ def main_fixed_mask(args, imp_num, adj_percent, wei_percent, resume_train_ckpt=N
         model.load_state_dict(ori_model_dict)
         print("(RP FIXED MASK) Resume at epoch:[{}] len:[{}/{}]!".format(resume_train_ckpt['epoch'], len(over_lap.keys()), len(ori_model_dict.keys())))
         optimizer.load_state_dict(resume_train_ckpt['optimizer_state_dict'])
-        adj_spar, wei_spar = pruning.print_sparsity(model)
+        adj_spar, wei_spar = pruning.print_sparsity(model, args)
 
     for epoch in range(start_epoch, args.epochs + 1):
     
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     args = ArgsInit().save_exp()
     pruning.print_args(args, 120)
     pruning.setup_seed(args.seed)
-    start_imp = 10
+    start_imp = 1
     rewind_weight_mask = None
     resume_train_ckpt = None
 
@@ -145,6 +145,7 @@ if __name__ == "__main__":
         main_fixed_mask(args, start_imp, adj_percent, wei_percent, resume_train_ckpt)
         start_imp += 1
 
+    main_fixed_mask(args, imp_num, 0, 0)
     for imp_num in range(start_imp, 20):
         
         adj_percent, wei_percent = percent_list[imp_num]
