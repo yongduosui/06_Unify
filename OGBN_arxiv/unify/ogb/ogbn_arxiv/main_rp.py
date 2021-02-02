@@ -145,7 +145,7 @@ if __name__ == "__main__":
         main_fixed_mask(args, start_imp, adj_percent, wei_percent, resume_train_ckpt)
         start_imp += 1
 
-    main_fixed_mask(args, imp_num, 0, 0)
+    main_fixed_mask(args, 0, 0, 0)
     for imp_num in range(start_imp, 20):
         
         adj_percent, wei_percent = percent_list[imp_num]
