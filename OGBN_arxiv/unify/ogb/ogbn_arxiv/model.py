@@ -8,12 +8,12 @@ from torch.utils.checkpoint import checkpoint
 import logging
 import pdb
 
-
 class DeeperGCN(torch.nn.Module):
     def __init__(self, args):
         super(DeeperGCN, self).__init__()
 
         self.edge_num = 2484941
+        # self.edge_num = 1166234
         self.num_layers = args.num_layers
         self.dropout = args.dropout
         self.block = args.block
@@ -43,21 +43,6 @@ class DeeperGCN(torch.nn.Module):
             self.checkpoint_grad = True
             self.ckp_k = self.num_layers // 2
 
-        # print('The number of layers {}'.format(self.num_layers),
-        #       'Aggregation method {}'.format(aggr),
-        #       'block: {}'.format(self.block))
-
-        # if self.block == 'res+':
-        #     print('LN/BN->ReLU->GraphConv->Res')
-        # elif self.block == 'res':
-        #     print('GraphConv->LN/BN->ReLU->Res')
-        # elif self.block == 'dense':
-        #     raise NotImplementedError('To be implemented')
-        # elif self.block == "plain":
-        #     print('GraphConv->LN/BN->ReLU')
-        # else:
-        #     raise Exception('Unknown block Type')
-
         self.gcns = torch.nn.ModuleList()
         self.norms = torch.nn.ModuleList()
 
@@ -86,26 +71,21 @@ class DeeperGCN(torch.nn.Module):
 
     def forward(self,  x, edge_index):
         
-        
         h = self.node_features_encoder(x)
-
         if self.block == 'res+':
 
             h = self.gcns[0](h, self.edge_mask1_train, self.edge_mask2_fixed, edge_index)
-
             if self.checkpoint_grad:
 
                 for layer in range(1, self.num_layers):
                     h1 = self.norms[layer - 1](h)
                     h2 = F.relu(h1)
                     h2 = F.dropout(h2, p=self.dropout, training=self.training)
-                    
                     if layer % self.ckp_k != 0:
                         res = checkpoint(self.gcns[layer], h2, self.edge_mask1_train, self.edge_mask2_fixed, edge_index)
                         h = res + h
                     else:
                         h = self.gcns[layer](h2, self.edge_mask1_train, self.edge_mask2_fixed, edge_index) + h
-
             else:
                 for layer in range(1, self.num_layers):
                     h1 = self.norms[layer - 1](h)

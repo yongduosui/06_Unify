@@ -166,8 +166,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
     if rewind_weight_mask:
         model.load_state_dict(rewind_weight_mask)
         adj_spar, wei_spar = pruning.print_sparsity(model)
-    pruning.add_trainable_mask_noise(model, c=1e-4)
-    
+    pruning.add_trainable_mask_noise(model, args, c=1e-5)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     results = {'highest_valid': 0,'final_train': 0, 'final_test': 0, 'highest_train': 0, 'epoch':0}
     
@@ -197,7 +196,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
             results['final_train'] = train_accuracy
             results['final_test'] = test_accuracy
             results['epoch'] = epoch
-            rewind_weight_mask = pruning.get_final_mask_epoch(model, rewind_weight_mask, args.pruning_percent_adj, args.pruning_percent_wei)
+            rewind_weight_mask = pruning.get_final_mask_epoch(model, rewind_weight_mask, args)
             #pruning.save_all(model, rewind_weight_mask, optimizer, imp_num, epoch, args.model_save_path, 'IMP{}_train_ckpt'.format(imp_num))
 
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' | ' +
@@ -219,8 +218,7 @@ def main_get_mask(args, imp_num, rewind_weight_mask=None, resume_train_ckpt=None
 if __name__ == "__main__":
 
     args = ArgsInit().save_exp()
-    
-    pruning.print_args(args, 120)
+    pruning.print_args(args, 80)
 
     start_imp = 1
     rewind_weight_mask = None
