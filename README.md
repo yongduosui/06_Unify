@@ -1,4 +1,4 @@
-# USG
+# UGS
 ## 1. Related Repo
 
 https://github.com/Shen-Lab/SS-GCNs
