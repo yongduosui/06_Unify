@@ -2,7 +2,7 @@
 ## 1. Requirements
 
 ```
-bash deepgcn_env_install.sh
+bash install.sh
 ```
 
 
