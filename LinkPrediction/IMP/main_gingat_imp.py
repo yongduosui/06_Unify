@@ -15,11 +15,10 @@ import dgl
 import warnings
 warnings.filterwarnings('ignore')
 
-def run_fix_mask(args, imp_num, rewind_weight_mask):
+def run_fix_mask(args, imp_num, rewind_weight_mask, dataset_dict):
 
     pruning_gin.setup_seed(args.seed)
     num_clusters = int(args.num_clusters)
-    dataset = args.dataset
 
     batch_size = 1
     patience = 50
@@ -29,27 +28,22 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
     sparse = False
     nonlinearity = 'prelu' # special name to separate parameters
 
-    adj, features, labels, idx_train, idx_val, idx_test = process.load_data(dataset)
-    adj_sparse = adj
+    adj = dataset_dict['adj']
+    adj_sparse = dataset_dict['adj_sparse']
+    features = dataset_dict['features']
+    labels = dataset_dict['labels']
+    val_edges = dataset_dict['val_edges']
+    val_edges_false = dataset_dict['val_edges_false']
+    test_edges = dataset_dict['test_edges']
+    test_edges_false = dataset_dict['test_edges_false']
 
-    adj_train, train_edges, train_edges_false, val_edges, val_edges_false, \
-    test_edges, test_edges_false = process.mask_test_edges(adj, test_frac=args.test_rate, val_frac=0.05)
-    adj = adj_train
+    nb_nodes = features.shape[1]
+    ft_size = features.shape[2]
 
-    ylabels = labels
-    features, _ = process.preprocess_features(features)
-
-    nb_nodes = features.shape[0]
-    ft_size = features.shape[1]
-    nb_classes = labels.shape[1]
-    
     g = dgl.DGLGraph()
     g.add_nodes(nb_nodes)
     adj = adj.tocoo()
     g.add_edges(adj.row, adj.col)
-
-    features = torch.FloatTensor(features[np.newaxis]).cuda()
-    labels = torch.FloatTensor(labels[np.newaxis]).cuda()
 
     b_xent = nn.BCEWithLogitsLoss()
     b_bce = nn.BCELoss()
@@ -140,7 +134,7 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
                             adj_spar,
                             wei_spar))
 
-def run_get_mask(args, imp_num, rewind_weight_mask):
+def run_get_mask(args, imp_num, rewind_weight_mask, dataset_dict):
 
     pruning_gin.setup_seed(args.seed)
     num_clusters = int(args.num_clusters)
@@ -154,28 +148,23 @@ def run_get_mask(args, imp_num, rewind_weight_mask):
     sparse = False
     nonlinearity = 'prelu' # special name to separate parameters
 
-    adj, features, labels, idx_train, idx_val, idx_test = process.load_data(dataset)
-    adj_sparse = adj
+    adj = dataset_dict['adj']
+    adj_sparse = dataset_dict['adj_sparse']
+    features = dataset_dict['features']
+    labels = dataset_dict['labels']
+    val_edges = dataset_dict['val_edges']
+    val_edges_false = dataset_dict['val_edges_false']
+    test_edges = dataset_dict['test_edges']
+    test_edges_false = dataset_dict['test_edges_false']
 
-    adj_train, train_edges, train_edges_false, val_edges, val_edges_false, \
-    test_edges, test_edges_false = process.mask_test_edges(adj, test_frac=args.test_rate, val_frac=0.05)
-    adj = adj_train
-
-    ylabels = labels
-    features, _ = process.preprocess_features(features)
-
-    nb_nodes = features.shape[0]
-    ft_size = features.shape[1]
-    nb_classes = labels.shape[1]
-
+    nb_nodes = features.shape[1]
+    ft_size = features.shape[2]
+    
     g = dgl.DGLGraph()
     g.add_nodes(nb_nodes)
     adj = adj.tocoo()
     g.add_edges(adj.row, adj.col)
     
-    features = torch.FloatTensor(features[np.newaxis]).cuda()
-    labels = torch.FloatTensor(labels[np.newaxis]).cuda()
-
     b_xent = nn.BCEWithLogitsLoss()
     b_bce = nn.BCELoss()
 
@@ -192,10 +181,10 @@ def run_get_mask(args, imp_num, rewind_weight_mask):
         model.load_state_dict(rewind_weight_mask)
 
     if args.net == 'gin':
-        pruning_gin.add_trainable_mask_noise(model.gcn, c=1e-5)
+        pruning_gin.add_trainable_mask_noise(model.gcn, c=1e-4)
         adj_spar, wei_spar = pruning_gin.print_sparsity(model.gcn)
     else:
-        pruning_gat.add_trainable_mask_noise(model.gcn, c=1e-5)
+        pruning_gat.add_trainable_mask_noise(model.gcn, c=1e-4)
         adj_spar, wei_spar = pruning_gat.print_sparsity(model.gcn)
 
     optimiser = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=l2_coef)
@@ -297,7 +286,29 @@ if __name__ == "__main__":
     pruning_gin.print_args(args)
 
     rewind_weight = None
+    
+    dataset = args.dataset
+    adj, features, labels, idx_train, idx_val, idx_test = process.load_data(dataset)
+    adj_sparse = adj
+    adj_train, train_edges, train_edges_false, val_edges, val_edges_false, \
+    test_edges, test_edges_false = process.mask_test_edges(adj, test_frac=args.test_rate, val_frac=0.05)
+    adj = adj_train
+    features, _ = process.preprocess_features(features)
+    features = torch.FloatTensor(features[np.newaxis]).cuda()
+    #adj = torch.FloatTensor(adj.todense()).cuda()
+    labels = torch.FloatTensor(labels[np.newaxis]).cuda()
+
+    dataset_dict = {}
+    dataset_dict['adj'] = adj
+    dataset_dict['adj_sparse'] = adj_sparse
+    dataset_dict['features'] = features
+    dataset_dict['labels'] = labels
+    dataset_dict['val_edges'] = val_edges
+    dataset_dict['val_edges_false'] = val_edges_false
+    dataset_dict['test_edges'] = test_edges
+    dataset_dict['test_edges_false'] = test_edges_false
+
     for imp in range(1, 21):
-        rewind_weight = run_get_mask(args, imp, rewind_weight)
-        run_fix_mask(args, imp, rewind_weight)
+        rewind_weight = run_get_mask(args, imp, rewind_weight, dataset_dict)
+        run_fix_mask(args, imp, rewind_weight, dataset_dict)
     

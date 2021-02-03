@@ -3,11 +3,14 @@ import torch
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 
+
+
 def test(model, features, adj, sparse, adj_sparse, test_edges, test_edges_false):
 
+    eps = 1e-4
     embeds, _,_, S= model.embed(features, adj, sparse, None, 100)
     embs = embeds[0, :]
-    embs = embs / embs.norm(dim=1)[:, None]
+    embs = embs / (embs.norm(dim=1)[:, None] + eps)
     sc_roc, sc_ap = get_roc_score(test_edges, test_edges_false, embs.cpu().detach().numpy(), adj_sparse)
     return sc_roc, sc_ap
 

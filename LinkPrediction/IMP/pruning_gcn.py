@@ -168,6 +168,8 @@ def get_final_mask_epoch(model, rewind_weight, args):
 ##### random pruning #######
 def random_pruning(model, adj_percent, wei_percent):
 
+    if adj_percent == 0 and wei_percent == 0:
+        return
     model.adj_mask1_train.requires_grad = False
     model.net_layer[0].weight_mask_train.requires_grad = False
     model.net_layer[1].weight_mask_train.requires_grad = False

@@ -10,13 +10,14 @@ import pdb
 import pruning
 import pruning_gcn
 import copy
+import warnings
+warnings.filterwarnings('ignore')
 
-def run_fix_mask(args, imp_num, adj_percent, wei_percent):
+def run_fix_mask(args, imp_num, adj_percent, wei_percent, dataset_dict):
 
     pruning_gcn.setup_seed(args.seed)
     num_clusters = int(args.num_clusters)
-    dataset = args.dataset
-
+    
     batch_size = 1
     patience = 50
     l2_coef = 0.0
@@ -25,24 +26,18 @@ def run_fix_mask(args, imp_num, adj_percent, wei_percent):
     sparse = False
     nonlinearity = 'prelu' # special name to separate parameters
 
-    adj, features, labels, idx_train, idx_val, idx_test = process.load_data(dataset)
-    adj_sparse = adj
+    adj = dataset_dict['adj']
+    adj_sparse = dataset_dict['adj_sparse']
+    features = dataset_dict['features']
+    labels = dataset_dict['labels']
+    val_edges = dataset_dict['val_edges']
+    val_edges_false = dataset_dict['val_edges_false']
+    test_edges = dataset_dict['test_edges']
+    test_edges_false = dataset_dict['test_edges_false']
 
-    adj_train, train_edges, train_edges_false, val_edges, val_edges_false, \
-    test_edges, test_edges_false = process.mask_test_edges(adj, test_frac=args.test_rate, val_frac=0.05)
-    adj = adj_train
-
-    ylabels = labels
-    features, _ = process.preprocess_features(features)
-
-    nb_nodes = features.shape[0]
-    ft_size = features.shape[1]
-    nb_classes = labels.shape[1]
-    
-    features = torch.FloatTensor(features[np.newaxis]).cuda()
-    adj = torch.FloatTensor(adj.todense()).cuda()
-    labels = torch.FloatTensor(labels[np.newaxis]).cuda()
-
+    nb_nodes = features.shape[1]
+    ft_size = features.shape[2]
+  
     b_xent = nn.BCEWithLogitsLoss()
     b_bce = nn.BCELoss()
 
@@ -56,7 +51,7 @@ def run_fix_mask(args, imp_num, adj_percent, wei_percent):
         if 'mask' in name:
             param.requires_grad = False
             #print("NAME:{}\tSHAPE:{}\tGRAD:{}".format(name, param.shape, param.requires_grad))
-
+    
     optimiser = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=l2_coef)
     model.cuda()
     best_val_acc = {'val_acc': 0, 'epoch' : 0, 'test_acc':0}
@@ -87,6 +82,7 @@ def run_fix_mask(args, imp_num, adj_percent, wei_percent):
                                              adj_sparse, 
                                              val_edges, 
                                              val_edges_false)
+
             acc_test, _ = pruning.test(model, features, 
                                               adj, 
                                               sparse, 
@@ -147,9 +143,29 @@ if __name__ == "__main__":
     args = parser_loader()
     pruning_gcn.print_args(args)
 
+    dataset = args.dataset
+    adj, features, labels, idx_train, idx_val, idx_test = process.load_data(dataset)
+    adj_sparse = adj
+    adj_train, train_edges, train_edges_false, val_edges, val_edges_false, \
+    test_edges, test_edges_false = process.mask_test_edges(adj, test_frac=args.test_rate, val_frac=0.05)
+    adj = adj_train
+    features, _ = process.preprocess_features(features)
+    features = torch.FloatTensor(features[np.newaxis]).cuda()
+    adj = torch.FloatTensor(adj.todense()).cuda()
+    labels = torch.FloatTensor(labels[np.newaxis]).cuda()
 
+    dataset_dict = {}
+    dataset_dict['adj'] = adj
+    dataset_dict['adj_sparse'] = adj_sparse
+    dataset_dict['features'] = features
+    dataset_dict['labels'] = labels
+    dataset_dict['val_edges'] = val_edges
+    dataset_dict['val_edges_false'] = val_edges_false
+    dataset_dict['test_edges'] = test_edges
+    dataset_dict['test_edges_false'] = test_edges_false
+
+    run_fix_mask(args, 0, 0, 0, dataset_dict)
     percent_list = [(1 - (1 - args.pruning_percent_adj) ** (i + 1), 1 - (1 - args.pruning_percent_wei) ** (i + 1)) for i in range(20)]
-
     for imp_num, (adj_percent, wei_percent) in enumerate(percent_list):
-        run_fix_mask(args, imp_num + 1, adj_percent, wei_percent)
+        run_fix_mask(args, imp_num + 1, adj_percent, wei_percent, dataset_dict)
 

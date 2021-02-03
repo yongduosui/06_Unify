@@ -2,7 +2,6 @@
     pytorch (differentiable) implementation of soft k-means clustering. 
     Modified from https://github.com/bwilder0/clusternet
 '''
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,10 +11,8 @@ import sklearn.cluster
 
 def cluster(data, k, temp, num_iter, init, cluster_temp):
     
+    eps = 1e-4
     cuda0 = torch.cuda.is_available()#False
-    
-    
-    
     if cuda0:
         mu = init.cuda()
         data = data.cuda()
@@ -25,29 +22,24 @@ def cluster(data, k, temp, num_iter, init, cluster_temp):
     n = data.shape[0]
     d = data.shape[1]
 #    
-    data = data / data.norm(dim=1)[:, None]
+    data = data / (data.norm(dim=1)[:, None] + eps)
+    # data = torch.where(torch.isnan(data), torch.full_like(data, 0.1), data)
+
     for t in range(num_iter):
         
-        
-        mu = mu / mu.norm(dim=1)[:, None]
+        mu = mu / (mu.norm(dim=1)[:, None] + eps)
         dist = torch.mm(data, mu.transpose(0,1))
-
-        
         #cluster responsibilities via softmax
-        r = F.softmax(cluster_temp*dist, dim=1)
+        r = F.softmax(cluster_temp * dist, dim=1)
         #total responsibility of each cluster
         cluster_r = r.sum(dim=0)
         #mean of points in each cluster weighted by responsibility
         cluster_mean = r.t() @ data
         #update cluster means
-        new_mu = torch.diag(1/cluster_r) @ cluster_mean
+        new_mu = torch.diag(1 / (cluster_r + eps)) @ cluster_mean
         mu = new_mu
-        
-    
-    
-    r = F.softmax(cluster_temp*dist, dim=1)
-    
-    
+
+    r = F.softmax(cluster_temp * dist, dim=1)
     return mu, r
 
 class Clusterator(nn.Module):
@@ -63,11 +55,9 @@ class Clusterator(nn.Module):
     def __init__(self, nout, K):
         super(Clusterator, self).__init__()
 
-        
         self.sigmoid = nn.Sigmoid()
         self.K = K
         self.nout = nout
-        
         self.init =  torch.rand(self.K, nout)
         
     def forward(self, embeds, cluster_temp, num_iter=10):

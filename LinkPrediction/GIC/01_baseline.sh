@@ -1,1 +1,0 @@
-CUDA_VISIBLE_DEVICES=$1 python -u execute_link.py --d pubmed
