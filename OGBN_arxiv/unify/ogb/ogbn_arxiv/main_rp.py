@@ -136,7 +136,7 @@ if __name__ == "__main__":
     rewind_weight_mask = None
     resume_train_ckpt = None
 
-    percent_list = [(1 - (1 - args.pruning_percent_adj) ** (i + 1), 1 - (1 - args.pruning_percent_wei) ** (i + 1)) for i in range(20)]
+    percent_list = [(1 - (1 - 0.05) ** (i + 1), 1 - (1 - 0.2) ** (i + 1)) for i in range(20)]
     
     if args.resume_dir:
         resume_train_ckpt = torch.load(args.resume_dir)

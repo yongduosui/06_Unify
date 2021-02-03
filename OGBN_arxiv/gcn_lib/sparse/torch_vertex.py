@@ -133,8 +133,6 @@ class GENConv(GenMessagePassing):
             else:
                 with torch.no_grad():
                     out = scatter_softmax(inputs * self.edge_mask1_train * self.edge_mask2_fixed * self.t, index, dim=self.node_dim)
-            ## NOTE: pruning adj
-            # inputs = inputs * self.edge_mask1_train * self.edge_mask2_fixed
 
             out = scatter(inputs * out, index, 
                           dim=self.node_dim,
