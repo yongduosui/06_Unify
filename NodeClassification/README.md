@@ -1,4 +1,4 @@
-# UGS on Cora, Citeseer, PubMed Datasets
+# UGS Node Classification on Cora, Citeseer, PubMed Datasets
 ## 1. Requirements
 
 ```
