@@ -144,7 +144,7 @@ def parser_loader():
     ###### Unify pruning settings #######
     parser.add_argument('--s1', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
     parser.add_argument('--s2', type=float, default=0.0001,help='scale sparse rate (default: 0.0001)')
-    parser.add_argument('--mask_epoch', type=int, default=100)
+    parser.add_argument('--mask_epoch', type=int, default=200)
     parser.add_argument('--fix_epoch', type=int, default=200)
     parser.add_argument('--pruning_percent_wei', type=float, default=0.1)
     parser.add_argument('--pruning_percent_adj', type=float, default=0.1)
