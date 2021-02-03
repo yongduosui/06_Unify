@@ -22,9 +22,9 @@ cd LinkPrediction
 ### 2.3 Experiments on OGB datasets
 
 ```
-cd OGBN_ArXiv/unify/ogb/ogbn_arxiv
+cd OGBN_arxiv/unify/ogb/ogbn_arxiv
 
-cd OGBN_Proteins/unify/ogb/ogbn_proteins
+cd OGBN_proteins/unify/ogb/ogbn_proteins
 
 cd OGBL_Collab/unify/ogb/ogbl_collab
 
