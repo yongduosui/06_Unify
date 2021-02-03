@@ -1,11 +1,13 @@
 # UGS on Cora, Citeseer, PubMed Datasets
 ## 1. Requirements
 
-```python==3.6`
+```
+python==3.6
 
-`pytorch >= 1.4.0`
+pytorch >= 1.4.0
 
-`dgl-cu101==0.4.2`
+dgl-cu101==0.4.2
+```
 
 
 ## 2. Training & Evaluation
