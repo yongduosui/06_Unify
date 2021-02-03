@@ -1,3 +1,7 @@
+# UGS Node Classification on Ogbn-Proteins
+## 1. Requirements
+
+```
 conda create -n deepgcn python=3.7
 source activate deepgcn
 # make sure pytorch version >=1.4.0
@@ -18,3 +22,39 @@ pip install requests
 # install useful modules
 pip install tqdm
 pip install ogb
+
+```
+
+
+## 2. Training & Evaluation
+
+### UGS and RP for the first sparsity
+
+```
+python main_imp.py \
+--use_gpu \
+--learn_t \
+--num_layers 28 \
+--block res+ \
+--s1 1e-6 \
+--s2 1e-5 \
+--pruning_percent_wei 0.2 \
+--pruning_percent_adj 0.05 \
+--mask_epochs 500 \
+--fix_epochs 500 \
+--model_save_path IMP \
+--imp_num 1
+
+
+python main_rp.py \
+--use_gpu \
+--learn_t \
+--num_layers 28 \
+--block res+ \
+--fix_epochs 500 \
+--model_save_path RP \
+--imp_num 1
+
+```
+
+
