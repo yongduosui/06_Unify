@@ -1,4 +1,4 @@
-# UGS Node Classification on Ogbn-Proteins
+# UGS Node Classification on Ogbn-ArXiv
 ## 1. Requirements
 
 ```

@@ -1,4 +1,4 @@
-# UGS Node Classification on Ogbn-Proteins
+# UGS Link Prediction on Ogbl-Collab
 ## 1. Requirements
 
 ```
