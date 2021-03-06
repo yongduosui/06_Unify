@@ -34,14 +34,6 @@ def run_fix_mask(args, seed, adj_percent, wei_percent):
     net_gcn = net_gcn.cuda()
     pruning.random_pruning(net_gcn, adj_percent, wei_percent)
 
-    # pruned_adj = net_gcn.adj_mask2_fixed.detach().cpu()
-    # pruned_adj = coo_matrix(pruned_adj)
-    # rp_dict = {}
-    # rp_dict['rp'] = pruned_adj
-    # save_dir = 'adjs/pubmed/pubmed_rp13.pt'
-    # torch.save(rp_dict, save_dir)
-    # pdb.set_trace()
-
     adj_spar, wei_spar = pruning.print_sparsity(net_gcn)
     
     for name, param in net_gcn.named_parameters():
@@ -105,11 +97,30 @@ if __name__ == "__main__":
     seed_dict = {'cora': 3846, 'citeseer': 2839, 'pubmed': 3333}
     seed = seed_dict[args['dataset']]
 
-    percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(20)]
-    for p, (adj_percent, wei_percent) in enumerate(percent_list):
-        
-        best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, adj_percent, wei_percent)
-        print("=" * 120)
-        print("syd : Sparsity:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
-            .format(p + 1,  best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
-        print("=" * 120)
+    final_acc_curve = []
+    for s in range(10):
+        print("seed:{}".format(s))
+        seed_acc_curve = []
+        seed += s
+
+        percent_list = [(1 - (1 - args['pruning_percent_adj']) ** (i + 1), 1 - (1 - args['pruning_percent_wei']) ** (i + 1)) for i in range(20)]
+        for p, (adj_percent, wei_percent) in enumerate(percent_list):
+            
+            best_acc_val, final_acc_test, final_epoch_list, adj_spar, wei_spar = run_fix_mask(args, seed, adj_percent, wei_percent)
+            print("=" * 120)
+            print("syd : seed:[{}], Sparsity:[{}], Best Val:[{:.2f}] at epoch:[{}] | Final Test Acc:[{:.2f}] Adj:[{:.2f}%] Wei:[{:.2f}%]"
+                .format(s, p + 1,  best_acc_val * 100, final_epoch_list, final_acc_test * 100, adj_spar, wei_spar))
+            print("=" * 120)
+            seed_acc_curve.append(final_acc_test * 100)
+        final_acc_curve.append(seed_acc_curve)
+    
+    mean_results = np.mean(final_acc_curve, axis=0)
+    std_results = np.std(final_acc_curve, axis=0)
+    
+    print("-" * 100)
+    idx = 0
+    for mean, std in zip(mean_results, std_results):
+        idx += 1
+        print("idx:{} | mean: {:.4f} std:{:.4f}".format(idx, mean, std))
+    print("-" * 100)
+    
