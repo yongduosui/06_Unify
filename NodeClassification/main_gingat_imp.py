@@ -79,7 +79,7 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
                 best_val_acc['test_acc'] = acc_test
                 best_val_acc['epoch'] = epoch
 
-        print("IMP[{}] (Fix Mask) Epoch:[{}] LOSS:[{:.4f}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
+        print("IMP[{}] (Fix Mask) Epoch:[{}/{}] LOSS:[{:.4f}] Val:[{:.2f}] Test:[{:.2f}] | Final Val:[{:.2f}] Test:[{:.2f}] at Epoch:[{}]"
                .format(imp_num, epoch, 
                                 args['fix_epoch'],
                                 loss,
