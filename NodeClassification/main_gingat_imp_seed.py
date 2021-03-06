@@ -223,10 +223,15 @@ if __name__ == "__main__":
             test_acc = run_fix_mask(args, imp, rewind_weight)
             seed_acc_curve.append(test_acc)
         final_acc_curve.append(seed_acc_curve)
-    results = np.mean(final_acc_curve, axis=0)
+
+    mean_results = np.mean(final_acc_curve, axis=0)
+    std_results = np.std(final_acc_curve, axis=0)
+
     print("-" * 100)
-    for i in results:
-        print("{:.4f}".format(i))
+    idx = 0
+    for mean, std in zip(mean_results, std_results):
+        idx += 1
+        print("idx:{} | mean: {:.4f} std:{:.4f}".format(idx, mean, std))
     print("-" * 100)
         
     

@@ -187,10 +187,20 @@ if __name__ == "__main__":
             print("=" * 120)
             seed_acc_curve.append(final_acc_test * 100)
         final_acc_curve.append(seed_acc_curve)
-    results = np.mean(final_acc_curve, axis=0)
+    
+    mean_results = np.mean(final_acc_curve, axis=0)
+    std_results = np.std(final_acc_curve, axis=0)
+    
+    print("-" * 100)
+    idx = 0
+    for mean, std in zip(mean_results, std_results):
+        idx += 1
+        print("idx:{} | mean: {:.4f} std:{:.4f}".format(idx, mean, std))
+    print("-" * 100)
 
-    print("-" * 100)
-    for i in results:
-        print("{:.4f}".format(i))
-    print("-" * 100)
+    # results = np.mean(final_acc_curve, axis=0)
+    # print("-" * 100)
+    # for i in results:
+    #     print("{:.4f}".format(i))
+    # print("-" * 100)
     
