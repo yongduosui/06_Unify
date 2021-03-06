@@ -98,7 +98,7 @@ def run_fix_mask(args, imp_num, rewind_weight_mask):
                             best_val_acc['epoch'],
                             adj_spar,
                             wei_spar))
-
+    return best_val_acc['test_acc'] * 100
 
 def run_get_mask(args, imp_num, rewind_weight_mask=None):
 
@@ -211,11 +211,22 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print(args)
     
-    
-    rewind_weight = None
-    for imp in range(1, 21):
-        
-        rewind_weight = run_get_mask(args, imp, rewind_weight)
-        run_fix_mask(args, imp, rewind_weight)
+    final_acc_curve = []
+    for s in range(10):
+        args['seed'] += s
+        print("seed:{}".format(args['seed']))
+        seed_acc_curve = []
+        rewind_weight = None
+        for imp in range(1, 21):
+            
+            rewind_weight = run_get_mask(args, imp, rewind_weight)
+            test_acc = run_fix_mask(args, imp, rewind_weight)
+            seed_acc_curve.append(test_acc)
+        final_acc_curve.append(seed_acc_curve)
+    results = np.mean(final_acc_curve, axis=0)
+    print("-" * 100)
+    for i in results:
+        print("{:.4f}".format(i))
+    print("-" * 100)
         
     
