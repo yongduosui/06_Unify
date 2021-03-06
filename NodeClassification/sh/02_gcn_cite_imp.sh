@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICE=$1 \
+CUDA_VISIBLE_DEVICES=$1 \
 python -u main_pruning_imp_seed.py \
 --dataset citeseer \
 --embedding-dim 3703 512 6 \

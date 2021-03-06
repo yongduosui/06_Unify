@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICE=$1 \
+CUDA_VISIBLE_DEVICES=$1 \
 python -u main_gingat_imp_seed.py \
 --dataset pubmed --net gin \
 --embedding-dim 500 512 3 --lr 0.01 --weight-decay 5e-4 \
