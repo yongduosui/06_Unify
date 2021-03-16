@@ -232,7 +232,7 @@ def parser_loader():
 
     parser.add_argument('--epochs', type=int, default=2000, help='')
     parser.add_argument('--lr', type=float, default=0.001, help='')
-    parser.add_argument('--seed', type=int, default=1234, help='')
+    parser.add_argument('--seed', type=int, default=6666, help='')
     parser.add_argument('--dataset',  type=str, default='cora',help='')
     parser.add_argument('--b', dest='beta', type=int, default=100,help='')
     parser.add_argument('--c', dest='num_clusters', type=float, default=128,help='')
@@ -270,7 +270,7 @@ if __name__ == "__main__":
 
 
     final_acc_curve = []
-    for s in range(10):
+    for s in range(8):
         print("seed:{}".format(s))
         seed_acc_curve = []
         args.seed += s
