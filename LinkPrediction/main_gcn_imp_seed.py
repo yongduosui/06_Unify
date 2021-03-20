@@ -232,7 +232,7 @@ def parser_loader():
 
     parser.add_argument('--epochs', type=int, default=2000, help='')
     parser.add_argument('--lr', type=float, default=0.001, help='')
-    parser.add_argument('--seed', type=int, default=6666, help='')
+    parser.add_argument('--seed', type=int, default=55555, help='')
     parser.add_argument('--dataset',  type=str, default='cora',help='')
     parser.add_argument('--b', dest='beta', type=int, default=100,help='')
     parser.add_argument('--c', dest='num_clusters', type=float, default=128,help='')
