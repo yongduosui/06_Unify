@@ -12,7 +12,7 @@ def main():
     args = parameter_parser()
     torch.manual_seed(args.seed)
     tab_printer(args)
-    pdb.set_trace()()
+    pdb.set_trace()
     graph = graph_reader(args.edge_path)
     features = feature_reader(args.features_path)
     target = target_reader(args.target_path)
