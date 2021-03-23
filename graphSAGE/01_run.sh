@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=$1 python -m src.main --epochs 50 --cuda --learn_method unsup
